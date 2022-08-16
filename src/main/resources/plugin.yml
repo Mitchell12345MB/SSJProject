@@ -1,0 +1,15 @@
+name: SuperSaiyan
+version: 1
+main: org.apache.maven.supersaiyan.Main
+api-version: 1.17
+prefix: SSJPL
+load: STARTUP
+authors: [ SauSAliens ]
+description: Simple super saiyan plugin
+website: https://www.spigotmc.org/resources/super-saiyan-transformations.18212/
+commands:
+  ssj:
+    description:
+    usage:
+    aliases:
+    permission:
