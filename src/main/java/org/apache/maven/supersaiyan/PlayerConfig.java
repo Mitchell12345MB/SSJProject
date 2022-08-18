@@ -24,16 +24,16 @@ public class PlayerConfig implements Listener {
 
     }
 
-    public FileConfiguration getCustomConfig(Player e) {
+    public FileConfiguration getPConfig(Player e) {
 
-        return (FileConfiguration) this.pConfig.get("/PlayerConfigs/" + e.getUniqueId() + ".yml");
+        return (FileConfiguration) this.pConfig.get(File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
 
     }
 
     @EventHandler
     private void createPConfig(AsyncPlayerPreLoginEvent e) {
 
-        pConfigFile = new File(ssj.getDataFolder(), "/PlayerConfigs/" + e.getUniqueId() + ".yml");
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
 
         if (!pConfigFile.exists()) {
 
@@ -45,7 +45,7 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Name: ", e.getName());
+                pConfig.set("Player_Name: " + e.getName(), false);
 
                 pConfig.save(pConfigFile);
 
@@ -59,11 +59,11 @@ public class PlayerConfig implements Listener {
     @EventHandler
     public void savePCOnLeave(PlayerQuitEvent e) {
 
-        pConfigFile = new File(ssj.getDataFolder(), "/PlayerConfigs/" + e.getPlayer().getUniqueId() + ".yml");
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getPlayer().getUniqueId() + ".yml");
+
+        pConfig = new YamlConfiguration();
 
         if (!pConfigFile.exists()) {
-
-            pConfig = new YamlConfiguration();
 
             try {
 
@@ -71,11 +71,23 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Name: ", e.getPlayer().getName());
+                pConfig.set("Player_Name: " + e.getPlayer().getName(), false);
 
                 pConfig.save(pConfigFile);
 
             } catch (IOException | InvalidConfigurationException ex) {
+
+                ex.printStackTrace();
+
+            }
+
+        } else {
+
+            try {
+
+                pConfig.save(pConfigFile);
+
+            } catch (IOException ex){
 
                 ex.printStackTrace();
             }
