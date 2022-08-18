@@ -1,56 +1,73 @@
 package org.apache.maven.supersaiyan;
 
-import lombok.Getter;
-import org.apache.logging.log4j.Level;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.UUID;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
-@Getter
 public class PlayerConfig implements Listener {
 
-    private Main main = Main.getInstance();
+    private final SSJ ssj;
 
-    File userFile;
+    public PlayerConfig(SSJ ssj) {
 
-    private HashMap<UUID, YamlConfiguration> usersConfig = new HashMap<>();
+        this.ssj = ssj;
+
+    }
+
+    private File pConfigFile;
+
+    private FileConfiguration pConfig;
+
+    public FileConfiguration getCustomConfig(Player e) {
+
+        return (FileConfiguration) this.pConfig.get("/PlayerConfigs/" + e.getUniqueId() + ".yml");
+
+    }
 
     @EventHandler
-    public void onPlayerPreLogin(AsyncPlayerPreLoginEvent e) {
+    private void createPConfig(AsyncPlayerPreLoginEvent e) {
 
-        File folder = new File("plugins/SuperSaiyan", "PlayerConfigs");
+        pConfigFile = new File(ssj.getDataFolder(), "/PlayerConfigs/" + e.getUniqueId() + ".yml");
 
-        userFile = new File(main.getDataFolder().toString()+ File.separatorChar + "PlayerConfigs" + File.separatorChar + e.getUniqueId().toString() + ".yml");
+        if (!pConfigFile.exists()) {
 
-        if(!folder.exists()) {
-
-            folder.mkdirs();
-        }
-
-        if (!userFile.exists()) {
+            pConfig = new YamlConfiguration();
 
             try {
 
-                userFile.createNewFile();
+                pConfigFile.createNewFile();
 
-            } catch (IOException ex) {
+                pConfig.load(pConfigFile);
 
-                getLogger().log(Level.WARN, "Can't create " + e.getName() + " user file");
+                pConfig.set("Name: ", e.getName());
+
+                pConfig.save(pConfigFile);
+
+            } catch (IOException | InvalidConfigurationException ex) {
 
                 ex.printStackTrace();
-
             }
-
         }
+    }
 
-        usersConfig.put(e.getUniqueId(), YamlConfiguration.loadConfiguration(userFile));
+    @EventHandler
+    public void savePCOnLeave(PlayerQuitEvent e){
+
+        try {
+
+            pConfig.save(pConfigFile);
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
     }
 }

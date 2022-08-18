@@ -4,7 +4,4 @@ import org.bukkit.event.Listener;
 
 public class Timers implements Listener {
 
-    public Timers(Main main) {
-    }
-
 }

@@ -1,6 +1,5 @@
 package org.apache.maven.supersaiyan;
 
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,12 +7,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-@Getter
 public class Listeners implements Listener {
 
-    private Main main = Main.getInstance();
+    private final SSJ ssj;
 
-    PlayerConfig pconfig;
+    public Listeners(SSJ ssj) {
+        this.ssj = ssj;
+    }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {

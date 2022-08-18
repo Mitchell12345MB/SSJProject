@@ -1,24 +1,13 @@
 package org.apache.maven.supersaiyan;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@Getter
-@Setter
-public class Main extends JavaPlugin {
-
-    @Getter
-    private static Main instance;
+public class SSJ extends JavaPlugin {
 
     private Configs configs;
 
-    private PlayerConfig pconfigs;
-
     @Override
     public void onEnable() {
-
-        instance = this;
 
         regListeners();
 
@@ -39,21 +28,21 @@ public class Main extends JavaPlugin {
 
     private void regListeners(){
 
-        getServer().getPluginManager().registerEvents(new Listeners(), this);
+        getServer().getPluginManager().registerEvents(new Listeners(this), this);
 
-        getServer().getPluginManager().registerEvents(new PlayerConfig(), this);
+        getServer().getPluginManager().registerEvents(new PlayerConfig(this), this);
 
     }
 
     private void regClass(){
 
-        configs = new Configs();
+        configs = new Configs(this);
 
     }
 
     private void regCommands(){
 
-        getCommand("ssj").setExecutor(new Commands());
+        getCommand("ssj").setExecutor(new Commands(this));
 
     }
 

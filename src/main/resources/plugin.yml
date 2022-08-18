@@ -1,6 +1,6 @@
 name: SuperSaiyan
 version: 1
-main: org.apache.maven.supersaiyan.Main
+main: org.apache.maven.supersaiyan.SSJ
 api-version: 1.17
 prefix: SSJPL
 load: STARTUP

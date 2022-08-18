@@ -1,6 +1,5 @@
 package org.apache.maven.supersaiyan;
 
-import lombok.Getter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,10 +7,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-@Getter
 public class Configs{
 
-    private Main main = Main.getInstance();
+    private final SSJ ssj;
+
+    public Configs(SSJ ssj) {
+        this.ssj = ssj;
+    }
 
     private File ConfigFile;
 
@@ -21,7 +23,7 @@ public class Configs{
 
     private FileConfiguration TConfig;
 
-    File userFolder;
+    private File userFolder;
 
     public FileConfiguration getCFile() {
 
@@ -37,11 +39,11 @@ public class Configs{
 
     public void createConfig() {
 
-        userFolder = new File(main.getDataFolder(), "PlayerConfigs");
+        userFolder = new File(ssj.getDataFolder(), "PlayerConfigs");
 
         userFolder.mkdirs();
 
-        ConfigFile = new File(main.getDataFolder(), "config.yml");
+        ConfigFile = new File(ssj.getDataFolder(), "config.yml");
 
         Config = new YamlConfiguration();
 
@@ -49,7 +51,7 @@ public class Configs{
 
             ConfigFile.getParentFile().mkdirs();
 
-            main.saveResource("config.yml", false);
+            ssj.saveResource("config.yml", false);
 
         }
 
@@ -67,13 +69,13 @@ public class Configs{
 
     public void createTConfig() {
 
-        TConfigFile = new File(main.getDataFolder(), "transformations.yml");
+        TConfigFile = new File(ssj.getDataFolder(), "transformations.yml");
 
         if (!TConfigFile.exists()) {
 
             TConfigFile.getParentFile().mkdirs();
 
-            main.saveResource("transformations.yml", false);
+            ssj.saveResource("transformations.yml", false);
 
         }
 
@@ -93,11 +95,11 @@ public class Configs{
 
     public void updateConfig(){
 
-        if (getCFile().getDouble("Version") < Double.parseDouble(Main.getInstance().getDescription().getVersion())) {
+        if (getCFile().getDouble("Version") < Double.parseDouble(ssj.getDescription().getVersion())) {
 
-            File configFile = new File(main.getDataFolder(), "config.yml");
+            File configFile = new File(ssj.getDataFolder(), "config.yml");
 
-            File tConfigFile = new File(main.getDataFolder(), "transformations.yml");
+            File tConfigFile = new File(ssj.getDataFolder(), "transformations.yml");
 
             configFile.delete();
 
@@ -107,13 +109,13 @@ public class Configs{
 
             createTConfig();
 
-            main.saveDefaultConfig();
+            ssj.saveDefaultConfig();
 
-            main.reloadConfig();
+            ssj.reloadConfig();
 
-            main.getLogger().warning("Config.yml has been updated!");
+            ssj.getLogger().warning("Config.yml has been updated!");
 
-            main.getLogger().warning("Transformations.yml has been updated!");
+            ssj.getLogger().warning("Transformations.yml has been updated!");
 
         }
 

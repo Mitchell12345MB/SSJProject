@@ -1,19 +1,19 @@
 package org.apache.maven.supersaiyan;
 
 
-import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@Getter
 public class Commands implements CommandExecutor {
 
-    private Main main = Main.getInstance();
+    private final SSJ ssj;
 
-    PlayerConfig pconfigs;
+    public Commands(SSJ ssj) {
+        this.ssj = ssj;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -37,7 +37,6 @@ public class Commands implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("start")) {
 
                     p.sendMessage(ChatColor.RED + "Start test");
-
                 }
 
             }
