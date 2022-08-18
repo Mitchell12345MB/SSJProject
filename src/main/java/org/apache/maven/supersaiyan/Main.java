@@ -20,19 +20,13 @@ public class Main extends JavaPlugin {
 
         instance = this;
 
-        getServer().getPluginManager().registerEvents(new Listeners(), this);
+        regListeners();
 
-        configs = new Configs();
+        regClass();
 
-        pconfigs = new PlayerConfig();
+        regCommands();
 
-        getCommand("ssj").setExecutor(new Commands());
-
-        configs.createConfig();
-
-        configs.createTConfig();
-
-        configs.updateConfig();
+        configUICall();
 
     }
 
@@ -41,6 +35,34 @@ public class Main extends JavaPlugin {
 
         configs.saveConfig();
 
+    }
 
+    private void regListeners(){
+
+        getServer().getPluginManager().registerEvents(new Listeners(), this);
+
+        getServer().getPluginManager().registerEvents(new PlayerConfig(), this);
+
+    }
+
+    private void regClass(){
+
+        configs = new Configs();
+
+    }
+
+    private void regCommands(){
+
+        getCommand("ssj").setExecutor(new Commands());
+
+    }
+
+    private void configUICall(){
+
+        configs.createConfig();
+
+        configs.createTConfig();
+
+        configs.updateConfig();
     }
 }

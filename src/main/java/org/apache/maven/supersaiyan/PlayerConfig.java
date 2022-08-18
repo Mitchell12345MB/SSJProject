@@ -1,79 +1,56 @@
 package org.apache.maven.supersaiyan;
 
 import lombok.Getter;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.apache.logging.log4j.Level;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 
+import static org.apache.logging.log4j.LogManager.getLogger;
+
 @Getter
-public class PlayerConfig {
+public class PlayerConfig implements Listener {
 
     private Main main = Main.getInstance();
 
-    Commands c;
-
-    UUID u;
-
     File userFile;
 
-    FileConfiguration userConfig;
+    private HashMap<UUID, YamlConfiguration> usersConfig = new HashMap<>();
 
+    @EventHandler
+    public void onPlayerPreLogin(AsyncPlayerPreLoginEvent e) {
 
-    public void createUser(final Player player){
+        File folder = new File("plugins/SuperSaiyan", "PlayerConfigs");
 
-        if ( !(userFile.exists()) ) {
+        userFile = new File(main.getDataFolder().toString()+ File.separatorChar + "PlayerConfigs" + File.separatorChar + e.getUniqueId().toString() + ".yml");
+
+        if(!folder.exists()) {
+
+            folder.mkdirs();
+        }
+
+        if (!userFile.exists()) {
 
             try {
 
-                YamlConfiguration userConfig = YamlConfiguration.loadConfiguration(userFile);
-
                 userFile.createNewFile();
 
-                userConfig.set("User.Info.PreviousName", player.getName());
+            } catch (IOException ex) {
 
-                userConfig.set("User.Info.UniqueID", player.getUniqueId().toString());
+                getLogger().log(Level.WARN, "Can't create " + e.getName() + " user file");
 
-                userConfig.set("User.Info.ipAddress", player.getAddress().getAddress().getHostAddress());
-
-                userConfig.save(userFile);
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
+                ex.printStackTrace();
 
             }
-        }
-    }
-
-    public void userDataHandler(UUID u){
-
-        this.u = u;
-
-        userFile = new File(main.getDataFolder(), u + ".yml");
-
-        userConfig = YamlConfiguration.loadConfiguration(userFile);
-    }
-
-    public FileConfiguration getUserFile(){
-
-        return userConfig;
-
-    }
-
-    public void saveUserFile() {
-
-        try {
-
-            getUserFile().save(userFile);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
 
         }
-    }
 
+        usersConfig.put(e.getUniqueId(), YamlConfiguration.loadConfiguration(userFile));
+    }
 }

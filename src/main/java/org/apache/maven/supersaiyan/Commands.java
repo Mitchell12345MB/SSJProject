@@ -13,9 +13,7 @@ public class Commands implements CommandExecutor {
 
     private Main main = Main.getInstance();
 
-    private PlayerConfig pconfigs = new PlayerConfig();
-
-
+    PlayerConfig pconfigs;
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -41,6 +39,7 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(ChatColor.RED + "Start test");
 
                 }
+
             }
 
         } else {
@@ -52,8 +51,6 @@ public class Commands implements CommandExecutor {
         }
 
         return true;
-
     }
-
 }
 

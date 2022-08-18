@@ -6,18 +6,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.UUID;
 
 @Getter
 public class Listeners implements Listener {
 
     private Main main = Main.getInstance();
 
-    //private PlayerConfig pconfigs = new PlayerConfig();
+    PlayerConfig pconfig;
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
@@ -49,7 +45,5 @@ public class Listeners implements Listener {
         if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.FIREWORK_STAR))) return;
 
         e.getPlayer().sendMessage("Charging");
-
     }
-
 }

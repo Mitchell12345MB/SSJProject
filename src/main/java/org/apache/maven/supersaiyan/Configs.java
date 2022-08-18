@@ -21,6 +21,8 @@ public class Configs{
 
     private FileConfiguration TConfig;
 
+    File userFolder;
+
     public FileConfiguration getCFile() {
 
         return this.Config;
@@ -35,7 +37,13 @@ public class Configs{
 
     public void createConfig() {
 
+        userFolder = new File(main.getDataFolder(), "PlayerConfigs");
+
+        userFolder.mkdirs();
+
         ConfigFile = new File(main.getDataFolder(), "config.yml");
+
+        Config = new YamlConfiguration();
 
         if (!ConfigFile.exists()) {
 
@@ -44,8 +52,6 @@ public class Configs{
             main.saveResource("config.yml", false);
 
         }
-
-        Config = new YamlConfiguration();
 
         try {
 
@@ -56,6 +62,7 @@ public class Configs{
             e.printStackTrace();
 
         }
+
     }
 
     public void createTConfig() {
@@ -81,6 +88,7 @@ public class Configs{
             e.printStackTrace();
 
         }
+
     }
 
     public void updateConfig(){
@@ -108,6 +116,7 @@ public class Configs{
             main.getLogger().warning("Transformations.yml has been updated!");
 
         }
+
     }
 
     public void saveConfig() {
@@ -125,7 +134,6 @@ public class Configs{
         } catch (IOException | InvalidConfigurationException e) {
 
             e.printStackTrace();
-
         }
     }
 }
