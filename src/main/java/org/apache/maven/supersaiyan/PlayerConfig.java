@@ -15,16 +15,14 @@ import java.io.IOException;
 public class PlayerConfig implements Listener {
 
     private final SSJ ssj;
+    private File pConfigFile;
+    private FileConfiguration pConfig;
 
     public PlayerConfig(SSJ ssj) {
 
         this.ssj = ssj;
 
     }
-
-    private File pConfigFile;
-
-    private FileConfiguration pConfig;
 
     public FileConfiguration getCustomConfig(Player e) {
 
@@ -59,15 +57,28 @@ public class PlayerConfig implements Listener {
     }
 
     @EventHandler
-    public void savePCOnLeave(PlayerQuitEvent e){
+    public void savePCOnLeave(PlayerQuitEvent e) {
 
-        try {
+        pConfigFile = new File(ssj.getDataFolder(), "/PlayerConfigs/" + e.getPlayer().getUniqueId() + ".yml");
 
-            pConfig.save(pConfigFile);
+        if (!pConfigFile.exists()) {
 
-        } catch (IOException ex) {
+            pConfig = new YamlConfiguration();
 
-            ex.printStackTrace();
+            try {
+
+                pConfigFile.createNewFile();
+
+                pConfig.load(pConfigFile);
+
+                pConfig.set("Name: ", e.getPlayer().getName());
+
+                pConfig.save(pConfigFile);
+
+            } catch (IOException | InvalidConfigurationException ex) {
+
+                ex.printStackTrace();
+            }
         }
     }
 }
