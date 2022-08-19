@@ -45,7 +45,7 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Player_Name: " + e.getName(), false);
+                pConfig.set("Player_Name", e.getName());
 
                 pConfig.save(pConfigFile);
 
@@ -71,7 +71,7 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Player_Name: " + e.getPlayer().getName(), false);
+                pConfig.set("Player_Name", e.getPlayer().getName());
 
                 pConfig.save(pConfigFile);
 
