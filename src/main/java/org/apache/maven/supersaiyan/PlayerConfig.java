@@ -45,19 +45,7 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Player_Name", e.getName());
-
-                pConfig.set("Level", 0);
-
-                pConfig.set("Base_form.Power_Multiplier", 0);
-
-                pConfig.set("Base_form.Jump_Multiplier", 0);
-
-                pConfig.set("Base_form.Strength_Multiplier", 0);
-
-                pConfig.set("Base_form.Speed_Multiplier", 0);
-
-                pConfig.set("Transformations_Unlocked", "");
+                pConfig.set("Player_Name: " + e.getName(), false);
 
                 pConfig.save(pConfigFile);
 
@@ -83,23 +71,23 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Player_Name", e.getPlayer().getName());
-
-                pConfig.set("Level", 0);
-
-                pConfig.set("Base_form.Power_Multiplier", 0);
-
-                pConfig.set("Base_form.Jump_Multiplier", 0);
-
-                pConfig.set("Base_form.Strength_Multiplier", 0);
-
-                pConfig.set("Base_form.Speed_Multiplier", 0);
-
-                pConfig.set("Transformations_Unlocked", "");
+                pConfig.set("Player_Name: " + e.getPlayer().getName(), false);
 
                 pConfig.save(pConfigFile);
 
             } catch (IOException | InvalidConfigurationException ex) {
+
+                ex.printStackTrace();
+
+            }
+
+        } else {
+
+            try {
+
+                pConfig.save(pConfigFile);
+
+            } catch (IOException ex){
 
                 ex.printStackTrace();
             }
