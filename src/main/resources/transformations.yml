@@ -23,19 +23,6 @@
 # [Traits] Under traits, if you don't want a trait to be multiplied, then leave "0." If you want to disable it, then put "false" where the "0" or number is.
 # [Use Traits?] This is if you want to use certain traits for a certain transformation and vise versa.
 
-#####################################
-#                                   #
-#    Adding new transformations     #
-#                                   #
-#####################################
-
-# In the following Transformation_List section, add new transformation that you want to add
-# Then copy and paste something like Kaioken_x1 or Super_Saiyan_1 and rename it to your new transformation and
-# modify it like the above.
-# Note that the permission will be "ssj.<TRANSFORMATION NAME>"
-# If your transformation is permanent, add it to SuperSaiyans and it will be available by /ssj, otherwise
-# add it to Kaiokens and it will be temporary and accessible by /kaioken.
-
 ##############################
 #                            #
 #    Useful Links & Tools    #
@@ -45,35 +32,6 @@
 # Chat Color Template: http://wiki.ess3.net/mc/
 
 # Particle list (DON'T USE ANYTHING ELSE BUT THESE): flame, villager_happy, spell_instant, dragon_breath, redstone, fireworks_spark
-
-Transformation_List:
-  SuperSaiyans:
-    - Super_Saiyan_1
-    - Super_Saiyan_2
-    - Super_Saiyan_3
-    - Super_Saiyan_4
-    - Super_Saiyan_5
-    - False_Super_Saiyan
-    - Ultimate_Super_Saiyan
-    - Legendary_Super_Saiyan_1
-    - Super_Saiyan_God
-    - Super_Saiyan_Blue_1
-    - Super_Saiyan_Blue_2
-    - Super_Saiyan_Rose_1
-    - Potential_Unleashed
-    - Super_Saiyan_Rage
-  Kaiokens:
-    - Kaioken_x1
-    - Kaioken_x2
-    - Kaioken_x3
-    - Kaioken_x4
-    - Kaioken_x20
-    - Kaioken_x30
-    - Kaioken_x40
-    - Kaioken_x50
-    - Kaioken_x100
-    - Super_Kaioken
-    - Kaioken_Super_Saiyan_Blue_1_x10
 
 
 Base_Form:
