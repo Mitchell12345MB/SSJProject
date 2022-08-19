@@ -35,9 +35,9 @@ public class PlayerConfig implements Listener {
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
 
-        if (!pConfigFile.exists()) {
+        pConfig = new YamlConfiguration();
 
-            pConfig = new YamlConfiguration();
+        if (!pConfigFile.exists()) {
 
             try {
 
@@ -46,6 +46,8 @@ public class PlayerConfig implements Listener {
                 pConfig.load(pConfigFile);
 
                 pConfig.set("Player_Name", e.getName());
+
+                pConfig.set("Start", false);
 
                 pConfig.set("Level", 0);
 
@@ -66,8 +68,31 @@ public class PlayerConfig implements Listener {
             } catch (IOException | InvalidConfigurationException ex) {
 
                 ex.printStackTrace();
+
             }
+
         }
+
+        if (!e.getName().equals(pConfig.getString("Player_Name"))){
+
+            try {
+
+                pConfig.load(pConfigFile);
+
+                pConfig.set("Player_Name", e.getName());
+
+                ssj.getLogger().warning(e.getName() + ".yml has been updated!");
+
+                pConfig.save(pConfigFile);
+
+            } catch (IOException | InvalidConfigurationException ex){
+
+                ex.printStackTrace();
+
+            }
+
+        }
+
     }
 
     @EventHandler
@@ -86,6 +111,8 @@ public class PlayerConfig implements Listener {
                 pConfig.load(pConfigFile);
 
                 pConfig.set("Player_Name", e.getPlayer().getName());
+
+                pConfig.set("Start", false);
 
                 pConfig.set("Level", 0);
 
