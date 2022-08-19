@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
@@ -73,26 +74,6 @@ public class PlayerConfig implements Listener {
 
         }
 
-        if (!e.getName().equals(pConfig.getString("Player_Name"))){
-
-            try {
-
-                pConfig.load(pConfigFile);
-
-                pConfig.set("Player_Name", e.getName());
-
-                ssj.getLogger().warning(e.getName() + ".yml has been updated!");
-
-                pConfig.save(pConfigFile);
-
-            } catch (IOException | InvalidConfigurationException ex){
-
-                ex.printStackTrace();
-
-            }
-
-        }
-
     }
 
     @EventHandler
@@ -133,7 +114,35 @@ public class PlayerConfig implements Listener {
             } catch (IOException | InvalidConfigurationException ex) {
 
                 ex.printStackTrace();
+
             }
+
+        }
+
+    }
+
+    @EventHandler
+    private void updatePlayerName(PlayerJoinEvent e){
+
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getPlayer().getUniqueId() + ".yml");
+
+        pConfig = new YamlConfiguration();
+
+        try {
+
+            pConfig.load(pConfigFile);
+
+            if (!(e.getPlayer().getName().equals(pConfig.getString("Player_Name")))) {
+
+                pConfig.set("Player_Name", e.getPlayer().getName());
+
+                ssj.getLogger().warning(e.getPlayer().getName() + "'s.yml has been updated!");
+
+            }
+
+        } catch (IOException | InvalidConfigurationException ex) {
+
+            ex.printStackTrace();
         }
     }
 }

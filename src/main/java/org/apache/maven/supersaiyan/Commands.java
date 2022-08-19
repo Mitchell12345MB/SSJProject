@@ -15,6 +15,8 @@ public class Commands implements CommandExecutor {
         this.ssj = ssj;
     }
 
+    PlayerConfig ppc;
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
@@ -36,7 +38,10 @@ public class Commands implements CommandExecutor {
 
                 } else if (args[0].equalsIgnoreCase("start")) {
 
+                    ppc.getPConfig(p).set("Start", true);
+
                     p.sendMessage(ChatColor.RED + "Start test");
+
                 }
 
             }
