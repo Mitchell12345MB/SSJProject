@@ -45,7 +45,21 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Player_Name: " + e.getName(), false);
+                pConfig.set("Player_Name", e.getName());
+
+                pConfig.set("Level", 0);
+
+                pConfig.set("Base.Health", 0);
+
+                pConfig.set("Base.Power", 0);
+
+                pConfig.set("Base.Strength", 0);
+
+                pConfig.set("Base.Speed", 0);
+
+                pConfig.set("Base.Stamina", 0);
+
+                pConfig.set("Transformations_Unlocked", "");
 
                 pConfig.save(pConfigFile);
 
@@ -71,23 +85,25 @@ public class PlayerConfig implements Listener {
 
                 pConfig.load(pConfigFile);
 
-                pConfig.set("Player_Name: " + e.getPlayer().getName(), false);
+                pConfig.set("Player_Name", e.getPlayer().getName());
+
+                pConfig.set("Level", 0);
+
+                pConfig.set("Base.Health", 0);
+
+                pConfig.set("Base.Power", 0);
+
+                pConfig.set("Base.Strength", 0);
+
+                pConfig.set("Base.Speed", 0);
+
+                pConfig.set("Base.Stamina", 0);
+
+                pConfig.set("Transformations_Unlocked", "");
 
                 pConfig.save(pConfigFile);
 
             } catch (IOException | InvalidConfigurationException ex) {
-
-                ex.printStackTrace();
-
-            }
-
-        } else {
-
-            try {
-
-                pConfig.save(pConfigFile);
-
-            } catch (IOException ex){
 
                 ex.printStackTrace();
             }
