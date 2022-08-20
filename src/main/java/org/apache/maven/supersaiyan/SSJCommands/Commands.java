@@ -1,6 +1,7 @@
-package org.apache.maven.supersaiyan;
+package org.apache.maven.supersaiyan.SSJCommands;
 
 
+import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -61,6 +62,8 @@ public class Commands implements CommandExecutor {
 
                                 pConfig.set("Start", true);
 
+                                ssj.getssjgui().openInventory(p);
+
                                 p.sendMessage(ChatColor.RED + "Your Saiyan journey has started!");
 
                                 ssj.getLogger().warning(p.getName() + "'s.yml Has been updated!");
@@ -91,7 +94,7 @@ public class Commands implements CommandExecutor {
 
         } else {
 
-            sender.sendMessage("Plugin doesn't support console commands yet.");
+            ssj.getLogger().warning("Plugin doesn't support console commands yet.");
 
             return true;
 

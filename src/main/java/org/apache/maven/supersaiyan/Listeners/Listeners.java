@@ -1,5 +1,6 @@
-package org.apache.maven.supersaiyan;
+package org.apache.maven.supersaiyan.Listeners;
 
+import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

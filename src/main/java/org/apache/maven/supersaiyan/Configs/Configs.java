@@ -1,5 +1,6 @@
-package org.apache.maven.supersaiyan;
+package org.apache.maven.supersaiyan.Configs;
 
+import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
