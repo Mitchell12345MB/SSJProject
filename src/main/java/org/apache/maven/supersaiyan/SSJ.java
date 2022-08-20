@@ -1,10 +1,10 @@
 package org.apache.maven.supersaiyan;
 
 import org.apache.maven.supersaiyan.Configs.Configs;
-import org.apache.maven.supersaiyan.Configs.PlayerConfig;
+import org.apache.maven.supersaiyan.Listeners.PlayerConfig;
 import org.apache.maven.supersaiyan.Listeners.Listeners;
 import org.apache.maven.supersaiyan.SSJCommands.Commands;
-import org.apache.maven.supersaiyan.SSJGUI.SSJgui;
+import org.apache.maven.supersaiyan.Listeners.SSJgui;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -73,4 +73,10 @@ public class SSJ extends JavaPlugin {
 
         return ssjgui;
     }
+
+    public PlayerConfig getpPc(){
+
+        return pPc;
+    }
+
 }

@@ -1,4 +1,4 @@
-package org.apache.maven.supersaiyan.Configs;
+package org.apache.maven.supersaiyan.Listeners;
 
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -154,4 +154,23 @@ public class PlayerConfig implements Listener {
             ssj.getLogger().warning(e.getName() + "'s.yml Doesn't exist! Creating one...");
         }
     }
+
+    public FileConfiguration getpConfig(Player p){
+
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+
+        pConfig = new YamlConfiguration();
+
+        return (FileConfiguration) this.pConfig.get(String.valueOf(pConfigFile));
+    }
+
+    public File getpConfigFile(Player p){
+
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+
+        pConfig = new YamlConfiguration();
+
+        return (File) this.pConfig.get(String.valueOf(pConfigFile));
+    }
+
 }

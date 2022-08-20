@@ -1,4 +1,4 @@
-package org.apache.maven.supersaiyan.ParticleSyS;
+package org.apache.maven.supersaiyan.Listeners;
 
 import org.bukkit.event.Listener;
 

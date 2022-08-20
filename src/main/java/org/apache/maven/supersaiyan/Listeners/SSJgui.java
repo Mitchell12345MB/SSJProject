@@ -1,4 +1,4 @@
-package org.apache.maven.supersaiyan.SSJGUI;
+package org.apache.maven.supersaiyan.Listeners;
 
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.Bukkit;

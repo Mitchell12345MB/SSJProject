@@ -22,9 +22,9 @@ public class Commands implements CommandExecutor {
         this.ssj = ssj;
     }
 
-    private File pConfigFile;
+    //private File pConfigFile;
 
-    private FileConfiguration pConfig;
+    //private FileConfiguration pConfig;
 
 
     @Override
@@ -34,9 +34,9 @@ public class Commands implements CommandExecutor {
 
             Player p = (Player) sender;
 
-            pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+            //pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
 
-            pConfig = new YamlConfiguration();
+            //pConfig = new YamlConfiguration();
 
             if (cmd.getName().equalsIgnoreCase("ssj")) {
 
@@ -52,15 +52,19 @@ public class Commands implements CommandExecutor {
 
                 } else if (args[0].equalsIgnoreCase("start")) {
 
-                    if (pConfigFile.exists()) {
+                    if (ssj.getpPc().getpConfigFile(p).exists()) {
 
                         try {
 
-                            pConfig.load(pConfigFile);
+                            ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
 
-                            if (!pConfig.getBoolean("Start")) {
+                            //pConfig.load(pConfigFile);
 
-                                pConfig.set("Start", true);
+                            if (!ssj.getpPc().getpConfig(p).getBoolean("Start")) {
+
+                                //pConfig.set("Start", true);
+
+                                ssj.getpPc().getpConfig(p).set("Start", true);
 
                                 ssj.getssjgui().openInventory(p);
 
