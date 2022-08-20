@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Listeners implements Listener {
 
-    private final SSJ ssj;
+    private SSJ ssj;
 
     public Listeners(SSJ ssj) {
         this.ssj = ssj;

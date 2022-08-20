@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Configs{
 
-    private final SSJ ssj;
+    private SSJ ssj;
 
     public Configs(SSJ ssj) {
         this.ssj = ssj;
