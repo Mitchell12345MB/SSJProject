@@ -1,22 +1,20 @@
 package org.apache.maven.supersaiyan.SSJCommands;
 
 
+import org.apache.maven.supersaiyan.Listeners.PlayerConfig;
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Commands implements CommandExecutor {
 
-    private SSJ ssj;
+    private final SSJ ssj;
 
     public Commands(SSJ ssj) {
         this.ssj = ssj;

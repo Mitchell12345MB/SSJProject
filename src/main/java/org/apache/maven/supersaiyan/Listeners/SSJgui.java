@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class SSJgui implements Listener {
 
-    private SSJ ssj;
+    private final SSJ ssj;
 
     public SSJgui(SSJ ssj) {
         this.ssj = ssj;

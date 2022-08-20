@@ -2,7 +2,7 @@ package org.apache.maven.supersaiyan;
 
 import org.apache.maven.supersaiyan.Configs.Configs;
 import org.apache.maven.supersaiyan.Listeners.PlayerConfig;
-import org.apache.maven.supersaiyan.Listeners.Listeners;
+import org.apache.maven.supersaiyan.Listeners.SSJListeners;
 import org.apache.maven.supersaiyan.SSJCommands.Commands;
 import org.apache.maven.supersaiyan.Listeners.SSJgui;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,13 +10,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SSJ extends JavaPlugin {
 
-    private Configs configs = new Configs(this);
+    private Configs configs;
 
-    private Listeners listener = new Listeners(this);
+    private SSJListeners ssjlistener;
 
-    private PlayerConfig pPc = new PlayerConfig(this);
+    private PlayerConfig pPc;
 
-    private SSJgui ssjgui = new SSJgui(this);
+    private SSJgui ssjgui;
 
     @Override
     public void onEnable() {
@@ -40,11 +40,17 @@ public class SSJ extends JavaPlugin {
 
     private void regListeners(){
 
-        super.getServer().getPluginManager().registerEvents(listener, this);
+        SSJListeners ssjlistener = new SSJListeners(this);
 
-        super.getServer().getPluginManager().registerEvents(pPc, this);
+        PlayerConfig pPc = new PlayerConfig(this);
+
+        SSJgui ssjgui = new SSJgui(this);
 
         super.getServer().getPluginManager().registerEvents(ssjgui, this);
+
+        super.getServer().getPluginManager().registerEvents(ssjlistener, this);
+
+        super.getServer().getPluginManager().registerEvents(pPc, this);
 
     }
 

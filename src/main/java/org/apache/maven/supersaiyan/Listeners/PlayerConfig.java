@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class PlayerConfig implements Listener {
 
-    private SSJ ssj;
+    private final SSJ ssj;
 
     public PlayerConfig(SSJ ssj) {
         this.ssj = ssj;

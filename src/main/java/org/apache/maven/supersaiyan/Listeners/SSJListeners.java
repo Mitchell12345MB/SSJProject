@@ -8,11 +8,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class Listeners implements Listener {
+public class SSJListeners implements Listener {
 
-    private SSJ ssj;
+    private final SSJ ssj;
 
-    public Listeners(SSJ ssj) {
+    public SSJListeners(SSJ ssj) {
         this.ssj = ssj;
     }
 
