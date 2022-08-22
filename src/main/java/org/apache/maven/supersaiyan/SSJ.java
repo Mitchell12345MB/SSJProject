@@ -1,7 +1,7 @@
 package org.apache.maven.supersaiyan;
 
 import org.apache.maven.supersaiyan.Configs.Configs;
-import org.apache.maven.supersaiyan.Listeners.PlayerConfig;
+import org.apache.maven.supersaiyan.Configs.PlayerConfig;
 import org.apache.maven.supersaiyan.Listeners.SSJListeners;
 import org.apache.maven.supersaiyan.SSJCommands.Commands;
 import org.apache.maven.supersaiyan.Listeners.SSJgui;
@@ -21,9 +21,9 @@ public class SSJ extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        regListeners();
-
         regClass();
+
+        regListeners();
 
         regCommands();
 
@@ -42,21 +42,22 @@ public class SSJ extends JavaPlugin {
 
         SSJListeners ssjlistener = new SSJListeners(this);
 
-        PlayerConfig pPc = new PlayerConfig(this);
-
         SSJgui ssjgui = new SSJgui(this);
 
         super.getServer().getPluginManager().registerEvents(ssjgui, this);
 
         super.getServer().getPluginManager().registerEvents(ssjlistener, this);
 
-        super.getServer().getPluginManager().registerEvents(pPc, this);
 
     }
 
     private void regClass(){
 
         configs = new Configs(this);
+
+        pPc = new PlayerConfig(this);
+
+        ssjgui = new SSJgui(this);
 
     }
 

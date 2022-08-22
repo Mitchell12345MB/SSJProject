@@ -1,7 +1,6 @@
 package org.apache.maven.supersaiyan.SSJCommands;
 
 
-import org.apache.maven.supersaiyan.Listeners.PlayerConfig;
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,10 +19,6 @@ public class Commands implements CommandExecutor {
         this.ssj = ssj;
     }
 
-    //private File pConfigFile;
-
-    //private FileConfiguration pConfig;
-
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -31,10 +26,6 @@ public class Commands implements CommandExecutor {
         if (sender instanceof Player) {
 
             Player p = (Player) sender;
-
-            //pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
-
-            //pConfig = new YamlConfiguration();
 
             if (cmd.getName().equalsIgnoreCase("ssj")) {
 
@@ -50,43 +41,29 @@ public class Commands implements CommandExecutor {
 
                 } else if (args[0].equalsIgnoreCase("start")) {
 
-                    if (ssj.getpPc().getpConfigFile(p).exists()) {
+                    if (ssj.getpPc().getpConfigFile(p).exists() && ssj.getpPc().getpConfig(p).getBoolean("Start")){
 
-                        try {
+                        p.sendMessage(ChatColor.RED + "You've already started your Saiyan journey!");
 
-                            ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
+                    }
 
-                            //pConfig.load(pConfigFile);
-
-                            if (!ssj.getpPc().getpConfig(p).getBoolean("Start")) {
-
-                                //pConfig.set("Start", true);
-
-                                ssj.getpPc().getpConfig(p).set("Start", true);
-
-                                ssj.getssjgui().openInventory(p);
-
-                                p.sendMessage(ChatColor.RED + "Your Saiyan journey has started!");
-
-                                ssj.getLogger().warning(p.getName() + "'s.yml Has been updated!");
-
-                            } else {
-
-                                p.sendMessage(ChatColor.RED + "You've already started your Saiyan journey!");
-
-                            }
-
-                        } catch (IOException | InvalidConfigurationException ex) {
-
-                            ex.printStackTrace();
-
-                        }
-
-                    } else {
+                    if (!ssj.getpPc().getpConfigFile(p).exists()){
 
                         p.sendMessage(ChatColor.RED + "Your player file doesn't exist!");
 
-                        p.sendMessage(ChatColor.RED + "Please re-log or tell the server owner.");
+                        p.sendMessage(ChatColor.RED + "Please re-log or tell a server Admin/Owner.");
+
+                    }
+
+                    if (ssj.getpPc().getpConfigFile(p).exists() && !ssj.getpPc().getpConfig(p).getBoolean("Start")){
+
+                            ssj.getssjgui().openInventory(p);
+
+                            ssj.getpPc().getpConfig(p).set("Start", true);
+
+                            p.sendMessage(ChatColor.RED + "Your Saiyan journey has started!");
+
+                            ssj.getLogger().warning(p.getName() + "'s.yml Has been updated!");
 
                     }
 

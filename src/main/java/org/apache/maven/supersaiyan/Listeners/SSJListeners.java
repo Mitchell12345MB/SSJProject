@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class SSJListeners implements Listener {
@@ -17,7 +19,7 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent e) {
+    private void onPlayerInteract(PlayerInteractEvent e) {
 
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
 
@@ -28,7 +30,7 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract2(PlayerInteractEvent e) {
+    private void onPlayerInteract2(PlayerInteractEvent e) {
 
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
 
@@ -39,12 +41,41 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract3(PlayerInteractEvent e) {
+    private void onPlayerInteract3(PlayerInteractEvent e) {
 
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
 
         if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.FIREWORK_STAR))) return;
 
         e.getPlayer().sendMessage("Charging");
+
+    }
+
+    @EventHandler
+    private void createAndUpdatePlayerConfig(PlayerJoinEvent e){
+
+        if (!ssj.getpPc().getpConfigFile(e.getPlayer()).exists()) {
+
+            ssj.getpPc().callCreatePLayerConfig(e.getPlayer());
+
+        } else {
+
+            ssj.getpPc().callUpdatePlayerName(e.getPlayer());
+
+        }
+
+    }
+
+    @EventHandler
+    private void savePlayerConfig(PlayerQuitEvent e){
+
+        if (!ssj.getpPc().getpConfigFile(e.getPlayer()).exists()) {
+
+            ssj.getpPc().callCreatePLayerConfig(e.getPlayer());
+
+        } else {
+
+            ssj.getpPc().callSavePlayerConfig(e.getPlayer());
+        }
     }
 }

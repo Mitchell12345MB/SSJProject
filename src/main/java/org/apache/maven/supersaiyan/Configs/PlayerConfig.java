@@ -1,19 +1,15 @@
-package org.apache.maven.supersaiyan.Listeners;
+package org.apache.maven.supersaiyan.Configs;
 
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
 import java.io.IOException;
 
-public class PlayerConfig implements Listener {
+public class PlayerConfig {
 
     private final SSJ ssj;
 
@@ -21,12 +17,11 @@ public class PlayerConfig implements Listener {
         this.ssj = ssj;
     }
 
-    private File pConfigFile;
+    public void callCreatePLayerConfig(Player e) {
 
-    private FileConfiguration pConfig;
+        File pConfigFile;
 
-    @EventHandler
-    private void createPConfig(AsyncPlayerPreLoginEvent e) {
+        FileConfiguration pConfig;
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
 
@@ -74,8 +69,11 @@ public class PlayerConfig implements Listener {
 
     }
 
-    @EventHandler
-    public void savePCOnLeave(PlayerQuitEvent e) {
+    public void callSavePlayerConfig(Player e) {
+
+        File pConfigFile;
+
+        FileConfiguration pConfig;
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getPlayer().getUniqueId() + ".yml");
 
@@ -119,12 +117,29 @@ public class PlayerConfig implements Listener {
 
             }
 
+        } else {
+
+            try {
+
+                pConfig.load(pConfigFile);
+
+                pConfig.save(pConfigFile);
+
+            } catch (IOException | InvalidConfigurationException ex) {
+
+                ex.printStackTrace();
+
+            }
+
         }
 
     }
 
-    @EventHandler
-    private void updatePlayerName(AsyncPlayerPreLoginEvent e) {
+    public void callUpdatePlayerName(Player e) {
+
+        File pConfigFile;
+
+        FileConfiguration pConfig;
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
 
@@ -147,30 +162,58 @@ public class PlayerConfig implements Listener {
             } catch (IOException | InvalidConfigurationException ex) {
 
                 ex.printStackTrace();
+
             }
 
         } else {
 
             ssj.getLogger().warning(e.getName() + "'s.yml Doesn't exist! Creating one...");
+
         }
+
     }
 
-    public FileConfiguration getpConfig(Player p){
+    public File getpConfigFile(final Player p) {
+
+        File pConfigFile;
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
 
-        pConfig = new YamlConfiguration();
+        return pConfigFile;
 
-        return (FileConfiguration) this.pConfig.get(String.valueOf(pConfigFile));
     }
 
-    public File getpConfigFile(Player p){
+    public FileConfiguration getpConfig(final Player p) {
 
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+        FileConfiguration pConfigFile;
 
-        pConfig = new YamlConfiguration();
+        pConfigFile = new FileConfiguration() {
+            @Override
+            public String saveToString() {
 
-        return (File) this.pConfig.get(String.valueOf(pConfigFile));
+                return File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml";
+
+            }
+
+            @Override
+            public void loadFromString(String s){
+
+                try {
+
+                    this.load(File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+
+                } catch (IOException | InvalidConfigurationException xe) {
+
+                    throw new RuntimeException(xe);
+
+                }
+
+            }
+
+        };
+
+        return pConfigFile;
+
     }
 
 }
