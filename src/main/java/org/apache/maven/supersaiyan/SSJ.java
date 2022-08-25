@@ -12,8 +12,6 @@ public class SSJ extends JavaPlugin {
 
     private Configs configs;
 
-    private SSJListeners ssjlistener;
-
     private PlayerConfig pPc;
 
     private SSJgui ssjgui;

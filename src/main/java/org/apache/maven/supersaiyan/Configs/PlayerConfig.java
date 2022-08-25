@@ -2,7 +2,6 @@ package org.apache.maven.supersaiyan.Configs;
 
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -17,11 +16,11 @@ public class PlayerConfig {
         this.ssj = ssj;
     }
 
+    File pConfigFile;
+
+    YamlConfiguration pConfig;
+
     public void callCreatePLayerConfig(Player e) {
-
-        File pConfigFile;
-
-        FileConfiguration pConfig;
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
 
@@ -70,10 +69,6 @@ public class PlayerConfig {
     }
 
     public void callSavePlayerConfig(Player e) {
-
-        File pConfigFile;
-
-        FileConfiguration pConfig;
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getPlayer().getUniqueId() + ".yml");
 
@@ -137,10 +132,6 @@ public class PlayerConfig {
 
     public void callUpdatePlayerName(Player e) {
 
-        File pConfigFile;
-
-        FileConfiguration pConfig;
-
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
 
         pConfig = new YamlConfiguration();
@@ -175,45 +166,14 @@ public class PlayerConfig {
 
     public File getpConfigFile(final Player p) {
 
-        File pConfigFile;
-
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
 
         return pConfigFile;
 
     }
 
-    public FileConfiguration getpConfig(final Player p) {
+    public YamlConfiguration getpConfig(final Player p) {
 
-        FileConfiguration pConfigFile;
-
-        pConfigFile = new FileConfiguration() {
-            @Override
-            public String saveToString() {
-
-                return File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml";
-
-            }
-
-            @Override
-            public void loadFromString(String s){
-
-                try {
-
-                    this.load(File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
-
-                } catch (IOException | InvalidConfigurationException xe) {
-
-                    throw new RuntimeException(xe);
-
-                }
-
-            }
-
-        };
-
-        return pConfigFile;
-
+        return pConfig;
     }
-
 }
