@@ -42,6 +42,8 @@ public class PlayerConfig {
 
                 pConfig.set("Level", 0);
 
+                pConfig.set("Action_Points", ssj.getConfig().getInt("Starting_Action_Points"));
+
                 pConfig.set("Base.Health", 0);
 
                 pConfig.set("Base.Power", 0);
@@ -51,6 +53,8 @@ public class PlayerConfig {
                 pConfig.set("Base.Speed", 0);
 
                 pConfig.set("Base.Stamina", 0);
+
+                pConfig.set("Base.Defence", 0);
 
                 pConfig.set("Transformations_Unlocked", "");
 
@@ -90,6 +94,8 @@ public class PlayerConfig {
 
                 pConfig.set("Level", 0);
 
+                pConfig.set("Action_Points", ssj.getConfig().getInt("Starting_Action_Points"));
+
                 pConfig.set("Base.Health", 0);
 
                 pConfig.set("Base.Power", 0);
@@ -99,6 +105,8 @@ public class PlayerConfig {
                 pConfig.set("Base.Speed", 0);
 
                 pConfig.set("Base.Stamina", 0);
+
+                pConfig.set("Base.Defence", 0);
 
                 pConfig.set("Transformations_Unlocked", "");
 
@@ -145,6 +153,8 @@ public class PlayerConfig {
                 if (!(e.getName().equals(pConfig.getString("Player_Name")))) {
 
                     pConfig.set("Player_Name", e.getName());
+
+                    pConfig.save(pConfigFile);
 
                     ssj.getLogger().warning(e.getName() + "'s.yml has been updated!");
 

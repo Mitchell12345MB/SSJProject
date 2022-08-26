@@ -1,6 +1,7 @@
 package org.apache.maven.supersaiyan.Listeners;
 
 import org.apache.maven.supersaiyan.SSJ;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,38 +22,81 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteract(PlayerInteractEvent e) {
 
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
+        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
-        if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.BLAZE_POWDER))) return;
+            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
 
-        e.getPlayer().sendMessage("WOOSH");
+                return;
+
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.BLAZE_POWDER)))
+
+                return;
+
+            e.getPlayer().sendMessage("WOOSH");
+
+        } else {
+
+            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+
+            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+
+        }
 
     }
 
     @EventHandler
     private void onPlayerInteract2(PlayerInteractEvent e) {
 
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
+        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
-        if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.BLAZE_ROD))) return;
+            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
 
-        e.getPlayer().sendMessage("deWOOSH");
+                return;
+
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.BLAZE_ROD)))
+
+                return;
+
+            e.getPlayer().sendMessage("deWOOSH");
+
+        } else {
+
+            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+
+            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+
+        }
 
     }
 
     @EventHandler
     private void onPlayerInteract3(PlayerInteractEvent e) {
 
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
+        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
-        if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.FIREWORK_STAR))) return;
 
-        e.getPlayer().sendMessage("Charging");
+            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+
+                return;
+
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.FIREWORK_STAR)))
+
+                return;
+
+            e.getPlayer().sendMessage("Charging");
+
+        } else {
+
+            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+
+            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+
+        }
 
     }
 
     @EventHandler
-    private void createAndUpdatePlayerConfig(PlayerJoinEvent e){
+    private void createAndUpdatePlayerConfig(PlayerJoinEvent e) {
 
         if (!ssj.getpPc().getpConfigFile(e.getPlayer()).exists()) {
 
@@ -67,7 +111,7 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    private void savePlayerConfig(PlayerQuitEvent e){
+    private void savePlayerConfig(PlayerQuitEvent e) {
 
         if (!ssj.getpPc().getpConfigFile(e.getPlayer()).exists()) {
 

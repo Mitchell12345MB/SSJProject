@@ -27,3 +27,6 @@ Explosion_Radious: 0
 
 # This true or false the sound when transforming (Sound: Ghast Firing)
 Sound_Effect: True
+
+# How many action points do you want the player to have when they first start? (Default is 10)
+Starting_Action_Points: 10

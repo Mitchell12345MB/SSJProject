@@ -27,7 +27,7 @@ public class SSJgui implements Listener {
 
     public void ExampleGui() {
         // Create a new inventory, with no owner (as this isn't a real inventory), a size of nine, called example
-        inv = Bukkit.createInventory(null, 9, "Example");
+        inv = Bukkit.createInventory(null, 9, "SSJ Menu");
 
         // Put the items into the inventory
         initializeItems();
