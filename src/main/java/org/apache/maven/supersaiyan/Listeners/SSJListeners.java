@@ -20,7 +20,7 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerInteract(PlayerInteractEvent e) {
+    private void onPlayerInteractTransform(PlayerInteractEvent e) {
 
         if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
@@ -45,7 +45,7 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerInteract2(PlayerInteractEvent e) {
+    private void onPlayerInteractPowerDown(PlayerInteractEvent e) {
 
         if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
@@ -70,7 +70,7 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerInteract3(PlayerInteractEvent e) {
+    private void onPlayerInteractCharge(PlayerInteractEvent e) {
 
         if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
@@ -84,6 +84,34 @@ public class SSJListeners implements Listener {
                 return;
 
             e.getPlayer().sendMessage("Charging");
+
+        } else {
+
+            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+
+            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+
+        }
+
+    }
+
+    @EventHandler
+    private void onPlayerInteractOpenMenu(PlayerInteractEvent e) {
+
+        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
+
+
+            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+
+                return;
+
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.PAPER)))
+
+                return;
+
+            ssj.getssjgui().openInventory(e.getPlayer());
+
+
 
         } else {
 

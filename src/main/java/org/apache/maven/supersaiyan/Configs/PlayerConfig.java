@@ -30,43 +30,7 @@ public class PlayerConfig {
 
             ssj.getLogger().warning(e.getName() + "'s.yml Doesn't exist! Creating one...");
 
-            try {
-
-                pConfigFile.createNewFile();
-
-                pConfig.load(pConfigFile);
-
-                pConfig.set("Player_Name", e.getName());
-
-                pConfig.set("Start", false);
-
-                pConfig.set("Level", 0);
-
-                pConfig.set("Action_Points", ssj.getConfig().getInt("Starting_Action_Points"));
-
-                pConfig.set("Base.Health", 0);
-
-                pConfig.set("Base.Power", 0);
-
-                pConfig.set("Base.Strength", 0);
-
-                pConfig.set("Base.Speed", 0);
-
-                pConfig.set("Base.Stamina", 0);
-
-                pConfig.set("Base.Defence", 0);
-
-                pConfig.set("Transformations_Unlocked", "");
-
-                pConfig.save(pConfigFile);
-
-                ssj.getLogger().warning(e.getName() + "'s.yml has been created!");
-
-            } catch (IOException | InvalidConfigurationException ex) {
-
-                ex.printStackTrace();
-
-            }
+            onFirstSet(e.getPlayer());
 
         }
 
@@ -82,43 +46,7 @@ public class PlayerConfig {
 
             ssj.getLogger().warning(e.getPlayer().getName() + "'s.yml Doesn't exist! Creating one...");
 
-            try {
-
-                pConfigFile.createNewFile();
-
-                pConfig.load(pConfigFile);
-
-                pConfig.set("Player_Name", e.getPlayer().getName());
-
-                pConfig.set("Start", false);
-
-                pConfig.set("Level", 0);
-
-                pConfig.set("Action_Points", ssj.getConfig().getInt("Starting_Action_Points"));
-
-                pConfig.set("Base.Health", 0);
-
-                pConfig.set("Base.Power", 0);
-
-                pConfig.set("Base.Strength", 0);
-
-                pConfig.set("Base.Speed", 0);
-
-                pConfig.set("Base.Stamina", 0);
-
-                pConfig.set("Base.Defence", 0);
-
-                pConfig.set("Transformations_Unlocked", "");
-
-                pConfig.save(pConfigFile);
-
-                ssj.getLogger().warning(e.getPlayer().getName() + "'s.yml has been created!");
-
-            } catch (IOException | InvalidConfigurationException ex) {
-
-                ex.printStackTrace();
-
-            }
+            onFirstSet(e.getPlayer());
 
         } else {
 
@@ -185,5 +113,49 @@ public class PlayerConfig {
     public YamlConfiguration getpConfig(final Player p) {
 
         return pConfig;
+    }
+
+    public void onFirstSet(Player p) {
+
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+
+        pConfig = new YamlConfiguration();
+
+        try {
+
+            pConfigFile.createNewFile();
+
+            pConfig.load(pConfigFile);
+
+            pConfig.set("Player_Name", p.getName());
+
+            pConfig.set("Start", false);
+
+            pConfig.set("Level", 0);
+
+            pConfig.set("Action_Points", ssj.getCConfigs().getCFile().getInt("Starting_Action_Points"));
+
+            pConfig.set("Base.Health", 0);
+
+            pConfig.set("Base.Power", 0);
+
+            pConfig.set("Base.Strength", 0);
+
+            pConfig.set("Base.Speed", 0);
+
+            pConfig.set("Base.Stamina", 0);
+
+            pConfig.set("Base.Defence", 0);
+
+            pConfig.set("Transformations_Unlocked", "");
+
+            pConfig.save(pConfigFile);
+
+            ssj.getLogger().warning(p.getName() + "'s.yml has been created!");
+
+        } catch (IOException | InvalidConfigurationException ex) {
+
+            ex.printStackTrace();
+        }
     }
 }

@@ -3,6 +3,7 @@ package org.apache.maven.supersaiyan;
 import org.apache.maven.supersaiyan.Configs.Configs;
 import org.apache.maven.supersaiyan.Configs.PlayerConfig;
 import org.apache.maven.supersaiyan.Listeners.SSJListeners;
+import org.apache.maven.supersaiyan.MethodClasses.SSJMethods;
 import org.apache.maven.supersaiyan.SSJCommands.Commands;
 import org.apache.maven.supersaiyan.Listeners.SSJgui;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +16,8 @@ public class SSJ extends JavaPlugin {
     private PlayerConfig pPc;
 
     private SSJgui ssjgui;
+
+    private SSJMethods ssjmethods;
 
     @Override
     public void onEnable() {
@@ -57,6 +60,8 @@ public class SSJ extends JavaPlugin {
 
         ssjgui = new SSJgui(this);
 
+        ssjmethods = new SSJMethods(this);
+
     }
 
     private void regCommands(){
@@ -84,4 +89,14 @@ public class SSJ extends JavaPlugin {
         return pPc;
     }
 
+    public Configs getCConfigs(){
+
+        return configs;
+
+    }
+
+    public SSJMethods getSsjmethods(){
+
+        return ssjmethods;
+    }
 }
