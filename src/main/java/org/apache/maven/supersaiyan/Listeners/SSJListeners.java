@@ -3,6 +3,7 @@ package org.apache.maven.supersaiyan.Listeners;
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.IOException;
 
 public class SSJListeners implements Listener {
 
@@ -138,11 +141,35 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
+        int ap = ssj.getpPc().getpConfig(p).getInt("Action_Points");
+
+        int subap = ap - 1;
+
         if (e.getRawSlot() == 2) {
 
             if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
 
-                p.sendMessage("hello");
+                try {
+
+                    int health = ssj.getpPc().getpConfig(p).getInt("Base.Health");
+
+                    int addh = health + 1;
+
+                    ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getpPc().getpConfig(p).set("Action_Points", subap);
+
+                    ssj.getpPc().getpConfig(p).set("Base.Health", addh);
+
+                    ssj.getpPc().getpConfig(p).save(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getssjgui().openInventory(p);
+
+                } catch (IOException | InvalidConfigurationException ex) {
+
+                    ex.printStackTrace();
+
+                }
 
             } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
 
@@ -156,7 +183,27 @@ public class SSJListeners implements Listener {
 
             if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
 
-                p.sendMessage("hello");
+                try {
+
+                    int power = ssj.getpPc().getpConfig(p).getInt("Base.Power");
+
+                    int addp = power + 1;
+
+                    ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getpPc().getpConfig(p).set("Action_Points", subap);
+
+                    ssj.getpPc().getpConfig(p).set("Base.Power", addp);
+
+                    ssj.getpPc().getpConfig(p).save(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getssjgui().openInventory(p);
+
+                } catch (IOException | InvalidConfigurationException ex) {
+
+                    ex.printStackTrace();
+
+                }
 
             } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
 
@@ -170,7 +217,27 @@ public class SSJListeners implements Listener {
 
             if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
 
-                p.sendMessage("hello");
+                try {
+
+                    int strength = ssj.getpPc().getpConfig(p).getInt("Base.Strength");
+
+                    int addst = strength + 1;
+
+                    ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getpPc().getpConfig(p).set("Action_Points", subap);
+
+                    ssj.getpPc().getpConfig(p).set("Base.Strength", addst);
+
+                    ssj.getpPc().getpConfig(p).save(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getssjgui().openInventory(p);
+
+                } catch (IOException | InvalidConfigurationException ex) {
+
+                    ex.printStackTrace();
+
+                }
 
             } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
 
@@ -184,7 +251,27 @@ public class SSJListeners implements Listener {
 
             if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
 
-                p.sendMessage("hello");
+                try {
+
+                    int speed = ssj.getpPc().getpConfig(p).getInt("Base.Speed");
+
+                    int addsp = speed + 1;
+
+                    ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getpPc().getpConfig(p).set("Action_Points", subap);
+
+                    ssj.getpPc().getpConfig(p).set("Base.Speed", addsp);
+
+                    ssj.getpPc().getpConfig(p).save(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getssjgui().openInventory(p);
+
+                } catch (IOException | InvalidConfigurationException ex) {
+
+                    ex.printStackTrace();
+
+                }
 
             } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
 
@@ -198,7 +285,27 @@ public class SSJListeners implements Listener {
 
             if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
 
-                p.sendMessage("hello");
+                try {
+
+                    int stamina = ssj.getpPc().getpConfig(p).getInt("Base.Stamina");
+
+                    int addsta = stamina + 1;
+
+                    ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getpPc().getpConfig(p).set("Action_Points", subap);
+
+                    ssj.getpPc().getpConfig(p).set("Base.Stamina", addsta);
+
+                    ssj.getpPc().getpConfig(p).save(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getssjgui().openInventory(p);
+
+                } catch (IOException | InvalidConfigurationException ex) {
+
+                    ex.printStackTrace();
+
+                }
 
             } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
 
@@ -212,7 +319,27 @@ public class SSJListeners implements Listener {
 
             if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
 
-                p.sendMessage("hello");
+                try {
+
+                    int defence = ssj.getpPc().getpConfig(p).getInt("Base.Defence");
+
+                    int adddef = defence + 1;
+
+                    ssj.getpPc().getpConfig(p).load(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getpPc().getpConfig(p).set("Action_Points", subap);
+
+                    ssj.getpPc().getpConfig(p).set("Base.Defence", adddef);
+
+                    ssj.getpPc().getpConfig(p).save(ssj.getpPc().getpConfigFile(p));
+
+                    ssj.getssjgui().openInventory(p);
+
+                } catch (IOException | InvalidConfigurationException ex) {
+
+                    ex.printStackTrace();
+
+                }
 
             } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
 
