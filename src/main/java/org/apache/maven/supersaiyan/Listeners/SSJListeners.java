@@ -112,9 +112,7 @@ public class SSJListeners implements Listener {
 
                 return;
 
-
             ssj.getssjgui().openInventory(e.getPlayer());
-
 
 
         } else {
@@ -136,17 +134,96 @@ public class SSJListeners implements Listener {
 
         final ItemStack clickedItem = e.getCurrentItem();
 
-        // verify current item is not null
         if (clickedItem == null || clickedItem.getType().isAir()) return;
 
         final Player p = (Player) e.getWhoClicked();
 
-        // Using slots click is a best option for your inventory click's
-        p.sendMessage("You clicked at slot " + e.getRawSlot());
+        if (e.getRawSlot() == 2) {
+
+            if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
+
+                p.sendMessage("hello");
+
+            } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+
+                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+
+            }
+
+        }
+
+        if (e.getRawSlot() == 3) {
+
+            if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
+
+                p.sendMessage("hello");
+
+            } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+
+                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+
+            }
+
+        }
+
+        if (e.getRawSlot() == 4) {
+
+            if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
+
+                p.sendMessage("hello");
+
+            } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+
+                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+
+            }
+
+        }
+
+        if (e.getRawSlot() == 5) {
+
+            if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
+
+                p.sendMessage("hello");
+
+            } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+
+                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+
+            }
+
+        }
+
+        if (e.getRawSlot() == 6) {
+
+            if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
+
+                p.sendMessage("hello");
+
+            } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+
+                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+
+            }
+
+        }
+
+        if (e.getRawSlot() == 7) {
+
+            if (ssj.getpPc().getpConfig(p).getInt("Action_Points") > 0) {
+
+                p.sendMessage("hello");
+
+            } else if (ssj.getpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+
+                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+
+            }
+
+        }
 
     }
 
-    // Cancel dragging in our inventory
     @EventHandler
     public void onInventoryClick(final InventoryDragEvent e) {
 

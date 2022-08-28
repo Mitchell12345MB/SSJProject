@@ -30,3 +30,6 @@ Sound_Effect: True
 
 # How many action points do you want the player to have when they first start? (Default is 10)
 Starting_Action_Points: 10
+
+# How many attribute points a player will start with. This sets all attributes such as health, attack, defence, etc... (default is 5)
+Starting_Attribute_Points: 5

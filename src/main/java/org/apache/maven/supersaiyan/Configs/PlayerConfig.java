@@ -28,8 +28,6 @@ public class PlayerConfig {
 
         if (!pConfigFile.exists()) {
 
-            ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
-
             onFirstSet(p);
 
         }
@@ -43,8 +41,6 @@ public class PlayerConfig {
         pConfig = new YamlConfiguration();
 
         if (!pConfigFile.exists()) {
-
-            ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
             onFirstSet(p);
 
@@ -96,7 +92,7 @@ public class PlayerConfig {
 
         } else {
 
-            ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
+            onFirstSet(p);
 
         }
 
@@ -123,6 +119,8 @@ public class PlayerConfig {
 
         try {
 
+            ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
+
             pConfigFile.createNewFile();
 
             pConfig.load(pConfigFile);
@@ -135,17 +133,17 @@ public class PlayerConfig {
 
             pConfig.set("Action_Points", ssj.getCConfigs().getCFile().getInt("Starting_Action_Points"));
 
-            pConfig.set("Base.Health", 0);
+            pConfig.set("Base.Health", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Power", 0);
+            pConfig.set("Base.Power", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Strength", 0);
+            pConfig.set("Base.Strength", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Speed", 0);
+            pConfig.set("Base.Speed", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Stamina", 0);
+            pConfig.set("Base.Stamina", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Defence", 0);
+            pConfig.set("Base.Defence", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
             pConfig.set("Transformations_Unlocked", "");
 
