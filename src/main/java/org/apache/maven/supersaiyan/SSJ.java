@@ -5,7 +5,7 @@ import org.apache.maven.supersaiyan.Configs.PlayerConfig;
 import org.apache.maven.supersaiyan.Listeners.SSJListeners;
 import org.apache.maven.supersaiyan.MethodClasses.SSJMethods;
 import org.apache.maven.supersaiyan.SSJCommands.Commands;
-import org.apache.maven.supersaiyan.Listeners.SSJgui;
+import org.apache.maven.supersaiyan.MethodClasses.SSJgui;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -42,10 +42,6 @@ public class SSJ extends JavaPlugin {
     private void regListeners(){
 
         SSJListeners ssjlistener = new SSJListeners(this);
-
-        SSJgui ssjgui = new SSJgui(this);
-
-        super.getServer().getPluginManager().registerEvents(ssjgui, this);
 
         super.getServer().getPluginManager().registerEvents(ssjlistener, this);
 

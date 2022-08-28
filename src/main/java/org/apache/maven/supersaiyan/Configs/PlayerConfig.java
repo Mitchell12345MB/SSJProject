@@ -20,33 +20,33 @@ public class PlayerConfig {
 
     YamlConfiguration pConfig;
 
-    public void callCreatePLayerConfig(Player e) {
+    public void callCreatePLayerConfig(Player p) {
 
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
 
         pConfig = new YamlConfiguration();
 
         if (!pConfigFile.exists()) {
 
-            ssj.getLogger().warning(e.getName() + "'s.yml Doesn't exist! Creating one...");
+            ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
-            onFirstSet(e.getPlayer());
+            onFirstSet(p);
 
         }
 
     }
 
-    public void callSavePlayerConfig(Player e) {
+    public void callSavePlayerConfig(Player p) {
 
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getPlayer().getUniqueId() + ".yml");
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
 
         pConfig = new YamlConfiguration();
 
         if (!pConfigFile.exists()) {
 
-            ssj.getLogger().warning(e.getPlayer().getName() + "'s.yml Doesn't exist! Creating one...");
+            ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
-            onFirstSet(e.getPlayer());
+            onFirstSet(p);
 
         } else {
 
@@ -66,9 +66,9 @@ public class PlayerConfig {
 
     }
 
-    public void callUpdatePlayerName(Player e) {
+    public void callUpdatePlayerName(Player p) {
 
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + e.getUniqueId() + ".yml");
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
 
         pConfig = new YamlConfiguration();
 
@@ -78,13 +78,13 @@ public class PlayerConfig {
 
                 pConfig.load(pConfigFile);
 
-                if (!(e.getName().equals(pConfig.getString("Player_Name")))) {
+                if (!(p.getName().equals(pConfig.getString("Player_Name")))) {
 
-                    pConfig.set("Player_Name", e.getName());
+                    pConfig.set("Player_Name", p.getName());
 
                     pConfig.save(pConfigFile);
 
-                    ssj.getLogger().warning(e.getName() + "'s.yml has been updated!");
+                    ssj.getLogger().warning(p.getName() + "'s.yml has been updated!");
 
                 }
 
@@ -96,7 +96,7 @@ public class PlayerConfig {
 
         } else {
 
-            ssj.getLogger().warning(e.getName() + "'s.yml Doesn't exist! Creating one...");
+            ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
         }
 
@@ -115,7 +115,7 @@ public class PlayerConfig {
         return pConfig;
     }
 
-    public void onFirstSet(Player p) {
+    private void onFirstSet(Player p) {
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
 

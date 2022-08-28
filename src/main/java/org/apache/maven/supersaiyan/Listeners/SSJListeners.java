@@ -3,9 +3,12 @@ package org.apache.maven.supersaiyan.Listeners;
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -109,6 +112,7 @@ public class SSJListeners implements Listener {
 
                 return;
 
+
             ssj.getssjgui().openInventory(e.getPlayer());
 
 
@@ -121,6 +125,35 @@ public class SSJListeners implements Listener {
 
         }
 
+    }
+
+    @EventHandler
+    public void onInventoryClick(final InventoryClickEvent e) {
+
+        if (!e.getInventory().equals(ssj.getssjgui().inv)) return;
+
+        e.setCancelled(true);
+
+        final ItemStack clickedItem = e.getCurrentItem();
+
+        // verify current item is not null
+        if (clickedItem == null || clickedItem.getType().isAir()) return;
+
+        final Player p = (Player) e.getWhoClicked();
+
+        // Using slots click is a best option for your inventory click's
+        p.sendMessage("You clicked at slot " + e.getRawSlot());
+
+    }
+
+    // Cancel dragging in our inventory
+    @EventHandler
+    public void onInventoryClick(final InventoryDragEvent e) {
+
+        if (e.getInventory().equals(ssj.getssjgui().inv)) {
+
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
