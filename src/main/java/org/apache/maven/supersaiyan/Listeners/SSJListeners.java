@@ -34,7 +34,7 @@ public class SSJListeners implements Listener {
 
                 return;
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.BLAZE_POWDER)))
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.YELLOW_STAINED_GLASS_PANE)))
 
                 return;
 
@@ -59,7 +59,7 @@ public class SSJListeners implements Listener {
 
                 return;
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.BLAZE_ROD)))
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.RED_STAINED_GLASS_PANE)))
 
                 return;
 
@@ -85,7 +85,7 @@ public class SSJListeners implements Listener {
 
                 return;
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.FIREWORK_STAR)))
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.LIME_STAINED_GLASS_PANE)))
 
                 return;
 
@@ -116,6 +116,33 @@ public class SSJListeners implements Listener {
                 return;
 
             ssj.getssjgui().openInventory(e.getPlayer());
+
+
+        } else {
+
+            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+
+            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+
+        }
+
+    }
+
+    @EventHandler
+    private void onPlayerInteractReleaseAura(PlayerInteractEvent e) {
+
+        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
+
+
+            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+
+                return;
+
+            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.ORANGE_STAINED_GLASS_PANE)))
+
+                return;
+
+            e.getPlayer().sendMessage("woosh woosh woosh");
 
 
         } else {
