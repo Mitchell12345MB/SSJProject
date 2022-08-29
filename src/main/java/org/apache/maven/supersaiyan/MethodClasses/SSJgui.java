@@ -22,7 +22,7 @@ public class SSJgui{
 
     private void SSJguicall(Player p) {
 
-        inv = Bukkit.createInventory(null, 9, "SSJ Menu");
+        inv = Bukkit.createInventory(null, 18, p.getName() + "'s Menu");
 
         initializeItems(p);
 
@@ -31,6 +31,8 @@ public class SSJgui{
     private void initializeItems(Player p) {
 
         inv.addItem(createGuiItem(Material.EGG, "§aLevel", String.valueOf(ssj.getpPc().getpConfig(p).getInt("Level")), "§aYour current level."));
+
+        inv.addItem(createGuiItem(Material.IRON_INGOT, "§aBattle Power", String.valueOf(ssj.getpPc().getpConfig(p).getInt("Battle_Power")), "§aYour current battle power."));
 
         inv.addItem(createGuiItem(Material.EMERALD, "§aAction Points", String.valueOf(ssj.getpPc().getpConfig(p).getInt("Action_Points")), "§aYour current (spendable) action points."));
 

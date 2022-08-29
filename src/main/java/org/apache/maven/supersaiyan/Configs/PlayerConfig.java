@@ -131,6 +131,8 @@ public class PlayerConfig {
 
             pConfig.set("Level", 0);
 
+            pConfig.set("Battle_Power", 0);
+
             pConfig.set("Action_Points", ssj.getCConfigs().getCFile().getInt("Starting_Action_Points"));
 
             pConfig.set("Base.Health", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
