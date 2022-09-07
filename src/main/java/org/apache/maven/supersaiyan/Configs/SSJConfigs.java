@@ -8,11 +8,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class Configs{
+public class SSJConfigs {
 
     private final SSJ ssj;
 
-    public Configs(SSJ ssj) {
+    public SSJConfigs(SSJ ssj) {
         this.ssj = ssj;
     }
 

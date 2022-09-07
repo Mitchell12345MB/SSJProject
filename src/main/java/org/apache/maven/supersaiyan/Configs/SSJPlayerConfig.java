@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 
-public class PlayerConfig {
+public class SSJPlayerConfig {
 
     private final SSJ ssj;
 
-    public PlayerConfig(SSJ ssj) {
+    public SSJPlayerConfig(SSJ ssj) {
         this.ssj = ssj;
     }
 
@@ -111,6 +111,32 @@ public class PlayerConfig {
         return pConfig;
     }
 
+    public void callLoadPlayerConfig(Player p) {
+
+        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+
+        pConfig = new YamlConfiguration();
+
+        if (!pConfigFile.exists()) {
+
+            onFirstSet(p);
+
+        } else {
+
+            try {
+
+                pConfig.load(pConfigFile);
+
+            } catch (IOException | InvalidConfigurationException ex) {
+
+                ex.printStackTrace();
+
+            }
+
+        }
+
+    }
+
     private void onFirstSet(Player p) {
 
         pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
@@ -133,19 +159,23 @@ public class PlayerConfig {
 
             pConfig.set("Battle_Power", 0);
 
-            pConfig.set("Action_Points", ssj.getCConfigs().getCFile().getInt("Starting_Action_Points"));
+            pConfig.set("Action_Points", ssj.getSSJCConfigs().getCFile().getInt("Starting_Action_Points"));
 
-            pConfig.set("Base.Health", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            pConfig.set("Base.Health", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Power", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            pConfig.set("Base.Power", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Strength", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            pConfig.set("Base.Strength", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Speed", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            pConfig.set("Base.Speed", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Stamina", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            pConfig.set("Base.Stamina", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Defence", ssj.getCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            pConfig.set("Base.Defence", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+
+            pConfig.set("Energy", 0);
+
+            pConfig.set("Form", "Base");
 
             pConfig.set("Transformations_Unlocked", "");
 

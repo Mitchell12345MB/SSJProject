@@ -25,7 +25,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractTransform(PlayerInteractEvent e) {
 
-        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
+        if (ssj.getSSJpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
 
@@ -50,7 +50,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractPowerDown(PlayerInteractEvent e) {
 
-        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
+        if (ssj.getSSJpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
 
@@ -75,7 +75,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractCharge(PlayerInteractEvent e) {
 
-        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
+        if (ssj.getSSJpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
@@ -101,7 +101,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractOpenMenu(PlayerInteractEvent e) {
 
-        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
+        if (ssj.getSSJpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
@@ -128,7 +128,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractReleaseAura(PlayerInteractEvent e) {
 
-        if (ssj.getpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
+        if (ssj.getSSJpPc().getpConfig(e.getPlayer()).getBoolean("Start")) {
 
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
@@ -165,7 +165,7 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
-        ssj.getSsjmethods().callMenuChecks(p, e);
+        ssj.getSSJmethods().callMenuChecks(p, e);
 
     }
 
@@ -183,13 +183,17 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void createAndUpdatePlayerConfig(PlayerJoinEvent e) {
 
-        if (!ssj.getpPc().getpConfigFile(e.getPlayer()).exists()) {
+        if (!ssj.getSSJpPc().getpConfigFile(e.getPlayer()).exists()) {
 
-            ssj.getpPc().callCreatePLayerConfig(e.getPlayer());
+            ssj.getSSJpPc().callCreatePLayerConfig(e.getPlayer());
 
         } else {
 
-            ssj.getpPc().callUpdatePlayerName(e.getPlayer());
+            ssj.getSSJpPc().callUpdatePlayerName(e.getPlayer());
+
+            ssj.getSSJscoreboard().callScoreboard();
+
+            ssj.getSSJscoreboard().callBelowName();
 
         }
 
@@ -198,13 +202,13 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void savePlayerConfig(PlayerQuitEvent e) {
 
-        if (!ssj.getpPc().getpConfigFile(e.getPlayer()).exists()) {
+        if (!ssj.getSSJpPc().getpConfigFile(e.getPlayer()).exists()) {
 
-            ssj.getpPc().callCreatePLayerConfig(e.getPlayer());
+            ssj.getSSJpPc().callCreatePLayerConfig(e.getPlayer());
 
         } else {
 
-            ssj.getpPc().callSavePlayerConfig(e.getPlayer());
+            ssj.getSSJpPc().callSavePlayerConfig(e.getPlayer());
         }
     }
 }

@@ -1,26 +1,29 @@
 package org.apache.maven.supersaiyan;
 
-import org.apache.maven.supersaiyan.Configs.Configs;
-import org.apache.maven.supersaiyan.Configs.PlayerConfig;
+import org.apache.maven.supersaiyan.Configs.SSJConfigs;
+import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
 import org.apache.maven.supersaiyan.Listeners.SSJListeners;
 import org.apache.maven.supersaiyan.MethodClasses.SSJMethods;
 import org.apache.maven.supersaiyan.MethodClasses.SSJScoreboard;
-import org.apache.maven.supersaiyan.SSJCommands.Commands;
-import org.apache.maven.supersaiyan.MethodClasses.SSJgui;
+import org.apache.maven.supersaiyan.MethodClasses.SSJTimers;
+import org.apache.maven.supersaiyan.SSJCommands.SSJCommands;
+import org.apache.maven.supersaiyan.MethodClasses.SSJGui;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class SSJ extends JavaPlugin {
 
-    private Configs configs;
+    private SSJConfigs ssjconfigs;
 
-    private PlayerConfig pPc;
+    private SSJPlayerConfig ssjppc;
 
-    private SSJgui ssjgui;
+    private SSJGui ssjgui;
 
     private SSJMethods ssjmethods;
 
     private SSJScoreboard ssjscoreboard;
+
+    private SSJTimers ssjtimers;
 
     @Override
     public void onEnable() {
@@ -33,12 +36,16 @@ public class SSJ extends JavaPlugin {
 
         configUICall();
 
+        ssjmethods.onEnableChecks();
+
     }
 
     @Override
     public void onDisable() {
 
-        configs.saveConfig();
+        ssjmethods.onDisableChecks();
+
+        ssjconfigs.saveConfig();
 
     }
 
@@ -48,61 +55,72 @@ public class SSJ extends JavaPlugin {
 
         super.getServer().getPluginManager().registerEvents(ssjlistener, this);
 
-
     }
 
     private void regClass(){
 
-        configs = new Configs(this);
+        ssjconfigs= new SSJConfigs(this);
 
-        pPc = new PlayerConfig(this);
+        ssjppc = new SSJPlayerConfig(this);
 
-        ssjgui = new SSJgui(this);
+        ssjgui = new SSJGui(this);
 
         ssjmethods = new SSJMethods(this);
 
         ssjscoreboard = new SSJScoreboard(this);
 
+        ssjtimers = new SSJTimers(this);
+
     }
 
     private void regCommands(){
 
-        getCommand("ssj").setExecutor(new Commands(this));
+        getCommand("ssj").setExecutor(new SSJCommands(this));
 
     }
 
     private void configUICall(){
 
-        configs.createConfig();
+        ssjconfigs.createConfig();
 
-        configs.createTConfig();
+        ssjconfigs.createTConfig();
 
-        configs.updateConfig();
+        ssjconfigs.updateConfig();
+
     }
 
-    public SSJgui getssjgui(){
+    public SSJGui getssjgui(){
 
         return ssjgui;
-    }
-
-    public PlayerConfig getpPc(){
-
-        return pPc;
-    }
-
-    public Configs getCConfigs(){
-
-        return configs;
 
     }
 
-    public SSJMethods getSsjmethods(){
+    public SSJPlayerConfig getSSJpPc(){
+
+        return ssjppc;
+
+    }
+
+    public SSJConfigs getSSJCConfigs(){
+
+        return ssjconfigs;
+
+    }
+
+    public SSJMethods getSSJmethods(){
 
         return ssjmethods;
+
     }
 
-    public SSJScoreboard getSsjscoreboard(){
+    public SSJScoreboard getSSJscoreboard(){
 
         return ssjscoreboard;
+
+    }
+
+    public SSJTimers getSSJTimers(){
+
+        return ssjtimers;
     }
 }

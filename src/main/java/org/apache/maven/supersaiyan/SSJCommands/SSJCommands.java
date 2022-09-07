@@ -2,19 +2,17 @@ package org.apache.maven.supersaiyan.SSJCommands;
 
 
 import org.apache.maven.supersaiyan.SSJ;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class Commands implements CommandExecutor {
+public class SSJCommands implements CommandExecutor {
 
     private final SSJ ssj;
 
-    public Commands(SSJ ssj) {
+    public SSJCommands(SSJ ssj) {
         this.ssj = ssj;
     }
 
@@ -40,13 +38,19 @@ public class Commands implements CommandExecutor {
 
                     p.sendMessage(ChatColor.RED + "/ssj items - Gives you the ssj items.");
 
+                    p.sendMessage(ChatColor.RED + "/ssj sb - Creates the SSJ score board.");
+
                 } else if (args[0].equalsIgnoreCase("start")) {
 
-                    ssj.getSsjmethods().checkStartCommandMethod(p);
+                    ssj.getSSJmethods().checkStartCommandMethod(p);
 
                 } else if (args[0].equalsIgnoreCase("items")) {
 
-                    ssj.getSsjmethods().callStartingItems(p);
+                    ssj.getSSJmethods().callStartingItems(p);
+
+                } else if (args[0].equalsIgnoreCase("sb")) {
+
+                    ssj.getSSJscoreboard().callScoreboard();
 
                 }
 

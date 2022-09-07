@@ -14,58 +14,95 @@ public class SSJScoreboard {
         this.ssj = ssj;
     }
 
-    public void callScoreboard(Player p) {
+    public void callScoreboard() {
 
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(ssj, () -> {
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 
-            ScoreboardManager manager = Bukkit.getScoreboardManager();
+                ScoreboardManager manager = Bukkit.getScoreboardManager();
 
-            final Scoreboard board = manager.getNewScoreboard();
+                final Scoreboard board = manager.getNewScoreboard();
 
-            final Objective objective = board.registerNewObjective("test", "dummy");
+                final Objective objective = board.registerNewObjective("test", "dummy");
 
-            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-            objective.setDisplayName(ChatColor.RED + "Your current stats");
+                objective.setDisplayName(ChatColor.RED + "Current Stats");
 
-            Score score = objective.getScore("Score10");
+                Score score = objective.getScore("Level");
 
-            score.setScore(10);
+                score.setScore(ssj.getSSJpPc().getpConfig(p).getInt("Level"));
 
-            Score score1 = objective.getScore("Score9");
+                Score score1 = objective.getScore("BP");
 
-            score1.setScore(9);
+                score1.setScore(ssj.getSSJpPc().getpConfig(p).getInt("Battle_Power"));
 
-            Score score2 = objective.getScore("Score8");
+                Score score2 = objective.getScore("Energy");
 
-            score2.setScore(8);
+                score2.setScore(ssj.getSSJpPc().getpConfig(p).getInt("Energy"));
 
-            Score score3 = objective.getScore("§6Colors");
+                Score score3 = objective.getScore("Current Form: " + ssj.getSSJpPc().getpConfig(p).getString("Form"));
 
-            score3.setScore(7);
+                score3.setScore(0);
 
-            p.setScoreboard(board);
+                p.setScoreboard(board);
 
-        },0, 20 * 10);
+        }
 
-    }
-
-    public void callBelowName(Player p) {
-
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(ssj, () -> {
-
-            ScoreboardManager manager = Bukkit.getScoreboardManager();
-
-            final Scoreboard board = manager.getNewScoreboard();
-
-            final Objective objective = board.registerNewObjective("Belowname", "dummy");
-
-            objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-
-            objective.setDisplayName(ChatColor.RED + "YourBelowName");
-
-        },0, 20 * 10);
 
     }
 
+    public void callBelowName() {
+
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+
+           // Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(ssj, () -> {
+
+
+
+           // }, 0, 20 * 10);
+
+        }
+
+
+        //Map<UUID, Scoreboard> scoreboards = new HashMap<>();
+
+
+        //public void ccallScoreboard(Player p) {
+
+        //  if (!scoreboards.containsKey(p.getUniqueId())) {
+
+        //    Scoreboard newScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+        //    newScoreboard.registerNewObjective("Stats", "dummy");
+
+        //    scoreboards.put(p.getUniqueId(), newScoreboard);
+
+
+        // Scoreboard scoreboard = scoreboards.get(p.getUniqueId());
+
+        //Objective objective = scoreboard.registerNewObjective("Stats", "dummy");
+
+        // objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        // objective.setDisplayName(ChatColor.RED + "Your current stats");
+
+        // Score score = objective.getScore("Level");
+
+        // score.setScore(ssj.getpPc().getpConfig(p).getInt("Level"));
+
+        // Score score1 = objective.getScore("Battle Power");
+
+        // score1.setScore(ssj.getpPc().getpConfig(p).getInt("Battle_Power"));
+
+        //Score score2 = objective.getScore("Energy");
+
+        // score2.setScore(ssj.getpPc().getpConfig(p).getInt("Energy"));
+
+        // Score score3 = objective.getScore("Current Form: " + ssj.getpPc().getpConfig(p).getString("Form"));
+
+        // score3.setScore(0);
+
+        // p.setScoreboard(scoreboard);
+
+    }
 }

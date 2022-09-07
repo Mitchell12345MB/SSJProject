@@ -33,3 +33,6 @@ Starting_Action_Points: 10
 
 # How many attribute points a player will start with. This sets all attributes such as health, attack, defence, etc... (default is 5)
 Starting_Attribute_Points: 5
+
+# The multiplier for every player's Battle Power. (Default is 4)
+BP_Multiplier: 25
