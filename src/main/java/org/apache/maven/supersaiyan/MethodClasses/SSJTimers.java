@@ -20,7 +20,7 @@ public class SSJTimers {
 
                 ssj.getSSJpPc().callSavePlayerConfig(p);
 
-                ssj.getSSJscoreboard().callScoreboard();
+                ssj.getSSJscoreboard().callScoreboard(p);
 
             }, 0, 20 * 10);
         }

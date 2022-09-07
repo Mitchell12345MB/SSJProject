@@ -3,11 +3,8 @@ package org.apache.maven.supersaiyan;
 import org.apache.maven.supersaiyan.Configs.SSJConfigs;
 import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
 import org.apache.maven.supersaiyan.Listeners.SSJListeners;
-import org.apache.maven.supersaiyan.MethodClasses.SSJMethods;
-import org.apache.maven.supersaiyan.MethodClasses.SSJScoreboard;
-import org.apache.maven.supersaiyan.MethodClasses.SSJTimers;
+import org.apache.maven.supersaiyan.MethodClasses.*;
 import org.apache.maven.supersaiyan.SSJCommands.SSJCommands;
-import org.apache.maven.supersaiyan.MethodClasses.SSJGui;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -24,6 +21,8 @@ public class SSJ extends JavaPlugin {
     private SSJScoreboard ssjscoreboard;
 
     private SSJTimers ssjtimers;
+
+    private ScoreHelper scorehelper;
 
     @Override
     public void onEnable() {
@@ -70,6 +69,8 @@ public class SSJ extends JavaPlugin {
         ssjscoreboard = new SSJScoreboard(this);
 
         ssjtimers = new SSJTimers(this);
+
+        scorehelper = new ScoreHelper(this);
 
     }
 
@@ -122,5 +123,10 @@ public class SSJ extends JavaPlugin {
     public SSJTimers getSSJTimers(){
 
         return ssjtimers;
+    }
+
+    public ScoreHelper getSSJSH(){
+
+        return scorehelper;
     }
 }

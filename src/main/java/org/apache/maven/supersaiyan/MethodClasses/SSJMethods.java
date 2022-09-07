@@ -58,7 +58,9 @@ public class SSJMethods {
                 ex.printStackTrace();
 
             }
+
         }
+
     }
 
     public void callMenuChecks(Player p, InventoryClickEvent e) {
@@ -103,7 +105,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard();
+                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -139,7 +141,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard();
+                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -175,7 +177,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard();
+                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -211,7 +213,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard();
+                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -247,7 +249,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard();
+                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -283,7 +285,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard();
+                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -294,8 +296,11 @@ public class SSJMethods {
             } else if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+
             }
+
         }
+
     }
 
     public void callTransformItem(Player p) {
@@ -361,7 +366,7 @@ public class SSJMethods {
 
                 ssj.getSSJscoreboard().callBelowName();
 
-                ssj.getSSJscoreboard().callScoreboard();
+                ssj.getSSJscoreboard().callScoreboard(online);
 
                 ssj.getSSJTimers().saveTimer();
 
@@ -378,7 +383,6 @@ public class SSJMethods {
             for (Player online : Bukkit.getOnlinePlayers()) {
 
                 ssj.getSSJpPc().callSavePlayerConfig(online);
-
             }
         }
     }

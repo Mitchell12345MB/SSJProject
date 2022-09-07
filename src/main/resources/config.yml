@@ -35,4 +35,4 @@ Starting_Action_Points: 10
 Starting_Attribute_Points: 5
 
 # The multiplier for every player's Battle Power. (Default is 4)
-BP_Multiplier: 25
+BP_Multiplier: 4

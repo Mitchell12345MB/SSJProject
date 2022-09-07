@@ -50,7 +50,7 @@ public class SSJCommands implements CommandExecutor {
 
                 } else if (args[0].equalsIgnoreCase("sb")) {
 
-                    ssj.getSSJscoreboard().callScoreboard();
+                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 }
 
