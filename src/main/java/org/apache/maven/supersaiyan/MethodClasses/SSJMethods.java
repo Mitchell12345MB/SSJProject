@@ -105,7 +105,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard(p);
+                    callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -141,7 +141,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard(p);
+                    callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -177,7 +177,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard(p);
+                    callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -213,7 +213,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard(p);
+                    callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -249,7 +249,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard(p);
+                    callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -285,7 +285,7 @@ public class SSJMethods {
 
                     ssj.getssjgui().openInventory(p);
 
-                    ssj.getSSJscoreboard().callScoreboard(p);
+                    callScoreboard(p);
 
                 } catch (IOException | InvalidConfigurationException ex) {
 
@@ -364,9 +364,7 @@ public class SSJMethods {
 
                 ssj.getSSJpPc().callLoadPlayerConfig(online);
 
-                ssj.getSSJscoreboard().callBelowName();
-
-                ssj.getSSJscoreboard().callScoreboard(online);
+                callScoreboard(online.getPlayer());
 
                 ssj.getSSJTimers().saveTimer();
 
@@ -383,7 +381,47 @@ public class SSJMethods {
             for (Player online : Bukkit.getOnlinePlayers()) {
 
                 ssj.getSSJpPc().callSavePlayerConfig(online);
+
             }
+
         }
+
     }
+
+    public void scoreBoardCheck(Player p) {
+
+        if (ssj.getSSJSB().hasScore(p)) {
+
+            ssj.getSSJSB().removeScore(p);
+
+        }
+
+    }
+
+    public void callScoreboard(Player p) {
+
+        SSJScoreBoards helper = ssj.getSSJSB().createScore(p);
+
+        helper.setTitle("&aCurrent Stats");
+
+        helper.setSlot(9, "&7&m--------------------------------");
+
+        helper.setSlot(8, "&aPlayer&f: " + p.getName());
+
+        helper.setSlot(7, " ");
+
+        helper.setSlot(6, "Level: " + ssj.getSSJpPc().getpConfig(p).getInt("Level"));
+
+        helper.setSlot(5, " ");
+
+        helper.setSlot(4, "BP: " + ssj.getSSJpPc().getpConfig(p).getInt("Battle_Power"));
+
+        helper.setSlot(3, " ");
+
+        helper.setSlot(2, "Current Form: " + ssj.getSSJpPc().getpConfig(p).getString("Form"));
+
+        helper.setSlot(1, "&7&m--------------------------------");
+
+    }
+
 }

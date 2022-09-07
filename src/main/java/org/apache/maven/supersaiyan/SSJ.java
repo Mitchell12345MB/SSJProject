@@ -18,11 +18,9 @@ public class SSJ extends JavaPlugin {
 
     private SSJMethods ssjmethods;
 
-    private SSJScoreboard ssjscoreboard;
-
     private SSJTimers ssjtimers;
 
-    private ScoreHelper scorehelper;
+    private SSJScoreBoards ssjscoreboards;
 
     @Override
     public void onEnable() {
@@ -66,11 +64,9 @@ public class SSJ extends JavaPlugin {
 
         ssjmethods = new SSJMethods(this);
 
-        ssjscoreboard = new SSJScoreboard(this);
+        ssjscoreboards = new SSJScoreBoards(this);
 
         ssjtimers = new SSJTimers(this);
-
-        scorehelper = new ScoreHelper(this);
 
     }
 
@@ -114,19 +110,13 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    public SSJScoreboard getSSJscoreboard(){
-
-        return ssjscoreboard;
-
-    }
-
     public SSJTimers getSSJTimers(){
 
         return ssjtimers;
     }
 
-    public ScoreHelper getSSJSH(){
+    public SSJScoreBoards getSSJSB(){
 
-        return scorehelper;
+        return ssjscoreboards;
     }
 }

@@ -38,8 +38,6 @@ public class SSJCommands implements CommandExecutor {
 
                     p.sendMessage(ChatColor.RED + "/ssj items - Gives you the ssj items.");
 
-                    p.sendMessage(ChatColor.RED + "/ssj sb - Creates the SSJ score board.");
-
                 } else if (args[0].equalsIgnoreCase("start")) {
 
                     ssj.getSSJmethods().checkStartCommandMethod(p);
@@ -47,10 +45,6 @@ public class SSJCommands implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("items")) {
 
                     ssj.getSSJmethods().callStartingItems(p);
-
-                } else if (args[0].equalsIgnoreCase("sb")) {
-
-                    ssj.getSSJscoreboard().callScoreboard(p);
 
                 }
 

@@ -191,9 +191,7 @@ public class SSJListeners implements Listener {
 
             ssj.getSSJpPc().callUpdatePlayerName(e.getPlayer());
 
-            ssj.getSSJscoreboard().callScoreboard(e.getPlayer());
-
-            ssj.getSSJscoreboard().callBelowName();
+            ssj.getSSJmethods().callScoreboard(e.getPlayer());
 
         }
 
@@ -202,11 +200,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerQuit(PlayerQuitEvent e) {
 
-        if (ssj.getSSJSH().hasScore(e.getPlayer())) {
-
-            ssj.getSSJSH().removeScore(e.getPlayer());
-
-        }
+        ssj.getSSJmethods().scoreBoardCheck(e.getPlayer());
 
         if (!ssj.getSSJpPc().getpConfigFile(e.getPlayer()).exists()) {
 
