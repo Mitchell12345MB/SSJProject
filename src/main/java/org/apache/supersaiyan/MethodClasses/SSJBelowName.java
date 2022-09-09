@@ -1,6 +1,6 @@
-package org.apache.maven.supersaiyan.MethodClasses;
+package org.apache.supersaiyan.MethodClasses;
 
-import org.apache.maven.supersaiyan.SSJ;
+import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -12,46 +12,47 @@ import org.bukkit.scoreboard.Team;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class SSJScoreBoards {
+public class SSJBelowName {
 
     private final SSJ ssj;
 
-    public SSJScoreBoards(SSJ ssj) {
+    public SSJBelowName(SSJ ssj) {
         this.ssj = ssj;
     }
 
-    private final HashMap<UUID, SSJScoreBoards> players = new HashMap<>();
+    private final HashMap<UUID, SSJBelowName> players = new HashMap<>();
 
-    public boolean hasScore(Player player) {
+    public boolean hasBelowName(Player player) {
 
         return players.containsKey(player.getUniqueId());
 
     }
 
-    public SSJScoreBoards createScore(Player player) {
+    public SSJBelowName createBelowName(Player player) {
 
-        return new SSJScoreBoards(ssj, player);
+        return new SSJBelowName(ssj, player);
 
     }
 
-    public SSJScoreBoards removeScore(Player player) {
+    public SSJBelowName removeBelowName(Player player) {
 
         return players.remove(player.getUniqueId());
 
     }
 
     private Scoreboard scoreboard;
-    private Objective sidebar;
 
-    private SSJScoreBoards(SSJ ssj, Player player) {
+    private Objective belowname;
+
+    private SSJBelowName(SSJ ssj, Player player) {
 
         this.ssj = ssj;
 
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
-        sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
+        belowname = scoreboard.registerNewObjective("belowname", "dummy");
 
-        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
+        belowname.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
         for (int i = 1; i <= 15; i++) {
 
@@ -67,14 +68,6 @@ public class SSJScoreBoards {
 
     }
 
-    public void setTitle(String title) {
-
-        title = ChatColor.translateAlternateColorCodes('&', title);
-
-        sidebar.setDisplayName(title.length() > 32 ? title.substring(0, 32) : title);
-
-    }
-
     public void setSlot(int slot, String text) {
 
         Team team = scoreboard.getTeam("SLOT_" + slot);
@@ -83,7 +76,7 @@ public class SSJScoreBoards {
 
         if (!scoreboard.getEntries().contains(entry)) {
 
-            sidebar.getScore(entry).setScore(slot);
+            belowname.getScore(entry).setScore(slot);
 
         }
 
@@ -121,4 +114,6 @@ public class SSJScoreBoards {
 
         return s.length() > 16 ? s.substring(16) : "";
     }
+
+
 }

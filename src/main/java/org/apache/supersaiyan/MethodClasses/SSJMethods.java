@@ -1,7 +1,7 @@
-package org.apache.maven.supersaiyan.MethodClasses;
+package org.apache.supersaiyan.MethodClasses;
 
-import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
-import org.apache.maven.supersaiyan.SSJ;
+import org.apache.supersaiyan.Configs.SSJPlayerConfig;
+import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -415,6 +415,60 @@ public class SSJMethods {
 
                 ssj.getLogger().warning(p.getName() + "'s.yml has been updated!");
             }
+        }
+    }
+
+    public void addEnergy(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        int energy = user.getUserConfig().getInt("Energy");
+
+        int health = user.getUserConfig().getInt("Base.Health");
+
+        int bpower = user.getUserConfig().getInt("Base.Power");
+
+        int strength = user.getUserConfig().getInt("Base.Strength");
+
+        int speed = user.getUserConfig().getInt("Base.Speed");
+
+        int stamina = user.getUserConfig().getInt("Base.Stamina");
+
+        int defence = user.getUserConfig().getInt("Base.Defence");
+
+        int bpi = ssj.getSSJCConfigs().getCFile().getInt("BP_Multiplier");
+
+        int bp = (health + bpower + strength + speed + stamina + defence) * bpi;
+
+        int adde = energy + bpower;
+
+        int limit = bpower * 5;
+
+        int addbp = bp * energy;
+
+        if (energy <= 0) {
+
+            user.loadUserFile();
+
+            user.getUserConfig().set("Energy", 5);
+
+            user.getUserConfig().set("Battle_Power", addbp);
+
+            user.saveUserFile();
+
+            ssj.getSSJMethods().callScoreboard(p);
+
+        } else if (energy < limit) {
+
+            user.loadUserFile();
+
+            user.getUserConfig().set("Energy", adde);
+
+            user.getUserConfig().set("Battle_Power", addbp);
+
+            user.saveUserFile();
+
+            ssj.getSSJMethods().callScoreboard(p);
         }
     }
 }

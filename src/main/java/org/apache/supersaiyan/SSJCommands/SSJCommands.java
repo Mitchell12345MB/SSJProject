@@ -1,7 +1,7 @@
-package org.apache.maven.supersaiyan.SSJCommands;
+package org.apache.supersaiyan.SSJCommands;
 
 
-import org.apache.maven.supersaiyan.SSJ;
+import org.apache.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,11 +40,11 @@ public class SSJCommands implements CommandExecutor {
 
                 } else if (args[0].equalsIgnoreCase("start")) {
 
-                    ssj.getSSJmethods().checkStartCommandMethod(p);
+                    ssj.getSSJMethods().checkStartCommandMethod(p);
 
                 } else if (args[0].equalsIgnoreCase("items")) {
 
-                    ssj.getSSJmethods().callStartingItems(p);
+                    ssj.getSSJMethods().callStartingItems(p);
 
                 }
 

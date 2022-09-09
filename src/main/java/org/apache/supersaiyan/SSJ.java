@@ -1,9 +1,9 @@
-package org.apache.maven.supersaiyan;
+package org.apache.supersaiyan;
 
-import org.apache.maven.supersaiyan.Configs.*;
-import org.apache.maven.supersaiyan.Listeners.*;
-import org.apache.maven.supersaiyan.MethodClasses.*;
-import org.apache.maven.supersaiyan.SSJCommands.*;
+import org.apache.supersaiyan.Configs.*;
+import org.apache.supersaiyan.Listeners.*;
+import org.apache.supersaiyan.MethodClasses.*;
+import org.apache.supersaiyan.SSJCommands.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -105,7 +105,7 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    public SSJMethods getSSJmethods(){
+    public SSJMethods getSSJMethods(){
 
         return ssjmethods;
 

@@ -1,7 +1,7 @@
-package org.apache.maven.supersaiyan.Listeners;
+package org.apache.supersaiyan.Listeners;
 
-import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
-import org.apache.maven.supersaiyan.SSJ;
+import org.apache.supersaiyan.Configs.SSJPlayerConfig;
+import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -177,7 +177,7 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
-        ssj.getSSJmethods().callMenuChecks(p, e);
+        ssj.getSSJMethods().callMenuChecks(p, e);
 
     }
 
@@ -205,11 +205,11 @@ public class SSJListeners implements Listener {
 
                 user.loadUserFile();
 
-                ssj.getSSJmethods().callUpdatePlayerName(online);
+                ssj.getSSJMethods().callUpdatePlayerName(online);
 
-                ssj.getSSJmethods().callScoreboard(online);
+                ssj.getSSJMethods().callScoreboard(online);
 
-                ssj.getSSJmethods().callBelowName(online);
+                ssj.getSSJMethods().callBelowName(online);
 
                 ssj.getSSJTimers().saveTimer();
 
@@ -228,9 +228,9 @@ public class SSJListeners implements Listener {
 
                 SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
 
-                ssj.getSSJmethods().scoreBoardCheck(online);
+                ssj.getSSJMethods().scoreBoardCheck(online);
 
-                ssj.getSSJmethods().belowNameCheck(online);
+                ssj.getSSJMethods().belowNameCheck(online);
 
                 user.createUserCheck(online);
 

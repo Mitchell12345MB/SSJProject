@@ -1,7 +1,7 @@
-package org.apache.maven.supersaiyan.MethodClasses;
+package org.apache.supersaiyan.MethodClasses;
 
-import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
-import org.apache.maven.supersaiyan.SSJ;
+import org.apache.supersaiyan.Configs.SSJPlayerConfig;
+import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -27,9 +27,9 @@ public class SSJTimers {
 
                         user.saveUserFile();
 
-                        ssj.getSSJmethods().callScoreboard(p);
+                        ssj.getSSJMethods().callScoreboard(p);
 
-                        ssj.getSSJXPB().addEnergy(p);
+                        ssj.getSSJMethods().addEnergy(p);
                     }
                 }
             }, 0, 20 * 10);

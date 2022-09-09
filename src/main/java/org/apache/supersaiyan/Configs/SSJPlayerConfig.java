@@ -1,6 +1,6 @@
-package org.apache.maven.supersaiyan.Configs;
+package org.apache.supersaiyan.Configs;
 
-import org.apache.maven.supersaiyan.SSJ;
+import org.apache.supersaiyan.SSJ;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -88,6 +88,8 @@ public class SSJPlayerConfig {
 
         try {
 
+            int sap = ssj.getSSJCConfigs().getCFile().getInt("Starting_Action_Points");
+
             ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
             YamlConfiguration UserConfig = YamlConfiguration.loadConfiguration(userFile);
@@ -104,19 +106,19 @@ public class SSJPlayerConfig {
 
             UserConfig.set("Form", "Base");
 
-            UserConfig.set("Action_Points", ssj.getSSJCConfigs().getCFile().getInt("Starting_Action_Points"));
+            UserConfig.set("Action_Points", sap);
 
-            UserConfig.set("Base.Health", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Health", sap);
 
-            UserConfig.set("Base.Power", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Power", sap);
 
-            UserConfig.set("Base.Strength", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Strength", sap);
 
-            UserConfig.set("Base.Speed", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Speed", sap);
 
-            UserConfig.set("Base.Stamina", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Stamina", sap);
 
-            UserConfig.set("Base.Defence", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Defence", sap);
 
             UserConfig.set("Transformations_Unlocked", "");
 

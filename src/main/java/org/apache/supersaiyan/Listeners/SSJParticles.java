@@ -1,4 +1,4 @@
-package org.apache.maven.supersaiyan.Listeners;
+package org.apache.supersaiyan.Listeners;
 
 import org.bukkit.event.Listener;
 
