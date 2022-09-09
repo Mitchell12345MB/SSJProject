@@ -9,9 +9,6 @@ Version: 1
 #                                                   #
 #####################################################
 
-# The prefix when the plugin send you a message.
-Prefix: "&c[&bSuper Saiyan PL&c] "
-
 # Remove their transformation when they teleport via command or plugin.
 Teleportation_Removal: true
 

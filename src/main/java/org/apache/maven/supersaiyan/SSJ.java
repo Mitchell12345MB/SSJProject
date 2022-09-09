@@ -1,18 +1,15 @@
 package org.apache.maven.supersaiyan;
 
-import org.apache.maven.supersaiyan.Configs.SSJConfigs;
-import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
-import org.apache.maven.supersaiyan.Listeners.SSJListeners;
+import org.apache.maven.supersaiyan.Configs.*;
+import org.apache.maven.supersaiyan.Listeners.*;
 import org.apache.maven.supersaiyan.MethodClasses.*;
-import org.apache.maven.supersaiyan.SSJCommands.SSJCommands;
+import org.apache.maven.supersaiyan.SSJCommands.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class SSJ extends JavaPlugin {
 
     private SSJConfigs ssjconfigs;
-
-    private SSJPlayerConfig ssjppc;
 
     private SSJGui ssjgui;
 
@@ -21,6 +18,12 @@ public class SSJ extends JavaPlugin {
     private SSJTimers ssjtimers;
 
     private SSJScoreBoards ssjscoreboards;
+
+    private SSJXPBar ssjxpbar;
+
+    private SSJBelowName ssjbelowname;
+
+    SSJPlayerConfig ssjppc;
 
     @Override
     public void onEnable() {
@@ -56,7 +59,7 @@ public class SSJ extends JavaPlugin {
 
     private void regClass(){
 
-        ssjconfigs= new SSJConfigs(this);
+        ssjconfigs = new SSJConfigs(this);
 
         ssjppc = new SSJPlayerConfig(this);
 
@@ -67,6 +70,10 @@ public class SSJ extends JavaPlugin {
         ssjscoreboards = new SSJScoreBoards(this);
 
         ssjtimers = new SSJTimers(this);
+
+        ssjxpbar = new SSJXPBar(this);
+
+        ssjbelowname = new SSJBelowName(this);
 
     }
 
@@ -86,15 +93,9 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    public SSJGui getssjgui(){
+    public SSJGui getSSJGui(){
 
         return ssjgui;
-
-    }
-
-    public SSJPlayerConfig getSSJpPc(){
-
-        return ssjppc;
 
     }
 
@@ -118,5 +119,15 @@ public class SSJ extends JavaPlugin {
     public SSJScoreBoards getSSJSB(){
 
         return ssjscoreboards;
+    }
+
+    public SSJXPBar getSSJXPB(){
+
+        return ssjxpbar;
+    }
+
+    public SSJBelowName getSSJBN() {
+
+        return ssjbelowname;
     }
 }

@@ -1,15 +1,13 @@
 package org.apache.maven.supersaiyan.MethodClasses;
 
+import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.io.IOException;
 
 public class SSJMethods {
 
@@ -21,13 +19,15 @@ public class SSJMethods {
 
     public void checkStartCommandMethod(Player p) {
 
-        if (ssj.getSSJpPc().getpConfigFile(p).exists() && ssj.getSSJpPc().getpConfig(p).getBoolean("Start")) {
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        if (user.getUserFile().exists() && user.getUserConfig().getBoolean("Start")) {
 
             p.sendMessage(ChatColor.RED + "You've already started your Saiyan journey!");
 
         }
 
-        if (!ssj.getSSJpPc().getpConfigFile(p).exists()) {
+        if (!user.getUserFile().exists()) {
 
             p.sendMessage(ChatColor.RED + "Your player file doesn't exist!");
 
@@ -35,29 +35,21 @@ public class SSJMethods {
 
         }
 
-        if (ssj.getSSJpPc().getpConfigFile(p).exists() && !ssj.getSSJpPc().getpConfig(p).getBoolean("Start")) {
+        if (user.getUserFile().exists() && !user.getUserConfig().getBoolean("Start")) {
 
             callStartingItems(p);
 
-            try {
+            user.loadUserFile();
 
-                ssj.getSSJpPc().getpConfig(p).load(ssj.getSSJpPc().getpConfigFile(p));
+            user.getUserConfig().set("Start", true);
 
-                ssj.getSSJpPc().getpConfig(p).set("Start", true);
+            user.saveUserFile();
 
-                ssj.getSSJpPc().getpConfig(p).save(ssj.getSSJpPc().getpConfigFile(p));
+            ssj.getSSJGui().openInventory(p);
 
-                ssj.getssjgui().openInventory(p);
+            p.sendMessage(ChatColor.RED + "Your Saiyan journey has started!");
 
-                p.sendMessage(ChatColor.RED + "Your Saiyan journey has started!");
-
-                ssj.getLogger().warning(p.getName() + "'s.yml Has been updated!");
-
-            } catch (IOException | InvalidConfigurationException ex) {
-
-                ex.printStackTrace();
-
-            }
+            ssj.getLogger().warning(p.getName() + "'s.yml Has been updated!");
 
         }
 
@@ -65,55 +57,49 @@ public class SSJMethods {
 
     public void callMenuChecks(Player p, InventoryClickEvent e) {
 
-        int ap = ssj.getSSJpPc().getpConfig(p).getInt("Action_Points");
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
 
-        int health = ssj.getSSJpPc().getpConfig(p).getInt("Base.Health");
+        int ap = user.getUserConfig().getInt("Action_Points");
 
-        int power = ssj.getSSJpPc().getpConfig(p).getInt("Base.Power");
+        int health = user.getUserConfig().getInt("Base.Health");
 
-        int strength = ssj.getSSJpPc().getpConfig(p).getInt("Base.Strength");
+        int power = user.getUserConfig().getInt("Base.Power");
 
-        int speed = ssj.getSSJpPc().getpConfig(p).getInt("Base.Speed");
+        int strength = user.getUserConfig().getInt("Base.Strength");
 
-        int stamina = ssj.getSSJpPc().getpConfig(p).getInt("Base.Stamina");
+        int speed = user.getUserConfig().getInt("Base.Speed");
 
-        int defence = ssj.getSSJpPc().getpConfig(p).getInt("Base.Defence");
+        int stamina = user.getUserConfig().getInt("Base.Stamina");
+
+        int defence = user.getUserConfig().getInt("Base.Defence");
 
         int bpi = ssj.getSSJCConfigs().getCFile().getInt("BP_Multiplier");
 
         int subap = ap - 1;
 
-        int bp = ( health + power + strength + speed + stamina + defence ) * bpi;
+        int bp = (health + power + strength + speed + stamina + defence) * bpi;
 
         if (e.getRawSlot() == 3) {
 
-            if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") > 0) {
+            if (user.getUserConfig().getInt("Action_Points") > 0) {
 
-                try {
+                int addh = health + 1;
 
-                    int addh = health + 1;
+                user.loadUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).load(ssj.getSSJpPc().getpConfigFile(p));
+                user.getUserConfig().set("Action_Points", subap);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Action_Points", subap);
+                user.getUserConfig().set("Base.Health", addh);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Base.Health", addh);
+                user.getUserConfig().set("Battle_Power", bp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Battle_Power", bp);
+                user.saveUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).save(ssj.getSSJpPc().getpConfigFile(p));
+                ssj.getSSJGui().openInventory(p);
 
-                    ssj.getssjgui().openInventory(p);
+                callScoreboard(p);
 
-                    callScoreboard(p);
-
-                } catch (IOException | InvalidConfigurationException ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            } else if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+            } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -123,33 +109,25 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 4) {
 
-            if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") > 0) {
+            if (user.getUserConfig().getInt("Action_Points") > 0) {
 
-                try {
+                int addp = power + 1;
 
-                    int addp = power + 1;
+                user.loadUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).load(ssj.getSSJpPc().getpConfigFile(p));
+                user.getUserConfig().set("Action_Points", subap);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Action_Points", subap);
+                user.getUserConfig().set("Base.Power", addp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Base.Power", addp);
+                user.getUserConfig().set("Battle_Power", bp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Battle_Power", bp);
+                user.saveUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).save(ssj.getSSJpPc().getpConfigFile(p));
+                ssj.getSSJGui().openInventory(p);
 
-                    ssj.getssjgui().openInventory(p);
+                callScoreboard(p);
 
-                    callScoreboard(p);
-
-                } catch (IOException | InvalidConfigurationException ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            } else if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+            } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -159,33 +137,25 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 5) {
 
-            if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") > 0) {
+            if (user.getUserConfig().getInt("Action_Points") > 0) {
 
-                try {
+                int addst = strength + 1;
 
-                    int addst = strength + 1;
+                user.loadUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).load(ssj.getSSJpPc().getpConfigFile(p));
+                user.getUserConfig().set("Action_Points", subap);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Action_Points", subap);
+                user.getUserConfig().set("Base.Strength", addst);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Base.Strength", addst);
+                user.getUserConfig().set("Battle_Power", bp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Battle_Power", bp);
+                user.saveUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).save(ssj.getSSJpPc().getpConfigFile(p));
+                ssj.getSSJGui().openInventory(p);
 
-                    ssj.getssjgui().openInventory(p);
+                callScoreboard(p);
 
-                    callScoreboard(p);
-
-                } catch (IOException | InvalidConfigurationException ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            } else if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+            } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -195,33 +165,25 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 6) {
 
-            if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") > 0) {
+            if (user.getUserConfig().getInt("Action_Points") > 0) {
 
-                try {
+                int addsp = speed + 1;
 
-                    int addsp = speed + 1;
+                user.loadUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).load(ssj.getSSJpPc().getpConfigFile(p));
+                user.getUserConfig().set("Action_Points", subap);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Action_Points", subap);
+                user.getUserConfig().set("Base.Speed", addsp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Base.Speed", addsp);
+                user.getUserConfig().set("Battle_Power", bp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Battle_Power", bp);
+                user.saveUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).save(ssj.getSSJpPc().getpConfigFile(p));
+                ssj.getSSJGui().openInventory(p);
 
-                    ssj.getssjgui().openInventory(p);
+                callScoreboard(p);
 
-                    callScoreboard(p);
-
-                } catch (IOException | InvalidConfigurationException ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            } else if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+            } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -231,33 +193,25 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 7) {
 
-            if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") > 0) {
+            if (user.getUserConfig().getInt("Action_Points") > 0) {
 
-                try {
+                int addsta = stamina + 1;
 
-                    int addsta = stamina + 1;
+                user.loadUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).load(ssj.getSSJpPc().getpConfigFile(p));
+                user.getUserConfig().set("Action_Points", subap);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Action_Points", subap);
+                user.getUserConfig().set("Base.Stamina", addsta);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Base.Stamina", addsta);
+                user.getUserConfig().set("Battle_Power", bp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Battle_Power", bp);
+                user.saveUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).save(ssj.getSSJpPc().getpConfigFile(p));
+                ssj.getSSJGui().openInventory(p);
 
-                    ssj.getssjgui().openInventory(p);
+                callScoreboard(p);
 
-                    callScoreboard(p);
-
-                } catch (IOException | InvalidConfigurationException ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            } else if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+            } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -267,33 +221,25 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 8) {
 
-            if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") > 0) {
+            if (user.getUserConfig().getInt("Action_Points") > 0) {
 
-                try {
+                int adddef = defence + 1;
 
-                    int adddef = defence + 1;
+                user.loadUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).load(ssj.getSSJpPc().getpConfigFile(p));
+                user.getUserConfig().set("Action_Points", subap);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Action_Points", subap);
+                user.getUserConfig().set("Base.Defence", adddef);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Base.Defence", adddef);
+                user.getUserConfig().set("Battle_Power", bp);
 
-                    ssj.getSSJpPc().getpConfig(p).set("Battle_Power", bp);
+                user.saveUserFile();
 
-                    ssj.getSSJpPc().getpConfig(p).save(ssj.getSSJpPc().getpConfigFile(p));
+                ssj.getSSJGui().openInventory(p);
 
-                    ssj.getssjgui().openInventory(p);
+                callScoreboard(p);
 
-                    callScoreboard(p);
-
-                } catch (IOException | InvalidConfigurationException ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            } else if (ssj.getSSJpPc().getpConfig(p).getInt("Action_Points") <= 0) {
+            } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -362,9 +308,13 @@ public class SSJMethods {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                ssj.getSSJpPc().callLoadPlayerConfig(online);
+                SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
 
-                callScoreboard(online.getPlayer());
+                user.loadUserFile();
+
+                callScoreboard(online);
+
+                callBelowName(online);
 
                 ssj.getSSJTimers().saveTimer();
 
@@ -380,7 +330,9 @@ public class SSJMethods {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                ssj.getSSJpPc().callSavePlayerConfig(online);
+                SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
+
+                user.saveUserFile();
 
             }
 
@@ -398,30 +350,71 @@ public class SSJMethods {
 
     }
 
-    public void callScoreboard(Player p) {
+    public void belowNameCheck(Player p) {
 
-        SSJScoreBoards helper = ssj.getSSJSB().createScore(p);
+        if (ssj.getSSJBN().hasBelowName(p)) {
 
-        helper.setTitle("&aCurrent Stats");
+            ssj.getSSJBN().removeBelowName(p);
 
-        helper.setSlot(9, "&7&m--------------------------------");
-
-        helper.setSlot(8, "&aPlayer&f: " + p.getName());
-
-        helper.setSlot(7, " ");
-
-        helper.setSlot(6, "Level: " + ssj.getSSJpPc().getpConfig(p).getInt("Level"));
-
-        helper.setSlot(5, " ");
-
-        helper.setSlot(4, "BP: " + ssj.getSSJpPc().getpConfig(p).getInt("Battle_Power"));
-
-        helper.setSlot(3, " ");
-
-        helper.setSlot(2, "Current Form: " + ssj.getSSJpPc().getpConfig(p).getString("Form"));
-
-        helper.setSlot(1, "&7&m--------------------------------");
+        }
 
     }
 
+    public void callScoreboard(Player p) {
+
+        SSJScoreBoards ssjsb = ssj.getSSJSB().createScore(p);
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        ssjsb.setTitle("&aCurrent Stats");
+
+        ssjsb.setSlot(9, "&7&m--------------------------------");
+
+        ssjsb.setSlot(8, "&aPlayer&f: " + p.getName());
+
+        ssjsb.setSlot(7, " ");
+
+        ssjsb.setSlot(6, "Level: " + user.getUserConfig().getInt("Level"));
+
+        ssjsb.setSlot(5, " ");
+
+        ssjsb.setSlot(4, "BP: " + user.getUserConfig().getInt("Battle_Power"));
+
+        ssjsb.setSlot(3, " ");
+
+        ssjsb.setSlot(2, "Current Form: " + user.getUserConfig().getString("Form"));
+
+        ssjsb.setSlot(1, "&7&m--------------------------------");
+
+    }
+
+    public void callBelowName(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        int bp = user.getUserConfig().getInt("Battle_Power");
+
+        SSJBelowName ssjbn = ssj.getSSJBN().createBelowName(p);
+
+        ssjbn.setSlot(1, "BP: " + bp);
+    }
+
+    public void callUpdatePlayerName(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        if (user.getUserFile().exists()) {
+
+            if (!(p.getName().equals(user.getUserConfig().getString("Player_Name")))) {
+
+                user.loadUserFile();
+
+                user.getUserConfig().set("Player_Name", p.getName());
+
+                user.saveUserFile();
+
+                ssj.getLogger().warning(p.getName() + "'s.yml has been updated!");
+            }
+        }
+    }
 }

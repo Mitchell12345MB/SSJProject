@@ -1,5 +1,6 @@
 package org.apache.maven.supersaiyan.MethodClasses;
 
+import org.apache.maven.supersaiyan.Configs.SSJPlayerConfig;
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -14,15 +15,23 @@ public class SSJTimers {
 
     public void saveTimer() {
 
-        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-
             Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(ssj, () -> {
 
-                ssj.getSSJpPc().callSavePlayerConfig(p);
+                if (!Bukkit.getOnlinePlayers().isEmpty()) {
 
-                ssj.getSSJmethods().callScoreboard(p);
+                    for (Player p : Bukkit.getOnlinePlayers()) {
 
+                        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+                        user.loadUserFile();
+
+                        user.saveUserFile();
+
+                        ssj.getSSJmethods().callScoreboard(p);
+
+                        ssj.getSSJXPB().addEnergy(p);
+                    }
+                }
             }, 0, 20 * 10);
-        }
     }
 }

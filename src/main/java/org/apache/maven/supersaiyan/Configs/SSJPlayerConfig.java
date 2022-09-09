@@ -2,11 +2,13 @@ package org.apache.maven.supersaiyan.Configs;
 
 import org.apache.maven.supersaiyan.SSJ;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 public class SSJPlayerConfig {
 
@@ -16,17 +18,27 @@ public class SSJPlayerConfig {
         this.ssj = ssj;
     }
 
-    File pConfigFile;
+    UUID u;
 
-    YamlConfiguration pConfig;
+    File userFile;
 
-    public void callCreatePLayerConfig(Player p) {
+    FileConfiguration userConfig;
 
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+    public SSJPlayerConfig(SSJ ssj, UUID u) {
 
-        pConfig = new YamlConfiguration();
+        this.ssj = ssj;
 
-        if (!pConfigFile.exists()) {
+        this.u = u;
+
+        userFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + u + ".yml");
+
+        userConfig = YamlConfiguration.loadConfiguration(userFile);
+
+    }
+
+    public void createUserCheck(final Player p) {
+
+        if (!(userFile.exists())) {
 
             onFirstSet(p);
 
@@ -34,156 +46,85 @@ public class SSJPlayerConfig {
 
     }
 
-    public void callSavePlayerConfig(Player p) {
+    public FileConfiguration getUserConfig() {
 
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+        return userConfig;
 
-        pConfig = new YamlConfiguration();
+    }
 
-        if (!pConfigFile.exists()) {
+    public File getUserFile() {
 
-            onFirstSet(p);
+        return userFile;
 
-        } else {
+    }
 
-            try {
+    public void loadUserFile(){
 
-                pConfig.load(pConfigFile);
+        try {
 
-                pConfig.save(pConfigFile);
+            getUserConfig().load(userFile);
 
-            } catch (IOException | InvalidConfigurationException ex) {
+        } catch (IOException | InvalidConfigurationException xp) {
 
-                ex.printStackTrace();
-
-            }
+            xp.printStackTrace();
 
         }
 
     }
 
-    public void callUpdatePlayerName(Player p) {
+    public void saveUserFile() {
 
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
+        try {
 
-        pConfig = new YamlConfiguration();
+            getUserConfig().save(userFile);
 
-        if (pConfigFile.exists()) {
+        } catch (Exception e) {
 
-            try {
-
-                pConfig.load(pConfigFile);
-
-                if (!(p.getName().equals(pConfig.getString("Player_Name")))) {
-
-                    pConfig.set("Player_Name", p.getName());
-
-                    pConfig.save(pConfigFile);
-
-                    ssj.getLogger().warning(p.getName() + "'s.yml has been updated!");
-
-                }
-
-            } catch (IOException | InvalidConfigurationException ex) {
-
-                ex.printStackTrace();
-
-            }
-
-        } else {
-
-            onFirstSet(p);
-
+            e.printStackTrace();
         }
-
-    }
-
-    public File getpConfigFile(final Player p) {
-
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
-
-        return pConfigFile;
-
-    }
-
-    public YamlConfiguration getpConfig(final Player p) {
-
-        return pConfig;
-    }
-
-    public void callLoadPlayerConfig(Player p) {
-
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
-
-        pConfig = new YamlConfiguration();
-
-        if (!pConfigFile.exists()) {
-
-            onFirstSet(p);
-
-        } else {
-
-            try {
-
-                pConfig.load(pConfigFile);
-
-            } catch (IOException | InvalidConfigurationException ex) {
-
-                ex.printStackTrace();
-
-            }
-
-        }
-
     }
 
     private void onFirstSet(Player p) {
-
-        pConfigFile = new File(ssj.getDataFolder(), File.separator + "PlayerConfigs" + File.separator + p.getUniqueId() + ".yml");
-
-        pConfig = new YamlConfiguration();
 
         try {
 
             ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
-            pConfigFile.createNewFile();
+            YamlConfiguration UserConfig = YamlConfiguration.loadConfiguration(userFile);
 
-            pConfig.load(pConfigFile);
+            UserConfig.set("Player_Name", p.getName());
 
-            pConfig.set("Player_Name", p.getName());
+            UserConfig.set("Start", false);
 
-            pConfig.set("Start", false);
+            UserConfig.set("Level", 0);
 
-            pConfig.set("Level", 0);
+            UserConfig.set("Battle_Power", 0);
 
-            pConfig.set("Battle_Power", 0);
+            UserConfig.set("Energy", 0);
 
-            pConfig.set("Action_Points", ssj.getSSJCConfigs().getCFile().getInt("Starting_Action_Points"));
+            UserConfig.set("Form", "Base");
 
-            pConfig.set("Base.Health", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Action_Points", ssj.getSSJCConfigs().getCFile().getInt("Starting_Action_Points"));
 
-            pConfig.set("Base.Power", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Health", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Strength", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Power", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Speed", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Strength", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Stamina", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Speed", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Base.Defence", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
+            UserConfig.set("Base.Stamina", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Energy", 0);
+            UserConfig.set("Base.Defence", ssj.getSSJCConfigs().getCFile().getInt("Starting_Attribute_Points"));
 
-            pConfig.set("Form", "Base");
+            UserConfig.set("Transformations_Unlocked", "");
 
-            pConfig.set("Transformations_Unlocked", "");
-
-            pConfig.save(pConfigFile);
+            UserConfig.save(userFile);
 
             ssj.getLogger().warning(p.getName() + "'s.yml has been created!");
 
-        } catch (IOException | InvalidConfigurationException ex) {
+        } catch (IOException ex) {
 
             ex.printStackTrace();
         }
