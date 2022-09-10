@@ -59,39 +59,17 @@ public class SSJMethods {
 
         SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
 
-        int ap = user.getUserConfig().getInt("Action_Points");
-
-        int health = user.getUserConfig().getInt("Base.Health");
-
-        int power = user.getUserConfig().getInt("Base.Power");
-
-        int strength = user.getUserConfig().getInt("Base.Strength");
-
-        int speed = user.getUserConfig().getInt("Base.Speed");
-
-        int stamina = user.getUserConfig().getInt("Base.Stamina");
-
-        int defence = user.getUserConfig().getInt("Base.Defence");
-
-        int bpi = ssj.getSSJCConfigs().getCFile().getInt("BP_Multiplier");
-
-        int subap = ap - 1;
-
-        int bp = (health + power + strength + speed + stamina + defence) * bpi;
-
         if (e.getRawSlot() == 3) {
 
-            if (user.getUserConfig().getInt("Action_Points") > 0) {
-
-                int addh = health + 1;
+            if (getAP(p) > 0) {
 
                 user.loadUserFile();
 
-                user.getUserConfig().set("Action_Points", subap);
+                user.getUserConfig().set("Action_Points", getAP(p) - 1);
 
-                user.getUserConfig().set("Base.Health", addh);
+                user.getUserConfig().set("Base.Health", getHealth(p) + 1);
 
-                user.getUserConfig().set("Battle_Power", bp);
+                user.getUserConfig().set("Battle_Power", addBaseBP(p));
 
                 user.saveUserFile();
 
@@ -109,17 +87,15 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 4) {
 
-            if (user.getUserConfig().getInt("Action_Points") > 0) {
-
-                int addp = power + 1;
+            if (getAP(p) > 0) {
 
                 user.loadUserFile();
 
-                user.getUserConfig().set("Action_Points", subap);
+                user.getUserConfig().set("Action_Points", getAP(p) - 1);
 
-                user.getUserConfig().set("Base.Power", addp);
+                user.getUserConfig().set("Base.Power", getPower(p) + 1);
 
-                user.getUserConfig().set("Battle_Power", bp);
+                user.getUserConfig().set("Battle_Power", addBaseBP(p));
 
                 user.saveUserFile();
 
@@ -137,17 +113,15 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 5) {
 
-            if (user.getUserConfig().getInt("Action_Points") > 0) {
-
-                int addst = strength + 1;
+            if (getAP(p) > 0) {
 
                 user.loadUserFile();
 
-                user.getUserConfig().set("Action_Points", subap);
+                user.getUserConfig().set("Action_Points", getAP(p) - 1);
 
-                user.getUserConfig().set("Base.Strength", addst);
+                user.getUserConfig().set("Base.Strength", getStrength(p) + 1);
 
-                user.getUserConfig().set("Battle_Power", bp);
+                user.getUserConfig().set("Battle_Power", addBaseBP(p));
 
                 user.saveUserFile();
 
@@ -165,17 +139,15 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 6) {
 
-            if (user.getUserConfig().getInt("Action_Points") > 0) {
-
-                int addsp = speed + 1;
+            if (getAP(p) > 0) {
 
                 user.loadUserFile();
 
-                user.getUserConfig().set("Action_Points", subap);
+                user.getUserConfig().set("Action_Points", getAP(p) - 1);
 
-                user.getUserConfig().set("Base.Speed", addsp);
+                user.getUserConfig().set("Base.Speed", getSpeed(p) + 1);
 
-                user.getUserConfig().set("Battle_Power", bp);
+                user.getUserConfig().set("Battle_Power", addBaseBP(p));
 
                 user.saveUserFile();
 
@@ -193,17 +165,15 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 7) {
 
-            if (user.getUserConfig().getInt("Action_Points") > 0) {
-
-                int addsta = stamina + 1;
+            if (getAP(p) > 0) {
 
                 user.loadUserFile();
 
-                user.getUserConfig().set("Action_Points", subap);
+                user.getUserConfig().set("Action_Points", getAP(p) - 1);
 
-                user.getUserConfig().set("Base.Stamina", addsta);
+                user.getUserConfig().set("Base.Stamina", getStamina(p) + 1);
 
-                user.getUserConfig().set("Battle_Power", bp);
+                user.getUserConfig().set("Battle_Power", addBaseBP(p));
 
                 user.saveUserFile();
 
@@ -221,17 +191,15 @@ public class SSJMethods {
 
         if (e.getRawSlot() == 8) {
 
-            if (user.getUserConfig().getInt("Action_Points") > 0) {
-
-                int adddef = defence + 1;
+            if (getAP(p) > 0) {
 
                 user.loadUserFile();
 
-                user.getUserConfig().set("Action_Points", subap);
+                user.getUserConfig().set("Action_Points", getAP(p) - 1);
 
-                user.getUserConfig().set("Base.Defence", adddef);
+                user.getUserConfig().set("Base.Defence", getDefence(p) + 1);
 
-                user.getUserConfig().set("Battle_Power", bp);
+                user.getUserConfig().set("Battle_Power", addBaseBP(p));
 
                 user.saveUserFile();
 
@@ -239,7 +207,7 @@ public class SSJMethods {
 
                 callScoreboard(p);
 
-            } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
+            } else if (getAP(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -300,6 +268,7 @@ public class SSJMethods {
         callAuraReleaseItem(p);
 
         callMenuItem(p);
+
     }
 
     public void onEnableChecks() {
@@ -314,9 +283,11 @@ public class SSJMethods {
 
                 callScoreboard(online);
 
-                callBelowName(online);
-
                 ssj.getSSJTimers().saveTimer();
+
+                ssj.getSSJConfigs().updateConfig();
+
+                ssj.getSSJConfigs().loadConfigs();
 
             }
 
@@ -334,6 +305,8 @@ public class SSJMethods {
 
                 user.saveUserFile();
 
+                ssj.getSSJConfigs().saveConfigs();
+
             }
 
         }
@@ -350,21 +323,9 @@ public class SSJMethods {
 
     }
 
-    public void belowNameCheck(Player p) {
-
-        if (ssj.getSSJBN().hasBelowName(p)) {
-
-            ssj.getSSJBN().removeBelowName(p);
-
-        }
-
-    }
-
     public void callScoreboard(Player p) {
 
         SSJScoreBoards ssjsb = ssj.getSSJSB().createScore(p);
-
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
 
         ssjsb.setTitle("&aCurrent Stats");
 
@@ -374,29 +335,18 @@ public class SSJMethods {
 
         ssjsb.setSlot(7, " ");
 
-        ssjsb.setSlot(6, "Level: " + user.getUserConfig().getInt("Level"));
+        ssjsb.setSlot(6, "Level: " + getLevel(p));
 
         ssjsb.setSlot(5, " ");
 
-        ssjsb.setSlot(4, "BP: " + user.getUserConfig().getInt("Battle_Power"));
+        ssjsb.setSlot(4, "BP: " + getBP(p));
 
         ssjsb.setSlot(3, " ");
 
-        ssjsb.setSlot(2, "Current Form: " + user.getUserConfig().getString("Form"));
+        ssjsb.setSlot(2, "Current Form: " + getForm(p));
 
         ssjsb.setSlot(1, "&7&m--------------------------------");
 
-    }
-
-    public void callBelowName(Player p) {
-
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
-
-        int bp = user.getUserConfig().getInt("Battle_Power");
-
-        SSJBelowName ssjbn = ssj.getSSJBN().createBelowName(p);
-
-        ssjbn.setSlot(1, "BP: " + bp);
     }
 
     public void callUpdatePlayerName(Player p) {
@@ -414,61 +364,197 @@ public class SSJMethods {
                 user.saveUserFile();
 
                 ssj.getLogger().warning(p.getName() + "'s.yml has been updated!");
+
             }
+
         }
+
     }
 
     public void addEnergy(Player p) {
 
         SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
 
-        int energy = user.getUserConfig().getInt("Energy");
+        int adde = getEnergy(p) * getPower(p);
 
-        int health = user.getUserConfig().getInt("Base.Health");
-
-        int bpower = user.getUserConfig().getInt("Base.Power");
-
-        int strength = user.getUserConfig().getInt("Base.Strength");
-
-        int speed = user.getUserConfig().getInt("Base.Speed");
-
-        int stamina = user.getUserConfig().getInt("Base.Stamina");
-
-        int defence = user.getUserConfig().getInt("Base.Defence");
-
-        int bpi = ssj.getSSJCConfigs().getCFile().getInt("BP_Multiplier");
-
-        int bp = (health + bpower + strength + speed + stamina + defence) * bpi;
-
-        int adde = energy + bpower;
-
-        int limit = bpower * 5;
-
-        int addbp = bp * energy;
-
-        if (energy <= 0) {
+        if (getEnergy(p) == 0) {
 
             user.loadUserFile();
 
             user.getUserConfig().set("Energy", 5);
 
-            user.getUserConfig().set("Battle_Power", addbp);
-
             user.saveUserFile();
 
-            ssj.getSSJMethods().callScoreboard(p);
-
-        } else if (energy < limit) {
+        } else if (getEnergy(p) < getLimit(p)) {
 
             user.loadUserFile();
 
             user.getUserConfig().set("Energy", adde);
 
-            user.getUserConfig().set("Battle_Power", addbp);
+            user.saveUserFile();
+
+        }
+
+    }
+
+    public void multBP(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        int multbp = ((getEnergy(p) + getBaseBP(p)) * getBPM());
+
+        if (getBP(p) == 0) {
+
+            user.loadUserFile();
+
+            user.getUserConfig().set("Battle_Power", addBaseBP(p));
 
             user.saveUserFile();
 
-            ssj.getSSJMethods().callScoreboard(p);
+        } else if (getEnergy(p) == 0) {
+
+            user.loadUserFile();
+
+            user.getUserConfig().set("Battle_Power", addBaseBP(p));
+
+            user.saveUserFile();
+
+        } else if (getEnergy(p) < getLimit(p)) {
+
+            user.loadUserFile();
+
+            user.getUserConfig().set("Battle_Power", multbp);
+
+            user.saveUserFile();
+
         }
+
+    }
+
+    public int addBaseBP(Player p) {
+
+        return getBaseBP(p) * getBPM();
+
+    }
+
+    public int getLimit(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Base.Power") * ssj.getSSJConfigs().getCFile().getInt("Limit_Energy_Multiplier");
+
+    }
+
+    public int getHealth(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Base.Health");
+
+    }
+
+    public int getPower(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Base.Power");
+
+    }
+
+    public int getStrength(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Base.Strength");
+
+    }
+
+    public int getSpeed(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Base.Speed");
+
+    }
+
+    public int getStamina(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Base.Stamina");
+
+    }
+
+    public int getDefence(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Base.Defence");
+
+    }
+
+    public int getEnergy(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Energy");
+
+    }
+
+    public int getBaseBP(Player p) {
+
+        return getHealth(p) * getPower(p) + getStrength(p) * getSpeed(p) + getStamina(p) * getDefence(p);
+
+    }
+
+    public int getBP(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Battle_Power");
+
+    }
+
+    public int getAP(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Action_Points");
+
+    }
+
+    public int getLevel(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getInt("Level");
+
+    }
+
+    public String getForm(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getString("Form");
+
+    }
+
+    public int getBPM() {
+
+        return ssj.getSSJConfigs().getCFile().getInt("Base_Battle_Power_Multiplier");
+
+    }
+
+    public int getSAP() {
+
+        return ssj.getSSJConfigs().getCFile().getInt("Starting_Action_Points");
+
+    }
+
+    public String getTransformations(Player p) {
+
+        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+
+        return user.getUserConfig().getString("Transformations_Unlocked");
     }
 }

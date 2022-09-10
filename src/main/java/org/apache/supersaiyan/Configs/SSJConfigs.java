@@ -122,7 +122,7 @@ public class SSJConfigs {
 
     }
 
-    public void saveConfig() {
+    public void saveConfigs() {
 
         try {
 
@@ -137,6 +137,48 @@ public class SSJConfigs {
         } catch (IOException | InvalidConfigurationException e) {
 
             e.printStackTrace();
+        }
+    }
+
+    public void loadConfigs() {
+
+        try {
+
+            Config.load(ConfigFile);
+
+            TConfig.load(TConfigFile);
+
+        } catch (IOException | InvalidConfigurationException xp) {
+
+            xp.printStackTrace();
+
+        }
+
+    }
+
+    public void loadTConfig() {
+
+        try {
+
+            TConfig.load(TConfigFile);
+
+        } catch (IOException | InvalidConfigurationException xp) {
+
+            xp.printStackTrace();
+
+        }
+
+    }
+
+    public void loadConfig() {
+
+        try {
+
+            Config.load(ConfigFile);
+
+        } catch (IOException | InvalidConfigurationException xp) {
+
+            xp.printStackTrace();
         }
     }
 }

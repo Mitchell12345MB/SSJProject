@@ -88,8 +88,6 @@ public class SSJPlayerConfig {
 
         try {
 
-            int sap = ssj.getSSJCConfigs().getCFile().getInt("Starting_Action_Points");
-
             ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
             YamlConfiguration UserConfig = YamlConfiguration.loadConfiguration(userFile);
@@ -106,19 +104,19 @@ public class SSJPlayerConfig {
 
             UserConfig.set("Form", "Base");
 
-            UserConfig.set("Action_Points", sap);
+            UserConfig.set("Action_Points", ssj.getSSJMethods().getSAP());
 
-            UserConfig.set("Base.Health", sap);
+            UserConfig.set("Base.Health", ssj.getSSJMethods().getSAP());
 
-            UserConfig.set("Base.Power", sap);
+            UserConfig.set("Base.Power", ssj.getSSJMethods().getSAP());
 
-            UserConfig.set("Base.Strength", sap);
+            UserConfig.set("Base.Strength", ssj.getSSJMethods().getSAP());
 
-            UserConfig.set("Base.Speed", sap);
+            UserConfig.set("Base.Speed", ssj.getSSJMethods().getSAP());
 
-            UserConfig.set("Base.Stamina", sap);
+            UserConfig.set("Base.Stamina", ssj.getSSJMethods().getSAP());
 
-            UserConfig.set("Base.Defence", sap);
+            UserConfig.set("Base.Defence", ssj.getSSJMethods().getSAP());
 
             UserConfig.set("Transformations_Unlocked", "");
 

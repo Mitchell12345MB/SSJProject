@@ -6,7 +6,6 @@ import org.apache.supersaiyan.MethodClasses.*;
 import org.apache.supersaiyan.SSJCommands.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
 public class SSJ extends JavaPlugin {
 
     private SSJConfigs ssjconfigs;
@@ -44,8 +43,6 @@ public class SSJ extends JavaPlugin {
     public void onDisable() {
 
         ssjmethods.onDisableChecks();
-
-        ssjconfigs.saveConfig();
 
     }
 
@@ -99,7 +96,7 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    public SSJConfigs getSSJCConfigs(){
+    public SSJConfigs getSSJConfigs(){
 
         return ssjconfigs;
 

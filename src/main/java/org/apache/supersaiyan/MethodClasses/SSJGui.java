@@ -1,6 +1,5 @@
 package org.apache.supersaiyan.MethodClasses;
 
-import org.apache.supersaiyan.Configs.SSJPlayerConfig;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,47 +30,25 @@ public class SSJGui {
 
     private void initializeItems(Player p) {
 
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
+        inv.addItem(createGuiItem(Material.EGG, "§aLevel", String.valueOf(ssj.getSSJMethods().getLevel(p)), "§aYour current level."));
 
-        int l = user.getUserConfig().getInt("Level");
+        inv.addItem(createGuiItem(Material.IRON_INGOT, "§aBattle Power", String.valueOf(ssj.getSSJMethods().getBaseBP(p)), "§aYour current battle power."));
 
-        int bp = user.getUserConfig().getInt("Battle_Power");
+        inv.addItem(createGuiItem(Material.EMERALD, "§aAction Points", String.valueOf(ssj.getSSJMethods().getAP(p)), "§aYour current (spendable) action points."));
 
-        int ap = user.getUserConfig().getInt("Action_Points");
+        inv.addItem(createGuiItem(Material.POTION, "§aHealth", String.valueOf(ssj.getSSJMethods().getHealth(p)), "§aImproves your health."));
 
-        int h = user.getUserConfig().getInt("Base.Health");
+        inv.addItem(createGuiItem(Material.FIREWORK_STAR, "§bPower", String.valueOf(ssj.getSSJMethods().getPower(p)), "§aImproves how much power you have."));
 
-        int pow = user.getUserConfig().getInt("Base.Power");
+        inv.addItem(createGuiItem(Material.DIAMOND_SWORD, "§bStrength", String.valueOf(ssj.getSSJMethods().getStrength(p)), "§aImproves your attack damage."));
 
-        int str = user.getUserConfig().getInt("Base.Strength");
+        inv.addItem(createGuiItem(Material.FEATHER, "§bSpeed", String.valueOf(ssj.getSSJMethods().getSpeed(p)), "§aImproves your speed."));
 
-        int spe = user.getUserConfig().getInt("Base.Speed");
+        inv.addItem(createGuiItem(Material.LEATHER_BOOTS, "§bStamina", String.valueOf(ssj.getSSJMethods().getStamina(p)), "§aImproves your stamina."));
 
-        int sta = user.getUserConfig().getInt("Base.Stamina");
+        inv.addItem(createGuiItem(Material.IRON_HELMET, "§bDefence", String.valueOf(ssj.getSSJMethods().getDefence(p)), "§aImproves your defence."));
 
-        int d = user.getUserConfig().getInt("Base.Defence");
-
-        String t = user.getUserConfig().getString("Transformations_Unlocked");
-
-        inv.addItem(createGuiItem(Material.EGG, "§aLevel", String.valueOf(l), "§aYour current level."));
-
-        inv.addItem(createGuiItem(Material.IRON_INGOT, "§aBattle Power", String.valueOf(bp), "§aYour current battle power."));
-
-        inv.addItem(createGuiItem(Material.EMERALD, "§aAction Points", String.valueOf(ap), "§aYour current (spendable) action points."));
-
-        inv.addItem(createGuiItem(Material.POTION, "§aHealth", String.valueOf(h), "§aImproves your health."));
-
-        inv.addItem(createGuiItem(Material.FIREWORK_STAR, "§bPower", String.valueOf(pow), "§aImproves how much power you have."));
-
-        inv.addItem(createGuiItem(Material.DIAMOND_SWORD, "§bStrength", String.valueOf(str), "§aImproves your attack damage."));
-
-        inv.addItem(createGuiItem(Material.FEATHER, "§bSpeed", String.valueOf(spe), "§aImproves your speed."));
-
-        inv.addItem(createGuiItem(Material.LEATHER_BOOTS, "§bStamina", String.valueOf(sta), "§aImproves your stamina."));
-
-        inv.addItem(createGuiItem(Material.IRON_HELMET, "§bDefence", String.valueOf(d), "§aImproves your defence."));
-
-        inv.addItem(createGuiItem(Material.GOLD_INGOT, "§bTransformations", t, "§aYour current unlocked transformations."));
+        inv.addItem(createGuiItem(Material.GOLD_INGOT, "§bTransformations", ssj.getSSJMethods().getTransformations(p), "§aYour current unlocked transformations."));
 
     }
 

@@ -209,8 +209,6 @@ public class SSJListeners implements Listener {
 
                 ssj.getSSJMethods().callScoreboard(online);
 
-                ssj.getSSJMethods().callBelowName(online);
-
                 ssj.getSSJTimers().saveTimer();
 
             }
@@ -229,8 +227,6 @@ public class SSJListeners implements Listener {
                 SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
 
                 ssj.getSSJMethods().scoreBoardCheck(online);
-
-                ssj.getSSJMethods().belowNameCheck(online);
 
                 user.createUserCheck(online);
 

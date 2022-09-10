@@ -1,6 +1,5 @@
 package org.apache.supersaiyan.SSJCommands;
 
-
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

@@ -41,6 +41,7 @@ public class SSJScoreBoards {
     }
 
     private Scoreboard scoreboard;
+
     private Objective sidebar;
 
     private SSJScoreBoards(SSJ ssj, Player player) {
