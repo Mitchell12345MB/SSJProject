@@ -77,7 +77,11 @@ public class SSJMethods {
 
                 ssj.getSSJGui().openInventory(p);
 
+                scoreBoardCheck();
+
                 callScoreboard(p);
+
+                callOtherScoreboards();
 
             } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
@@ -105,7 +109,11 @@ public class SSJMethods {
 
                 ssj.getSSJGui().openInventory(p);
 
+                scoreBoardCheck();
+
                 callScoreboard(p);
+
+                callOtherScoreboards();
 
             } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
@@ -133,7 +141,11 @@ public class SSJMethods {
 
                 ssj.getSSJGui().openInventory(p);
 
+                scoreBoardCheck();
+
                 callScoreboard(p);
+
+                callOtherScoreboards();
 
             } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
@@ -161,7 +173,11 @@ public class SSJMethods {
 
                 ssj.getSSJGui().openInventory(p);
 
+                scoreBoardCheck();
+
                 callScoreboard(p);
+
+                callOtherScoreboards();
 
             } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
@@ -189,7 +205,11 @@ public class SSJMethods {
 
                 ssj.getSSJGui().openInventory(p);
 
+                scoreBoardCheck();
+
                 callScoreboard(p);
+
+                callOtherScoreboards();
 
             } else if (user.getUserConfig().getInt("Action_Points") <= 0) {
 
@@ -217,7 +237,11 @@ public class SSJMethods {
 
                 ssj.getSSJGui().openInventory(p);
 
+                scoreBoardCheck();
+
                 callScoreboard(p);
+
+                callOtherScoreboards();
 
             } else if (user.getAP() <= 0) {
 
@@ -293,6 +317,8 @@ public class SSJMethods {
 
                 user.loadUserFile();
 
+                scoreBoardCheck();
+
                 callScoreboard(online);
 
                 ssj.getSSJTimers().saveTimer();
@@ -317,6 +343,8 @@ public class SSJMethods {
 
                 user.saveUserFile();
 
+                scoreBoardCheck();
+
                 ssj.getSSJConfigs().saveConfigs();
 
             }
@@ -325,11 +353,33 @@ public class SSJMethods {
 
     }
 
-    public void scoreBoardCheck(Player p) {
+    public void scoreBoardCheck() {
 
-        if (ssj.getSSJSB().hasScore(p)) {
+        if (!Bukkit.getOnlinePlayers().isEmpty()) {
 
-            ssj.getSSJSB().removeScore(p);
+            for (Player online : Bukkit.getOnlinePlayers()) {
+
+                if (ssj.getSSJSB().hasScore(online)) {
+
+                    ssj.getSSJSB().removeScore(online);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    public void callOtherScoreboards() {
+
+        for (Player online : Bukkit.getOnlinePlayers()) {
+
+            scoreBoardCheck();
+
+            scoreBoardCheck();
+
+            callScoreboard(online);
 
         }
 
@@ -399,6 +449,8 @@ public class SSJMethods {
 
             user.saveUserFile();
 
+            scoreBoardCheck();
+
             callScoreboard(p);
 
         } else if (user.getEnergy() < user.getLimit()) {
@@ -408,6 +460,8 @@ public class SSJMethods {
             user.getUserConfig().set("Energy", adde);
 
             user.saveUserFile();
+
+            scoreBoardCheck();
 
             callScoreboard(p);
 
@@ -429,6 +483,8 @@ public class SSJMethods {
 
             user.saveUserFile();
 
+            scoreBoardCheck();
+
             callScoreboard(p);
 
         } else if (user.getEnergy() == 0) {
@@ -439,6 +495,8 @@ public class SSJMethods {
 
             user.saveUserFile();
 
+            scoreBoardCheck();
+
             callScoreboard(p);
 
         } else if (user.getEnergy() < user.getLimit()) {
@@ -448,6 +506,8 @@ public class SSJMethods {
             user.getUserConfig().set("Battle_Power", multbp);
 
             user.saveUserFile();
+
+            scoreBoardCheck();
 
             callScoreboard(p);
 
@@ -466,6 +526,6 @@ public class SSJMethods {
 
         SSJPlayerConfig user = new SSJPlayerConfig(ssj, p.getUniqueId());
 
-        return user.getBaseBP() / 2;
+        return user.getBaseBP() / 17;
     }
 }

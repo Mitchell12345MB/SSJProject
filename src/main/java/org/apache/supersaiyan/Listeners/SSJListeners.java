@@ -177,6 +177,10 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
+        ssj.getSSJMethods().scoreBoardCheck();
+
+        ssj.getSSJMethods().callScoreboard(p);
+
         ssj.getSSJMethods().callMenuChecks(p, e);
 
     }
@@ -226,7 +230,7 @@ public class SSJListeners implements Listener {
 
                 SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
 
-                ssj.getSSJMethods().scoreBoardCheck(online);
+                ssj.getSSJMethods().scoreBoardCheck();
 
                 user.createUserCheck(online);
 

@@ -60,13 +60,14 @@ public class SSJScoreBoards {
 
         undername.setDisplayName("BP");
 
-        for(Player online : Bukkit.getOnlinePlayers()){
+        for (Player online : Bukkit.getOnlinePlayers()) {
 
             SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
 
             Score score = undername.getScore(online);
 
             score.setScore(user.getBP());
+
         }
 
         for (int i = 1; i <= 15; i++) {
