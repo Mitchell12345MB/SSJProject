@@ -20,8 +20,6 @@ public class SSJ extends JavaPlugin {
 
     private SSJXPBar ssjxpbar;
 
-    private SSJBelowName ssjbelowname;
-
     SSJPlayerConfig ssjppc;
 
     @Override
@@ -69,8 +67,6 @@ public class SSJ extends JavaPlugin {
         ssjtimers = new SSJTimers(this);
 
         ssjxpbar = new SSJXPBar(this);
-
-        ssjbelowname = new SSJBelowName(this);
 
     }
 
@@ -121,10 +117,5 @@ public class SSJ extends JavaPlugin {
     public SSJXPBar getSSJXPB(){
 
         return ssjxpbar;
-    }
-
-    public SSJBelowName getSSJBN() {
-
-        return ssjbelowname;
     }
 }

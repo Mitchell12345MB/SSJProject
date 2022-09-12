@@ -181,4 +181,16 @@ public class SSJConfigs {
             xp.printStackTrace();
         }
     }
+
+    public int getBPM() {
+
+        return ssj.getSSJConfigs().getCFile().getInt("Base_Battle_Power_Multiplier");
+
+    }
+
+    public int getSAP() {
+
+        return ssj.getSSJConfigs().getCFile().getInt("Starting_Action_Points");
+
+    }
 }

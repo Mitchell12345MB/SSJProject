@@ -38,7 +38,7 @@ public class SSJPlayerConfig {
 
     public void createUserCheck(final Player p) {
 
-        if (!(userFile.exists())) {
+        if (!(getUserFile().exists())) {
 
             onFirstSet(p);
 
@@ -62,7 +62,7 @@ public class SSJPlayerConfig {
 
         try {
 
-            getUserConfig().load(userFile);
+            getUserConfig().load(getUserFile());
 
         } catch (IOException | InvalidConfigurationException xp) {
 
@@ -76,7 +76,7 @@ public class SSJPlayerConfig {
 
         try {
 
-            getUserConfig().save(userFile);
+            getUserConfig().save(getUserFile());
 
         } catch (Exception e) {
 
@@ -90,7 +90,7 @@ public class SSJPlayerConfig {
 
             ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
-            YamlConfiguration UserConfig = YamlConfiguration.loadConfiguration(userFile);
+            YamlConfiguration UserConfig = YamlConfiguration.loadConfiguration(getUserFile());
 
             UserConfig.set("Player_Name", p.getName());
 
@@ -104,23 +104,23 @@ public class SSJPlayerConfig {
 
             UserConfig.set("Form", "Base");
 
-            UserConfig.set("Action_Points", ssj.getSSJMethods().getSAP());
+            UserConfig.set("Action_Points", ssj.getSSJConfigs().getSAP());
 
-            UserConfig.set("Base.Health", ssj.getSSJMethods().getSAP());
+            UserConfig.set("Base.Health", ssj.getSSJConfigs().getSAP());
 
-            UserConfig.set("Base.Power", ssj.getSSJMethods().getSAP());
+            UserConfig.set("Base.Power", ssj.getSSJConfigs().getSAP());
 
-            UserConfig.set("Base.Strength", ssj.getSSJMethods().getSAP());
+            UserConfig.set("Base.Strength", ssj.getSSJConfigs().getSAP());
 
-            UserConfig.set("Base.Speed", ssj.getSSJMethods().getSAP());
+            UserConfig.set("Base.Speed", ssj.getSSJConfigs().getSAP());
 
-            UserConfig.set("Base.Stamina", ssj.getSSJMethods().getSAP());
+            UserConfig.set("Base.Stamina", ssj.getSSJConfigs().getSAP());
 
-            UserConfig.set("Base.Defence", ssj.getSSJMethods().getSAP());
+            UserConfig.set("Base.Defence", ssj.getSSJConfigs().getSAP());
 
             UserConfig.set("Transformations_Unlocked", "");
 
-            UserConfig.save(userFile);
+            UserConfig.save(getUserFile());
 
             ssj.getLogger().warning(p.getName() + "'s.yml has been created!");
 
@@ -128,5 +128,88 @@ public class SSJPlayerConfig {
 
             ex.printStackTrace();
         }
+    }
+
+    public int getLimit() {
+
+        return getUserConfig().getInt("Base.Power") * ssj.getSSJConfigs().getCFile().getInt("Limit_Energy_Multiplier");
+
+    }
+
+    public int getHealth() {
+
+        return getUserConfig().getInt("Base.Health");
+
+    }
+
+    public int getPower() {
+
+        return getUserConfig().getInt("Base.Power");
+
+    }
+
+    public int getStrength() {
+
+        return getUserConfig().getInt("Base.Strength");
+
+    }
+
+    public int getSpeed() {
+
+        return getUserConfig().getInt("Base.Speed");
+
+    }
+
+    public int getStamina() {
+
+        return getUserConfig().getInt("Base.Stamina");
+
+    }
+
+    public int getDefence() {
+
+        return getUserConfig().getInt("Base.Defence");
+
+    }
+
+    public int getEnergy() {
+
+        return getUserConfig().getInt("Energy");
+
+    }
+
+    public int getBaseBP() {
+
+        return getHealth() * getPower() + getStrength() * getSpeed() + getStamina() * getDefence();
+
+    }
+
+    public int getBP() {
+
+        return getUserConfig().getInt("Battle_Power");
+
+    }
+
+    public int getAP() {
+
+        return getUserConfig().getInt("Action_Points");
+
+    }
+
+    public int getLevel() {
+
+        return getUserConfig().getInt("Level");
+
+    }
+
+    public String getForm() {
+
+        return getUserConfig().getString("Form");
+
+    }
+
+    public String getTransformations() {
+
+        return getUserConfig().getString("Transformations_Unlocked");
     }
 }

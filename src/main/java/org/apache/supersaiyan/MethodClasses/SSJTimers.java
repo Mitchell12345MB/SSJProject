@@ -32,10 +32,8 @@ public class SSJTimers {
                         ssj.getSSJMethods().addEnergy(p);
 
                         ssj.getSSJMethods().multBP(p);
-
-                        ssj.getSSJMethods().callScoreboard(p);
                     }
                 }
-            }, 0, 10 * 10);
+            }, 0, 20 * 10);
     }
 }

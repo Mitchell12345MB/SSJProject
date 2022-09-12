@@ -1,13 +1,11 @@
 package org.apache.supersaiyan.MethodClasses;
 
+import org.apache.supersaiyan.Configs.SSJPlayerConfig;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -44,6 +42,8 @@ public class SSJScoreBoards {
 
     private Objective sidebar;
 
+    private Objective undername;
+
     private SSJScoreBoards(SSJ ssj, Player player) {
 
         this.ssj = ssj;
@@ -52,7 +52,22 @@ public class SSJScoreBoards {
 
         sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
 
+        undername = scoreboard.registerNewObjective("belowname", "dummy");
+
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        undername.setDisplaySlot(DisplaySlot.BELOW_NAME);
+
+        undername.setDisplayName("BP");
+
+        for(Player online : Bukkit.getOnlinePlayers()){
+
+            SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
+
+            Score score = undername.getScore(online);
+
+            score.setScore(user.getBP());
+        }
 
         for (int i = 1; i <= 15; i++) {
 
