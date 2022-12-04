@@ -39,7 +39,7 @@ public class SSJCommands implements CommandExecutor {
 
                 } else if (args[0].equalsIgnoreCase("start")) {
 
-                    ssj.getSSJMethods().checkStartCommandMethod(p);
+                    ssj.getSSJMethodChecks().checkStartCommandMethod(p);
 
                 } else if (args[0].equalsIgnoreCase("items")) {
 

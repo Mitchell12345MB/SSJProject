@@ -24,8 +24,6 @@ public class SSJConfigs {
 
     private FileConfiguration TConfig;
 
-    private File userFolder;
-
     public FileConfiguration getCFile() {
 
         return this.Config;
@@ -40,7 +38,7 @@ public class SSJConfigs {
 
     public void createConfig() {
 
-        userFolder = new File(ssj.getDataFolder(), "PlayerConfigs");
+        File userFolder = new File(ssj.getDataFolder(), "PlayerConfigs");
 
         userFolder.mkdirs();
 

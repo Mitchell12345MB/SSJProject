@@ -1,9 +1,13 @@
 package org.apache.supersaiyan;
 
-import org.apache.supersaiyan.Configs.*;
-import org.apache.supersaiyan.Listeners.*;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import org.apache.supersaiyan.Configs.SSJConfigs;
+import org.apache.supersaiyan.Configs.SSJPlayerConfig;
+import org.apache.supersaiyan.Listeners.SSJListeners;
 import org.apache.supersaiyan.MethodClasses.*;
-import org.apache.supersaiyan.SSJCommands.*;
+import org.apache.supersaiyan.SSJCommands.SSJCommands;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SSJ extends JavaPlugin {
@@ -20,7 +24,13 @@ public class SSJ extends JavaPlugin {
 
     private SSJXPBar ssjxpbar;
 
-    SSJPlayerConfig ssjppc;
+    private SSJPlayerConfig ssjppc;
+
+    private SSJHologram ssjhologram;
+
+    private ProtocolManager protocolManager;
+
+    private SSJMethodChecks ssjmethodchecks;
 
     @Override
     public void onEnable() {
@@ -33,14 +43,14 @@ public class SSJ extends JavaPlugin {
 
         configUICall();
 
-        ssjmethods.onEnableChecks();
+        ssjmethodchecks.onEnableChecks();
 
     }
 
     @Override
     public void onDisable() {
 
-        ssjmethods.onDisableChecks();
+        ssjmethodchecks.onDisableChecks();
 
     }
 
@@ -53,6 +63,8 @@ public class SSJ extends JavaPlugin {
     }
 
     private void regClass(){
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
 
         ssjconfigs = new SSJConfigs(this);
 
@@ -67,6 +79,10 @@ public class SSJ extends JavaPlugin {
         ssjtimers = new SSJTimers(this);
 
         ssjxpbar = new SSJXPBar(this);
+
+        ssjhologram = new SSJHologram(this);
+
+        ssjmethodchecks = new SSJMethodChecks(this);
 
     }
 
@@ -107,15 +123,39 @@ public class SSJ extends JavaPlugin {
     public SSJTimers getSSJTimers(){
 
         return ssjtimers;
+
     }
 
     public SSJScoreBoards getSSJSB(){
 
         return ssjscoreboards;
+
     }
 
     public SSJXPBar getSSJXPB(){
 
         return ssjxpbar;
+
+    }
+    public SSJPlayerConfig getSSJPPC(SSJ ssj, Player p) {
+
+        return new SSJPlayerConfig(ssj, p.getUniqueId());
+
+    }
+
+    public SSJHologram getSSJHologram(){
+
+        return ssjhologram;
+
+    }
+
+    public ProtocolManager getPL(){
+
+        return protocolManager;
+    }
+
+    public SSJMethodChecks getSSJMethodChecks(){
+
+        return ssjmethodchecks;
     }
 }

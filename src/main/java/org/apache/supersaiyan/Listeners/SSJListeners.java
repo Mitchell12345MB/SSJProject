@@ -1,6 +1,5 @@
 package org.apache.supersaiyan.Listeners;
 
-import org.apache.supersaiyan.Configs.SSJPlayerConfig;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,6 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,9 +27,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractTransform(PlayerInteractEvent e) {
 
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, e.getPlayer().getUniqueId());
-
-        if (user.getUserConfig().getBoolean("Start")) {
+        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
 
@@ -54,9 +52,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractPowerDown(PlayerInteractEvent e) {
 
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, e.getPlayer().getUniqueId());
-
-        if (user.getUserConfig().getBoolean("Start")) {
+        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
 
@@ -81,9 +77,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractCharge(PlayerInteractEvent e) {
 
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, e.getPlayer().getUniqueId());
-
-        if (user.getUserConfig().getBoolean("Start")) {
+        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
 
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
@@ -109,9 +103,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractOpenMenu(PlayerInteractEvent e) {
 
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, e.getPlayer().getUniqueId());
-
-        if (user.getUserConfig().getBoolean("Start")) {
+        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
 
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
@@ -138,9 +130,7 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractReleaseAura(PlayerInteractEvent e) {
 
-        SSJPlayerConfig user = new SSJPlayerConfig(ssj, e.getPlayer().getUniqueId());
-
-        if (user.getUserConfig().getBoolean("Start")) {
+        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
 
 
             if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
@@ -177,11 +167,11 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
-        ssj.getSSJMethods().scoreBoardCheck();
+        ssj.getSSJMethodChecks().scoreBoardCheck();
 
         ssj.getSSJMethods().callScoreboard(p);
 
-        ssj.getSSJMethods().callMenuChecks(p, e);
+        ssj.getSSJMethodChecks().callMenuChecks(p, e);
 
     }
 
@@ -203,13 +193,11 @@ public class SSJListeners implements Listener {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
+                ssj.getSSJPPC(ssj, e.getPlayer()).createUserCheck(online);
 
-                user.createUserCheck(online);
+                ssj.getSSJPPC(ssj, e.getPlayer()).loadUserFile();
 
-                user.loadUserFile();
-
-                ssj.getSSJMethods().callUpdatePlayerName(online);
+                ssj.getSSJMethodChecks().checkPPCPlayerName(online);
 
                 ssj.getSSJMethods().callScoreboard(online);
 
@@ -228,16 +216,24 @@ public class SSJListeners implements Listener {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                SSJPlayerConfig user = new SSJPlayerConfig(ssj, online.getUniqueId());
+                ssj.getSSJMethodChecks().scoreBoardCheck();
 
-                ssj.getSSJMethods().scoreBoardCheck();
+                ssj.getSSJPPC(ssj, e.getPlayer()).createUserCheck(online);
 
-                user.createUserCheck(online);
+                ssj.getSSJPPC(ssj, e.getPlayer()).loadUserFile();
 
-                user.loadUserFile();
+                ssj.getSSJPPC(ssj, e.getPlayer()).saveUserFile();
 
-                user.saveUserFile();
             }
+
         }
+
+    }
+
+    @EventHandler
+    private void onPlayerMove(PlayerMoveEvent e) {
+
+       // ssj.getSSJHologram().updateHolos(e.getPlayer());
+
     }
 }
