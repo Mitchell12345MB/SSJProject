@@ -20,6 +20,8 @@ public class SSJScoreBoards {
         this.ssj = ssj;
     }
 
+
+
     private final HashMap<UUID, SSJScoreBoards> players = new HashMap<>();
 
     public boolean hasScore(Player player) {
