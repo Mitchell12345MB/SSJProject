@@ -94,15 +94,15 @@ public class SSJMethods {
 
         ssjsb.setSlot(7, " ");
 
-        ssjsb.setSlot(6, "Level: " + ssj.getSSJPPC(ssj, p).getLevel());
+        ssjsb.setSlot(6, "Level: " + ssj.getSSJPCM().getLevel(p));
 
         ssjsb.setSlot(5, " ");
 
-        ssjsb.setSlot(4, "BP: " + ssj.getSSJPPC(ssj, p).getBP());
+        ssjsb.setSlot(4, "BP: " + ssj.getSSJPCM().getBP(p));
 
         ssjsb.setSlot(3, " ");
 
-        ssjsb.setSlot(2, "Current Form: " + ssj.getSSJPPC(ssj, p).getForm());
+        ssjsb.setSlot(2, "Current Form: " + ssj.getSSJPCM().getForm(p));
 
         ssjsb.setSlot(1, "&7&m--------------------------------");
 
@@ -110,27 +110,19 @@ public class SSJMethods {
 
     public void addEnergy(Player p) {
 
-        int adde = ssj.getSSJPPC(ssj, p).getEnergy() * ssj.getSSJPPC(ssj, p).getPower();
+        int adde = ssj.getSSJPCM().getEnergy(p) * ssj.getSSJPCM().getPower(p);
 
-        if (ssj.getSSJPPC(ssj, p).getEnergy() == 0) {
+        if (ssj.getSSJPCM().getEnergy(p) == 0) {
 
-            ssj.getSSJPPC(ssj, p).loadUserFile();
-
-            ssj.getSSJPPC(ssj, p).getUserConfig().set("Energy", 5);
-
-            ssj.getSSJPPC(ssj, p).saveUserFile();
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", 5);
 
             ssj.getSSJMethodChecks().scoreBoardCheck();
 
             callScoreboard(p);
 
-        } else if (ssj.getSSJPPC(ssj, p).getEnergy() < ssj.getSSJPPC(ssj, p).getLimit()) {
+        } else if (ssj.getSSJPCM().getEnergy(p) < ssj.getSSJPCM().getLimit(p)) {
 
-            ssj.getSSJPPC(ssj, p).loadUserFile();
-
-            ssj.getSSJPPC(ssj, p).getUserConfig().set("Energy", adde);
-
-            ssj.getSSJPPC(ssj, p).saveUserFile();
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", adde);
 
             ssj.getSSJMethodChecks().scoreBoardCheck();
 
@@ -142,39 +134,27 @@ public class SSJMethods {
 
     public void multBP(Player p) {
 
-        int multbp = ((ssj.getSSJPPC(ssj, p).getEnergy() + ssj.getSSJPPC(ssj, p).getBaseBP()) * ssj.getSSJConfigs().getBPM());
+        int multbp = ((ssj.getSSJPCM().getEnergy(p) + ssj.getSSJPCM().getBaseBP(p)) * ssj.getSSJConfigs().getBPM());
 
-        if (ssj.getSSJPPC(ssj, p).getBP() == 0) {
+        if (ssj.getSSJPCM().getBP(p) == 0) {
 
-            ssj.getSSJPPC(ssj, p).loadUserFile();
-
-            ssj.getSSJPPC(ssj, p).getUserConfig().set("Battle_Power", addBaseBP(p));
-
-            ssj.getSSJPPC(ssj, p).saveUserFile();
+            ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", addBaseBP(p));
 
             ssj.getSSJMethodChecks().scoreBoardCheck();
 
             callScoreboard(p);
 
-        } else if (ssj.getSSJPPC(ssj, p).getEnergy() == 0) {
+        } else if (ssj.getSSJPCM().getEnergy(p) == 0) {
 
-            ssj.getSSJPPC(ssj, p).loadUserFile();
-
-            ssj.getSSJPPC(ssj, p).getUserConfig().set("Battle_Power", addBaseBP(p));
-
-            ssj.getSSJPPC(ssj, p).saveUserFile();
+            ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", addBaseBP(p));
 
             ssj.getSSJMethodChecks().scoreBoardCheck();
 
             callScoreboard(p);
 
-        } else if (ssj.getSSJPPC(ssj, p).getEnergy() < ssj.getSSJPPC(ssj, p).getLimit()) {
+        } else if (ssj.getSSJPCM().getEnergy(p) < ssj.getSSJPCM().getLimit(p)) {
 
-            ssj.getSSJPPC(ssj, p).loadUserFile();
-
-            ssj.getSSJPPC(ssj, p).getUserConfig().set("Battle_Power", multbp);
-
-            ssj.getSSJPPC(ssj, p).saveUserFile();
+            ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", multbp);
 
             ssj.getSSJMethodChecks().scoreBoardCheck();
 
@@ -186,11 +166,11 @@ public class SSJMethods {
 
     public int addBaseBP(Player p) {
 
-        return ssj.getSSJPPC(ssj, p).getBaseBP() * ssj.getSSJConfigs().getBPM();
+        return ssj.getSSJPCM().getBaseBP(p) * ssj.getSSJConfigs().getBPM();
     }
 
     public int addLevel(Player p) {
 
-        return ssj.getSSJPPC(ssj, p).getBaseBP() / 150;
+        return ssj.getSSJPCM().getBaseBP(p) / 150;
     }
 }

@@ -20,9 +20,9 @@ public class SSJTimers {
 
                 for (Player p : Bukkit.getOnlinePlayers()) {
 
-                    ssj.getSSJPPC(ssj, p).loadUserFile();
+                    ssj.getSSJPCM().getPlayerConfig(p);
 
-                    ssj.getSSJPPC(ssj, p).saveUserFile();
+                    ssj.getSSJPCM().savePlayerConfig(p, ssj.getSSJPCM().getPlayerConfig(p));
 
                     ssj.getSSJConfigs().saveConfigs();
 

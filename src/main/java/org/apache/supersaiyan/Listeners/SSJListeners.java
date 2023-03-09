@@ -12,7 +12,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,23 +26,23 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractTransform(PlayerInteractEvent e) {
 
-        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
+        Player p = e.getPlayer();
 
-            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+        ItemStack heldItem = p.getInventory().getItemInMainHand();
 
-                return;
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.BLAZE_POWDER) {
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.BLAZE_POWDER)))
+            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
-                return;
+                p.sendMessage("WOOSH");
 
-            e.getPlayer().sendMessage("WOOSH");
+            } else {
 
-        } else {
+                p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
 
-            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+                p.sendMessage(ChatColor.RED + "So this action won't work!");
 
-            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+            }
 
         }
 
@@ -52,23 +51,23 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractPowerDown(PlayerInteractEvent e) {
 
-        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
+        Player p = e.getPlayer();
 
-            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+        ItemStack heldItem = p.getInventory().getItemInMainHand();
 
-                return;
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.PHANTOM_MEMBRANE) {
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.PHANTOM_MEMBRANE)))
+            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
-                return;
+                p.sendMessage("deWOOSH");
 
-            e.getPlayer().sendMessage("deWOOSH");
+            } else {
 
-        } else {
+                p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
 
-            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+                p.sendMessage(ChatColor.RED + "So this action won't work!");
 
-            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+            }
 
         }
 
@@ -77,24 +76,23 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractCharge(PlayerInteractEvent e) {
 
-        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
+        Player p = e.getPlayer();
 
+        ItemStack heldItem = p.getInventory().getItemInMainHand();
 
-            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.MAGMA_CREAM) {
 
-                return;
+            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.MAGMA_CREAM)))
+                p.sendMessage("Charging");
 
-                return;
+            } else {
 
-            e.getPlayer().sendMessage("Charging");
+                p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
 
-        } else {
+                p.sendMessage(ChatColor.RED + "So this action won't work!");
 
-            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
-
-            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+            }
 
         }
 
@@ -103,25 +101,23 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractOpenMenu(PlayerInteractEvent e) {
 
-        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
+        Player p = e.getPlayer();
 
+        ItemStack heldItem = p.getInventory().getItemInMainHand();
 
-            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.PAPER) {
 
-                return;
+            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.PAPER)))
+                ssj.getSSJGui().openInventory(e.getPlayer());
 
-                return;
+            } else {
 
-            ssj.getSSJGui().openInventory(e.getPlayer());
+                p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
 
+                p.sendMessage(ChatColor.RED + "So this action won't work!");
 
-        } else {
-
-            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
-
-            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+            }
 
         }
 
@@ -130,29 +126,29 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractReleaseAura(PlayerInteractEvent e) {
 
-        if (ssj.getSSJPPC(ssj, e.getPlayer()).getUserConfig().getBoolean("Start")) {
+        Player p = e.getPlayer();
 
+        ItemStack heldItem = p.getInventory().getItemInMainHand();
 
-            if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR)
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.GHAST_TEAR) {
 
-                return;
+            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
-            if (!e.getPlayer().getInventory().getItemInMainHand().isSimilar(new ItemStack(Material.GHAST_TEAR)))
+                p.sendMessage("woosh woosh woosh");
 
-                return;
+            } else {
 
-            e.getPlayer().sendMessage("woosh woosh woosh");
+                p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
 
+                p.sendMessage(ChatColor.RED + "So this action won't work!");
 
-        } else {
-
-            e.getPlayer().sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
-
-            e.getPlayer().sendMessage(ChatColor.RED + "So this action won't work!");
+            }
 
         }
 
     }
+
+    //inv management
 
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
@@ -193,9 +189,9 @@ public class SSJListeners implements Listener {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                ssj.getSSJPPC(ssj, e.getPlayer()).createUserCheck(online);
+                ssj.getSSJPCM().createUserCheck(online);
 
-                ssj.getSSJPPC(ssj, e.getPlayer()).loadUserFile();
+                ssj.getSSJPCM().getPlayerConfig(online);
 
                 ssj.getSSJMethodChecks().checkPPCPlayerName(online);
 
@@ -218,22 +214,15 @@ public class SSJListeners implements Listener {
 
                 ssj.getSSJMethodChecks().scoreBoardCheck();
 
-                ssj.getSSJPPC(ssj, e.getPlayer()).createUserCheck(online);
+                ssj.getSSJPCM().createUserCheck(online);
 
-                ssj.getSSJPPC(ssj, e.getPlayer()).loadUserFile();
+                ssj.getSSJPCM().getPlayerConfig(online);
 
-                ssj.getSSJPPC(ssj, e.getPlayer()).saveUserFile();
+                ssj.getSSJPCM().savePlayerConfig(online, ssj.getSSJPCM().getPlayerConfig(online));
 
             }
 
         }
-
-    }
-
-    @EventHandler
-    private void onPlayerMove(PlayerMoveEvent e) {
-
-       // ssj.getSSJHologram().updateHolos(e.getPlayer());
 
     }
 }
