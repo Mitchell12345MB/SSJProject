@@ -165,10 +165,13 @@ public class SSJMethods {
     public int addBaseBP(Player p) {
 
         return ssj.getSSJPCM().getBaseBP(p) * ssj.getSSJConfigs().getBPM();
+
     }
 
     public int addLevel(Player p) {
 
         return ssj.getSSJPCM().getBaseBP(p) / 150;
+
     }
+
 }

@@ -168,7 +168,7 @@ public class SSJListeners implements Listener {
 
                     p.sendMessage(ChatColor.RED + "Scoreboard removed.");
 
-                } else if (!ssj.getSSJSB().hasScore(p)){
+                } else {
 
                     ssj.getSSJMethods().callScoreboard(p);
 

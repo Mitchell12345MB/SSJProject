@@ -29,9 +29,9 @@ public class SSJHologram {
 
     public void removeHolosForPlayer(Player player) {
 
-        ArmorStand armorStand = createPlayerNameHolo(player);
+        ArmorStand armorNameStand = createPlayerNameHolo(player);
 
-        armorStand.remove();
+        armorNameStand.remove();
 
         players.remove(player.getUniqueId());
 
@@ -45,11 +45,11 @@ public class SSJHologram {
 
         }
 
-        ArmorStand armorStand = createPlayerNameHolo(player);
+        ArmorStand armorNameStand = createPlayerNameHolo(player);
 
-        if (armorStand != null) {
+        if (armorNameStand != null) {
 
-            new SSJHologramUpdater(ssj, armorStand, player).runTaskTimer(ssj, 0L, 1L);
+            new SSJHologramUpdater(ssj, armorNameStand, player).runTaskTimer(ssj, 0L, 1L);
 
         }
 
@@ -101,7 +101,49 @@ public class SSJHologram {
 
     }
 
-    public ArmorStand getArmorStand(Player player) {
+    private ArmorStand createPlayerBPHolo(Player player) {
+
+        if (player == null) {
+
+            return null;
+
+        }
+
+        ArmorStand armorStand = null;
+
+        try {
+
+            armorStand = (ArmorStand) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+
+            armorStand.setCustomName(String.valueOf(ssj.getSSJPCM().getBP(player)));
+
+            armorStand.setMarker(true);
+
+            armorStand.setInvulnerable(true);
+
+            armorStand.setSmall(true);
+
+            armorStand.setVisible(false);
+
+            armorStand.setCustomNameVisible(true);
+
+            armorStand.setBasePlate(false);
+
+            armorStand.setArms(false);
+
+            armorStand.setGravity(false);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return armorStand;
+
+    }
+
+    public ArmorStand getArmorStandPName(Player player) {
 
         for (Entity entity : player.getNearbyEntities(0.1, 0.1, 0.1)) {
 

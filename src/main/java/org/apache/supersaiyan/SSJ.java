@@ -22,8 +22,6 @@ public class SSJ extends JavaPlugin {
 
     private SSJTimers ssjtimers;
 
-    private SSJScoreBoards ssjscoreboards;
-
     private SSJMethodChecks ssjmethodchecks;
 
     private SSJPlayerConfigManager ssjplayerconfigmanager;
@@ -31,6 +29,8 @@ public class SSJ extends JavaPlugin {
     private SSJHologram ssjhologram;
 
     private SSJHologramUpdater ssjhologramupdater;
+
+    private SSJScoreBoards ssjscoreboards;
 
     @Override
     public void onEnable() {
@@ -64,6 +64,8 @@ public class SSJ extends JavaPlugin {
 
     private void regClass() {
 
+        ssjscoreboards = new SSJScoreBoards(this);
+
         File playerConfigsFolder = new File(getDataFolder(), "PlayerConfigs");
 
         if (!playerConfigsFolder.exists()) {
@@ -76,7 +78,7 @@ public class SSJ extends JavaPlugin {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
 
-            ArmorStand armorStand = ssjhologram.getArmorStand(player);
+            ArmorStand armorStand = ssjhologram.getArmorStandPName(player);
 
             Player player1 = ssjhologram.getPlayer(armorStand);
 
@@ -95,8 +97,6 @@ public class SSJ extends JavaPlugin {
         ssjgui = new SSJGui(this);
 
         ssjmethods = new SSJMethods(this);
-
-        ssjscoreboards = new SSJScoreBoards(this);
 
         ssjtimers = new SSJTimers(this);
 
@@ -145,12 +145,6 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    public SSJScoreBoards getSSJSB(){
-
-        return ssjscoreboards;
-
-    }
-
     public SSJPlayerConfigManager getSSJPCM(){
 
         return ssjplayerconfigmanager;
@@ -160,10 +154,19 @@ public class SSJ extends JavaPlugin {
     public SSJMethodChecks getSSJMethodChecks(){
 
         return ssjmethodchecks;
+
     }
 
     public SSJHologram getSSJHologram(){
 
         return ssjhologram;
+
     }
+
+    public SSJScoreBoards getSSJSB(){
+
+        return ssjscoreboards;
+
+    }
+
 }

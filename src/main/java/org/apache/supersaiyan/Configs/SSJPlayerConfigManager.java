@@ -1,13 +1,13 @@
 package org.apache.supersaiyan.Configs;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
 
 public class SSJPlayerConfigManager {
 
@@ -126,6 +126,12 @@ public class SSJPlayerConfigManager {
 
     }
 
+    public String getName(Player p) {
+
+        return ((String) getPlayerConfigValue(p, "Player_Name"));
+
+    }
+
     public int getLimit(Player p) {
 
         return ((int) getPlayerConfigValue(p, "Base.Power")) * ssj.getSSJConfigs().getCFile().getInt("Limit_Energy_Multiplier");
@@ -207,6 +213,7 @@ public class SSJPlayerConfigManager {
     public String getTransformations(Player p) {
 
         return ((String) getPlayerConfigValue(p,"Transformations_Unlocked"));
+
     }
 
 }

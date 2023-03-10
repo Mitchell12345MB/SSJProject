@@ -11,7 +11,7 @@ public class SSJHologramUpdater extends BukkitRunnable {
 
     private final Player player;
 
-    private SSJ ssj;
+    private final SSJ ssj;
 
     public SSJHologramUpdater(SSJ ssj, ArmorStand armorStand, Player player) {
 

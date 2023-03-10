@@ -16,14 +16,15 @@ import java.util.UUID;
 public class SSJScoreBoards {
 
     private final SSJ ssj;
+    private final HashMap<UUID, SSJScoreBoards> players = new HashMap<>();
+    private Scoreboard scoreboard;
+    private Objective sidebar;
 
     public SSJScoreBoards(SSJ ssj) {
+
         this.ssj = ssj;
+
     }
-
-
-
-    private final HashMap<UUID, SSJScoreBoards> players = new HashMap<>();
 
     public boolean hasScore(Player player) {
 
@@ -33,7 +34,11 @@ public class SSJScoreBoards {
 
     public SSJScoreBoards createScore(Player player) {
 
-        return new SSJScoreBoards(ssj, player);
+        SSJScoreBoards scoreBoard = new SSJScoreBoards(ssj, player);
+
+        players.put(player.getUniqueId(), scoreBoard);
+
+        return scoreBoard;
 
     }
 
@@ -41,11 +46,9 @@ public class SSJScoreBoards {
 
         players.remove(player.getUniqueId());
 
+        player.setScoreboard(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard());
+
     }
-
-    private Scoreboard scoreboard;
-
-    private Objective sidebar;
 
     private SSJScoreBoards(SSJ ssj, Player player) {
 
@@ -56,7 +59,6 @@ public class SSJScoreBoards {
         sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
 
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
-
 
         for (int i = 1; i <= 15; i++) {
 
@@ -99,11 +101,15 @@ public class SSJScoreBoards {
         String suf = getFirstSplit(ChatColor.getLastColors(pre) + getSecondSplit(text));
 
         if (team != null) {
+
             team.setPrefix(pre);
+
         }
 
         if (team != null) {
+
             team.setSuffix(suf);
+
         }
 
     }
