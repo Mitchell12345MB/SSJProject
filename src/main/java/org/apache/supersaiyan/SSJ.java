@@ -78,17 +78,17 @@ public class SSJ extends JavaPlugin {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
 
+            ssjhologram = new SSJHologram(this, player);
+
             ArmorStand armorStand = ssjhologram.getArmorStandPName(player);
 
             Player player1 = ssjhologram.getPlayer(armorStand);
-
-            this.ssjhologram = new SSJHologram(this, player);
 
             int ticks = 20;
 
             ssjhologramupdater = new SSJHologramUpdater(this, armorStand, player1);
 
-            this.getServer().getScheduler().runTaskTimer(this, ssjhologramupdater, 0, ticks);
+            ssjhologramupdater.runTaskTimer(this, 0, ticks);
 
         }
 
