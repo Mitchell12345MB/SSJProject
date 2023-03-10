@@ -225,19 +225,19 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent e) {
 
-        if (!Bukkit.getOnlinePlayers().isEmpty()) {
+        for (Player online : Bukkit.getOnlinePlayers()) {
 
-            for (Player online : Bukkit.getOnlinePlayers()) {
+            ssj.getSSJPCM().createUserCheck(online);
 
-                ssj.getSSJPCM().createUserCheck(online);
+            ssj.getSSJPCM().getPlayerConfig(online);
 
-                ssj.getSSJPCM().getPlayerConfig(online);
+            ssj.getSSJMethodChecks().checkPPCPlayerName(online);
 
-                ssj.getSSJMethodChecks().checkPPCPlayerName(online);
+            ssj.getSSJMethods().callScoreboard(online);
 
-                ssj.getSSJMethods().callScoreboard(online);
+            ssj.getSSJTimers().saveTimer();
 
-                ssj.getSSJTimers().saveTimer();
+            if (ssj.getSSJHologram() != null) {
 
                 ssj.getSSJHologram().createHolosForPlayer(online);
 
@@ -262,7 +262,11 @@ public class SSJListeners implements Listener {
 
                 ssj.getSSJPCM().savePlayerConfig(online, ssj.getSSJPCM().getPlayerConfig(online));
 
-                ssj.getSSJHologram().removeHolosForPlayer(online);
+                if (ssj.getSSJHologram() != null) {
+
+                    ssj.getSSJHologram().removeHolosForPlayer(online);
+
+                }
 
             }
 

@@ -6,6 +6,7 @@ import org.apache.supersaiyan.Listeners.SSJListeners;
 import org.apache.supersaiyan.MethodClasses.*;
 import org.apache.supersaiyan.SSJCommands.SSJCommands;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +29,8 @@ public class SSJ extends JavaPlugin {
     private SSJPlayerConfigManager ssjplayerconfigmanager;
 
     private SSJHologram ssjhologram;
+
+    private SSJHologramUpdater ssjhologramupdater;
 
     @Override
     public void onEnable() {
@@ -59,7 +62,7 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    private void regClass(){
+    private void regClass() {
 
         File playerConfigsFolder = new File(getDataFolder(), "PlayerConfigs");
 
@@ -73,7 +76,17 @@ public class SSJ extends JavaPlugin {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
 
+            ArmorStand armorStand = ssjhologram.getArmorStand(player);
+
+            Player player1 = ssjhologram.getPlayer(armorStand);
+
             this.ssjhologram = new SSJHologram(this, player);
+
+            int ticks = 20;
+
+            ssjhologramupdater = new SSJHologramUpdater(this, armorStand, player1);
+
+            this.getServer().getScheduler().runTaskTimer(this, ssjhologramupdater, 0, ticks);
 
         }
 
@@ -90,7 +103,6 @@ public class SSJ extends JavaPlugin {
         new SSJXPBar(this);
 
         ssjmethodchecks = new SSJMethodChecks(this);
-
     }
 
     private void regCommands(){

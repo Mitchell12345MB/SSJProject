@@ -4,7 +4,7 @@ import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class SSJTimers {
+public class SSJTimers{
 
     private final SSJ ssj;
 
@@ -48,16 +48,6 @@ public class SSJTimers {
         }, 0, 20 * 10);
     }
 
-    public void hologramFollowandUpdate() {
 
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(ssj, () -> {
 
-            if (!Bukkit.getOnlinePlayers().isEmpty()) {
-
-                for (Player p : Bukkit.getOnlinePlayers()) {
-
-                }
-            }
-        }, 0, 20 * 10);
-    }
 }

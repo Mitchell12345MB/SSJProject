@@ -1,7 +1,9 @@
 package org.apache.supersaiyan.MethodClasses;
 
 import org.apache.supersaiyan.SSJ;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -40,6 +42,14 @@ public class SSJHologram {
         if (player == null) {
 
             return;
+
+        }
+
+        ArmorStand armorStand = createPlayerNameHolo(player);
+
+        if (armorStand != null) {
+
+            new SSJHologramUpdater(ssj, armorStand, player).runTaskTimer(ssj, 0L, 1L);
 
         }
 
@@ -88,6 +98,48 @@ public class SSJHologram {
         }
 
         return armorStand;
+
+    }
+
+    public ArmorStand getArmorStand(Player player) {
+
+        for (Entity entity : player.getNearbyEntities(0.1, 0.1, 0.1)) {
+
+            if (entity instanceof ArmorStand) {
+
+                ArmorStand armorStand = (ArmorStand) entity;
+
+                if (armorStand.getCustomName() != null && armorStand.getCustomName().equals(player.getName())) {
+
+                    return armorStand;
+
+                }
+
+            }
+
+        }
+
+        return null;
+
+    }
+
+    public Player getPlayer(ArmorStand armorStand) {
+
+        String playerName = armorStand.getCustomName();
+
+        for (UUID playerId : players.keySet()) {
+
+            Player player = Bukkit.getPlayer(playerId);
+
+            if (player != null && player.getName().equals(playerName)) {
+
+                return player;
+
+            }
+
+        }
+
+        return null;
 
     }
 
