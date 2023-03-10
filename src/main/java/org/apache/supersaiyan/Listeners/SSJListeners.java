@@ -148,6 +148,43 @@ public class SSJListeners implements Listener {
 
     }
 
+    @EventHandler
+    private void onPlayerInteractRemoveSB(PlayerInteractEvent e) {
+
+        Player p = e.getPlayer();
+
+        ItemStack heldItem = p.getInventory().getItemInMainHand();
+
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.TNT) {
+
+            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+
+                if (ssj.getSSJSB().hasScore(p)) {
+
+                    ssj.getSSJSB().removeScore(p);
+
+                    p.sendMessage(ChatColor.RED + "Scoreboard removed.");
+
+                } else if (!ssj.getSSJSB().hasScore(p)){
+
+                    ssj.getSSJMethods().callScoreboard(p);
+
+                    p.sendMessage(ChatColor.RED + "Scoreboard added.");
+
+                }
+
+            } else {
+
+                p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
+
+                p.sendMessage(ChatColor.RED + "So this action won't work!");
+
+            }
+
+        }
+
+    }
+
     //inv management
 
     @EventHandler

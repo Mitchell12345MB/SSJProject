@@ -10,6 +10,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SSJScoreBoards {
@@ -36,9 +37,9 @@ public class SSJScoreBoards {
 
     }
 
-    public SSJScoreBoards removeScore(Player player) {
+    public void removeScore(Player player) {
 
-        return players.remove(player.getUniqueId());
+        players.remove(player.getUniqueId());
 
     }
 
@@ -50,7 +51,7 @@ public class SSJScoreBoards {
 
         this.ssj = ssj;
 
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
 
         sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
 
@@ -97,9 +98,13 @@ public class SSJScoreBoards {
 
         String suf = getFirstSplit(ChatColor.getLastColors(pre) + getSecondSplit(text));
 
-        team.setPrefix(pre);
+        if (team != null) {
+            team.setPrefix(pre);
+        }
 
-        team.setSuffix(suf);
+        if (team != null) {
+            team.setSuffix(suf);
+        }
 
     }
 

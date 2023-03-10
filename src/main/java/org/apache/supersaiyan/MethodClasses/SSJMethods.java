@@ -74,8 +74,6 @@ public class SSJMethods {
 
             ssj.getSSJMethodChecks().scoreBoardCheck();
 
-            ssj.getSSJMethodChecks().scoreBoardCheck();
-
             callScoreboard(online);
 
         }
