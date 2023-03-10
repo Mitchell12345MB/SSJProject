@@ -20,6 +20,9 @@ public class SSJListeners implements Listener {
     private final SSJ ssj;
 
     public SSJListeners(SSJ ssj) {
+        if (ssj == null) {
+            throw new IllegalArgumentException("ssj cannot be null");
+        }
         this.ssj = ssj;
     }
 
@@ -236,6 +239,8 @@ public class SSJListeners implements Listener {
 
                 ssj.getSSJTimers().saveTimer();
 
+                ssj.getSSJHologram().createHolosForPlayer(online);
+
             }
 
         }
@@ -257,9 +262,12 @@ public class SSJListeners implements Listener {
 
                 ssj.getSSJPCM().savePlayerConfig(online, ssj.getSSJPCM().getPlayerConfig(online));
 
+                ssj.getSSJHologram().removeHolosForPlayer(online);
+
             }
 
         }
 
     }
+
 }

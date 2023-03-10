@@ -34,7 +34,7 @@
                         <configuration>
                             <srgIn>org.spigotmc:minecraft-server:1.19.2-R0.1-SNAPSHOT:txt:maps-mojang</srgIn>
                             <reverse>true</reverse>
-                            <remappedDependencies>org.spigotmc:spigot:1.19.3-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
+                            <remappedDependencies>org.spigotmc:spigot:1.19.2-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
                             <remappedArtifactAttached>true</remappedArtifactAttached>
                             <remappedClassifierName>remapped-obf</remappedClassifierName>
                         </configuration>
@@ -76,12 +76,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -91,11 +85,21 @@
             <classifier>remapped-mojang</classifier>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.8.0</version>
+            <version>4.7.0</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 </project>

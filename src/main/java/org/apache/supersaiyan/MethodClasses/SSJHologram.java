@@ -1,75 +1,93 @@
 package org.apache.supersaiyan.MethodClasses;
 
-
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class SSJHologram {
 
     private final SSJ ssj;
 
-    private final HashMap<UUID, SSJHologram> players = new HashMap<UUID, SSJHologram>();
-
-    public SSJHologram(SSJ ssj) {
-
-        this.ssj = ssj;
-
-    }
+    private final Map<UUID, SSJHologram> players = new HashMap<>();
 
     public SSJHologram(SSJ ssj, Player player) {
 
         this.ssj = ssj;
 
-        playerNameHolo(player);
+        createHolosForPlayer(player);
 
         players.put(player.getUniqueId(), this);
 
     }
 
-    private ArmorStand as;
+    public void removeHolosForPlayer(Player player) {
 
-    public ArmorStand playerNameHolo(Player player) {
+        ArmorStand armorStand = createPlayerNameHolo(player);
 
-        as = (ArmorStand) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
-
-        as.setCustomName(player.getName());
-
-        as.setMarker(true);
-
-        as.setInvulnerable(true);
-
-        as.setSmall(true);
-
-        as.setVisible(false);
-
-        as.setCustomNameVisible(true);
-
-        as.setBasePlate(false);
-
-        as.setArms(false);
-
-        as.setGravity(false);
-
-        return as;
-
-    }
-
-    public void removeHolos(Player player) {
-
-        playerNameHolo(player).remove();
+        armorStand.remove();
 
         players.remove(player.getUniqueId());
 
     }
 
-    public SSJHologram creatHolos(Player player) {
+    public void createHolosForPlayer(Player player) {
 
-        return new SSJHologram(ssj, player);
+        if (player == null) {
+
+            return;
+
+        }
+
+        this.createPlayerNameHolo(player);
+
+        this.players.put(player.getUniqueId(), this);
+
+    }
+
+    private ArmorStand createPlayerNameHolo(Player player) {
+
+        if (player == null) {
+
+            return null;
+
+        }
+
+        ArmorStand armorStand = null;
+
+        try {
+
+            armorStand = (ArmorStand) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+
+            armorStand.setCustomName(player.getName());
+
+            armorStand.setMarker(true);
+
+            armorStand.setInvulnerable(true);
+
+            armorStand.setSmall(true);
+
+            armorStand.setVisible(false);
+
+            armorStand.setCustomNameVisible(true);
+
+            armorStand.setBasePlate(false);
+
+            armorStand.setArms(false);
+
+            armorStand.setGravity(false);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return armorStand;
 
     }
 

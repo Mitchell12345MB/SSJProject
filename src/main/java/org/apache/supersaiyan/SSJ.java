@@ -5,6 +5,8 @@ import org.apache.supersaiyan.Configs.SSJPlayerConfigManager;
 import org.apache.supersaiyan.Listeners.SSJListeners;
 import org.apache.supersaiyan.MethodClasses.*;
 import org.apache.supersaiyan.SSJCommands.SSJCommands;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -23,7 +25,9 @@ public class SSJ extends JavaPlugin {
 
     private SSJMethodChecks ssjmethodchecks;
 
-    private SSJPlayerConfigManager ssjplayerConfigManager;
+    private SSJPlayerConfigManager ssjplayerconfigmanager;
+
+    private SSJHologram ssjhologram;
 
     @Override
     public void onEnable() {
@@ -65,7 +69,13 @@ public class SSJ extends JavaPlugin {
 
         }
 
-        ssjplayerConfigManager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
+        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+
+            this.ssjhologram = new SSJHologram(this, player);
+
+        }
 
         ssjconfigs = new SSJConfigs(this);
 
@@ -78,8 +88,6 @@ public class SSJ extends JavaPlugin {
         ssjtimers = new SSJTimers(this);
 
         new SSJXPBar(this);
-
-        new SSJHologram(this);
 
         ssjmethodchecks = new SSJMethodChecks(this);
 
@@ -133,12 +141,17 @@ public class SSJ extends JavaPlugin {
 
     public SSJPlayerConfigManager getSSJPCM(){
 
-        return ssjplayerConfigManager;
+        return ssjplayerconfigmanager;
 
     }
 
     public SSJMethodChecks getSSJMethodChecks(){
 
         return ssjmethodchecks;
+    }
+
+    public SSJHologram getSSJHologram(){
+
+        return ssjhologram;
     }
 }
