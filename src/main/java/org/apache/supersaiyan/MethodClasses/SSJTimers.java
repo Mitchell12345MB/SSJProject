@@ -27,8 +27,11 @@ public class SSJTimers{
                     ssj.getSSJConfigs().saveConfigs();
 
                 }
+
             }
+
         }, 0, 20 * 10);
+
     }
 
     public void bpandEnergyMultiplier() {
@@ -44,10 +47,11 @@ public class SSJTimers{
                     ssj.getSSJMethods().multBP(p);
 
                 }
+
             }
+
         }, 0, 20 * 10);
+
     }
-
-
 
 }

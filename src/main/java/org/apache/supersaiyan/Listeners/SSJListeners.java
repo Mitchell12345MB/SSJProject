@@ -237,6 +237,8 @@ public class SSJListeners implements Listener {
 
             ssj.getSSJTimers().saveTimer();
 
+            ssj.getSSJTimers().bpandEnergyMultiplier();
+
             if (ssj.getSSJHologram() != null) {
 
                 ssj.getSSJHologram().createHolosForPlayer(online);

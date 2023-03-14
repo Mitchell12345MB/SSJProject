@@ -232,6 +232,8 @@ public class SSJMethodChecks {
 
                 ssj.getSSJTimers().saveTimer();
 
+                ssj.getSSJTimers().bpandEnergyMultiplier();
+
                 ssj.getSSJConfigs().updateConfig();
 
                 ssj.getSSJConfigs().loadConfigs();

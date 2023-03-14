@@ -1,7 +1,6 @@
 package org.apache.supersaiyan.MethodClasses;
 
 import org.apache.supersaiyan.SSJ;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -17,172 +16,96 @@ public class SSJHologram {
 
     private final Map<UUID, SSJHologram> players = new HashMap<>();
 
-    public SSJHologram(SSJ ssj, Player player) {
-
+    public SSJHologram(SSJ ssj) {
         this.ssj = ssj;
-
-        createHolosForPlayer(player);
-
-        players.put(player.getUniqueId(), this);
-
     }
 
     public void removeHolosForPlayer(Player player) {
+        if (players.containsKey(player.getUniqueId())) {
 
-        ArmorStand armorNameStand = createPlayerNameHolo(player);
+            ArmorStand armorNameStand = getArmorStandPName(player);
+            ArmorStand armorPowerStand = getArmorStandPPower(player);
+            ArmorStand armorFormStand = getArmorStandPForm(player);
 
-        armorNameStand.remove();
+            armorNameStand.remove();
+            armorPowerStand.remove();
+            armorFormStand.remove();
 
-        players.remove(player.getUniqueId());
-
+            players.remove(player.getUniqueId());
+        }
     }
 
     public void createHolosForPlayer(Player player) {
-
         if (player == null) {
-
             return;
-
         }
 
-        ArmorStand armorNameStand = createPlayerNameHolo(player);
+        removeHolosForPlayer(player);
 
-        if (armorNameStand != null) {
 
-            new SSJHologramUpdater(ssj, armorNameStand, player).runTaskTimer(ssj, 0L, 1L);
+        ArmorStand armorNameStand = createArmorStand(player, EntityType.ARMOR_STAND, player.getLocation().subtract(0, 2, 0));
+        ArmorStand armorPowerStand = createArmorStand(player, EntityType.ARMOR_STAND, player.getLocation().subtract(0, 3, 0));
+        ArmorStand armorFormStand = createArmorStand(player, EntityType.ARMOR_STAND, player.getLocation().subtract(0, 4, 0));
 
-        }
+        armorNameStand.setCustomName(player.getName());
+        armorPowerStand.setCustomName(String.valueOf(ssj.getSSJPCM().getBP(player)));
+        armorFormStand.setCustomName(ssj.getSSJPCM().getForm(player));
 
-        this.createPlayerNameHolo(player);
+        armorNameStand.setCustomNameVisible(true);
+        armorPowerStand.setCustomNameVisible(true);
+        armorFormStand.setCustomNameVisible(true);
 
-        this.players.put(player.getUniqueId(), this);
-
+        players.put(player.getUniqueId(), this);
     }
 
-    private ArmorStand createPlayerNameHolo(Player player) {
-
-        if (player == null) {
-
-            return null;
-
-        }
-
-        ArmorStand armorStand = null;
-
-        try {
-
-            armorStand = (ArmorStand) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
-
-            armorStand.setCustomName(player.getName());
-
-            armorStand.setMarker(true);
-
-            armorStand.setInvulnerable(true);
-
-            armorStand.setSmall(true);
-
-            armorStand.setVisible(false);
-
-            armorStand.setCustomNameVisible(true);
-
-            armorStand.setBasePlate(false);
-
-            armorStand.setArms(false);
-
-            armorStand.setGravity(false);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
+    private ArmorStand createArmorStand(Player player, EntityType entityType, org.bukkit.Location location) {
+        ArmorStand armorStand = (ArmorStand) player.getWorld().spawnEntity(location, entityType);
+        armorStand.setGravity(false);
+        armorStand.setVisible(false);
+        armorStand.setCanPickupItems(false);
+        armorStand.setCustomNameVisible(false);
+        armorStand.setRemoveWhenFarAway(false);
+        armorStand.setSmall(true);
+        armorStand.setMarker(true);
         return armorStand;
-
     }
 
-    private ArmorStand createPlayerBPHolo(Player player) {
-
-        if (player == null) {
-
-            return null;
-
-        }
-
-        ArmorStand armorStand = null;
-
-        try {
-
-            armorStand = (ArmorStand) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
-
-            armorStand.setCustomName(String.valueOf(ssj.getSSJPCM().getBP(player)));
-
-            armorStand.setMarker(true);
-
-            armorStand.setInvulnerable(true);
-
-            armorStand.setSmall(true);
-
-            armorStand.setVisible(false);
-
-            armorStand.setCustomNameVisible(true);
-
-            armorStand.setBasePlate(false);
-
-            armorStand.setArms(false);
-
-            armorStand.setGravity(false);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        return armorStand;
-
+    private ArmorStand getArmorStandPName(Player player) {
+        return (ArmorStand) getNearbyEntity(player, EntityType.ARMOR_STAND, 2, 2, 2, true);
     }
 
-    public ArmorStand getArmorStandPName(Player player) {
+    private ArmorStand getArmorStandPPower(Player player) {
+        return (ArmorStand) getNearbyEntity(player, EntityType.ARMOR_STAND, 2, 3, 2, true);
+    }
 
-        for (Entity entity : player.getNearbyEntities(0.1, 0.1, 0.1)) {
+    private ArmorStand getArmorStandPForm(Player player) {
+        return (ArmorStand) getNearbyEntity(player, EntityType.ARMOR_STAND, 2, 4, 2, true);
+    }
 
-            if (entity instanceof ArmorStand) {
+    private Entity getNearbyEntity(Player player, EntityType entityType, int rangeXZ, int rangeY, int rangeXZBuff, boolean playerOnly) {
+        Entity nearbyEntity = null;
+        for (Entity entity : player.getNearbyEntities(rangeXZ, rangeY, rangeXZ)) {
+            if (entity.getType() == entityType && (playerOnly ? entity instanceof Player : true)) {
+                if (rangeXZBuff > 0 || rangeY > 0) {
+                    if (entity.getLocation().getBlockY() >= player.getLocation().getBlockY() - rangeY
+                            && entity.getLocation().getBlockY() <= player.getLocation().getBlockY() + rangeY) {
+                        double xDiff = Math.abs(entity.getLocation().getX() - player.getLocation().getX());
+                        double zDiff = Math.abs(entity.getLocation().getZ() - player.getLocation().getZ());
 
-                ArmorStand armorStand = (ArmorStand) entity;
+                        double xzDistance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(zDiff, 2));
 
-                if (armorStand.getCustomName() != null && armorStand.getCustomName().equals(player.getName())) {
-
-                    return armorStand;
-
+                        if (xzDistance <= rangeXZ + rangeXZBuff) {
+                            nearbyEntity = entity;
+                            rangeXZBuff = (int) xzDistance;
+                        }
+                    }
+                } else {
+                    nearbyEntity = entity;
                 }
-
             }
-
         }
 
-        return null;
-
-    }
-
-    public Player getPlayer(ArmorStand armorStand) {
-
-        String playerName = armorStand.getCustomName();
-
-        for (UUID playerId : players.keySet()) {
-
-            Player player = Bukkit.getPlayer(playerId);
-
-            if (player != null && player.getName().equals(playerName)) {
-
-                return player;
-
-            }
-
-        }
-
-        return null;
-
+        return nearbyEntity;
     }
 
 }

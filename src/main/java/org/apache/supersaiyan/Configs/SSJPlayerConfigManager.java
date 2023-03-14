@@ -30,7 +30,7 @@ public class SSJPlayerConfigManager {
 
     public File getFile(Player player) {
 
-        return new File(folder, player.getUniqueId().toString() + ".yml");
+        return new File(folder, player.getUniqueId() + ".yml");
 
     }
 
