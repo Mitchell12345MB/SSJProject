@@ -1,15 +1,15 @@
 package org.apache.supersaiyan.MethodClasses;
 
+import org.apache.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class SSJXPBar{
 
-    private final JavaPlugin plugin;
+    private final SSJ ssj;
 
-    public SSJXPBar(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public SSJXPBar(SSJ ssj) {
+        this.ssj = ssj;
     }
 /**
     @EventHandler
@@ -28,13 +28,13 @@ public class SSJXPBar{
         }
     }
 **/
-    private int calculateEnergyLevel(Player player) {
+    public int calculateEnergyLevel(Player player) {
         // Replace this with your own implementation for calculating energy level based on player stats
         // This is just a placeholder example
         return player.getFoodLevel() + player.getLevel();
     }
 
-    private void updateXPBar(Player player, int energyLevel) {
+    public void updateXPBar(Player player, int energyLevel) {
         // Calculate XP percentage based on energy level (from 0 to 100)
         int xpPercentage = Math.min(100, energyLevel * 10);
 

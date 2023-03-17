@@ -34,16 +34,14 @@ public class SSJ extends JavaPlugin {
 
     private SSJPlayerConfigManager ssjplayerconfigmanager;
 
-   // private SSJHologram ssjhologram;
-
     private SSJScoreBoards ssjscoreboards;
 
     private SSJParticles ssjparticles;
 
+    private SSJXPBar ssjxpbar;
+
     @Override
     public void onEnable() {
-
-        //ssjhologram = new SSJHologram(this);
 
         regClass();
 
@@ -92,7 +90,7 @@ public class SSJ extends JavaPlugin {
 
         ssjtimers = new SSJTimers(this);
 
-        new SSJXPBar(this);
+        ssjxpbar = new SSJXPBar(this);
 
         ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
 
@@ -154,15 +152,15 @@ public class SSJ extends JavaPlugin {
 
     }
 
-   //public SSJHologram getSSJHologram(){
-
-     //   return ssjhologram;
-
-    //}
-
     public SSJScoreBoards getSSJSB(){
 
         return ssjscoreboards;
+
+    }
+
+    public SSJXPBar getSSJXPB(){
+
+        return ssjxpbar;
 
     }
 }

@@ -95,6 +95,11 @@ public class SSJListeners implements Listener {
 
                 p.sendMessage("Charging");
 
+                int energyLevel = ssj.getSSJXPB().calculateEnergyLevel(p);
+
+                // Update XP bar
+                ssj.getSSJXPB().updateXPBar(p, energyLevel);
+
             } else {
 
                 p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
