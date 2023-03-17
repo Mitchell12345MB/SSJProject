@@ -4,7 +4,6 @@ import org.apache.supersaiyan.SSJ;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class SSJParticles {
@@ -16,7 +15,7 @@ public class SSJParticles {
 
     private final SSJ ssj;
 
-    public SSJParticles(SSJ ssj,Player player, Particle particleType, int particleCount, double particleRange) {
+    public SSJParticles(SSJ ssj, Player player, Particle particleType, int particleCount, double particleRange) {
         this.ssj = ssj;
         this.player = player;
         this.particleType = particleType;
@@ -42,6 +41,6 @@ public class SSJParticles {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(JavaPlugin.getPlugin(SSJ.class), 0L, 1L);
+        }.runTaskTimer(ssj, 0L, 1L);
     }
 }
