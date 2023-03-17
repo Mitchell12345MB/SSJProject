@@ -1,9 +1,11 @@
 package org.apache.supersaiyan.Listeners;
 
+import org.apache.supersaiyan.MethodClasses.SSJParticles;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,9 +22,13 @@ public class SSJListeners implements Listener {
     private final SSJ ssj;
 
     public SSJListeners(SSJ ssj) {
+
         if (ssj == null) {
+
             throw new IllegalArgumentException("ssj cannot be null");
+
         }
+
         this.ssj = ssj;
     }
 
@@ -139,6 +145,9 @@ public class SSJListeners implements Listener {
 
                 p.sendMessage("woosh woosh woosh");
 
+                SSJParticles ssjparticles = new SSJParticles(ssj, p, Particle.FLAME, 50, 3);
+                ssjparticles.createParticles();
+
             } else {
 
                 p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
@@ -188,8 +197,6 @@ public class SSJListeners implements Listener {
 
     }
 
-    //inv management
-
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
 
@@ -223,7 +230,7 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent e) {
+    private void onPlayerJoin(PlayerJoinEvent e){
 
         for (Player online : Bukkit.getOnlinePlayers()) {
 
@@ -239,11 +246,7 @@ public class SSJListeners implements Listener {
 
             ssj.getSSJTimers().bpandEnergyMultiplier();
 
-            if (ssj.getSSJHologram() != null) {
-
-                ssj.getSSJHologram().createHolosForPlayer(online);
-
-            }
+            //ssj.getSSJHologram().setScoreboard(online, ssj.getSSJPCM().getBP(online));
 
         }
 
@@ -264,16 +267,8 @@ public class SSJListeners implements Listener {
 
                 ssj.getSSJPCM().savePlayerConfig(online, ssj.getSSJPCM().getPlayerConfig(online));
 
-                if (ssj.getSSJHologram() != null) {
-
-                    ssj.getSSJHologram().removeHolosForPlayer(online);
-
-                }
-
+                //ssj.getSSJHologram().removeScoreboard(online);
             }
-
         }
-
     }
-
 }

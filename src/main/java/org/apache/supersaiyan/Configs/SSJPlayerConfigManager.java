@@ -12,11 +12,10 @@ import java.io.IOException;
 public class SSJPlayerConfigManager {
 
     private final JavaPlugin plugin;
+
     private final File folder;
 
     private final SSJ ssj;
-
-
 
     public SSJPlayerConfigManager(JavaPlugin plugin, File folder, SSJ ssj) {
 
@@ -215,5 +214,4 @@ public class SSJPlayerConfigManager {
         return ((String) getPlayerConfigValue(p,"Transformations_Unlocked"));
 
     }
-
 }

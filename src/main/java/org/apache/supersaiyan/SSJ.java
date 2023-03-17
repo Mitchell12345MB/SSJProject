@@ -3,9 +3,10 @@ package org.apache.supersaiyan;
 import org.apache.supersaiyan.Configs.SSJConfigs;
 import org.apache.supersaiyan.Configs.SSJPlayerConfigManager;
 import org.apache.supersaiyan.Listeners.SSJListeners;
+import org.apache.supersaiyan.MethodClasses.SSJParticles;
 import org.apache.supersaiyan.MethodClasses.*;
 import org.apache.supersaiyan.SSJCommands.SSJCommands;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,9 +14,13 @@ import java.io.File;
 
 public class SSJ extends JavaPlugin {
 
-    private ArmorStand armorStand;
-
     private Player player;
+
+    private Particle particleType;
+
+    private int particleCount;
+
+    private Double particleRange;
 
     private SSJConfigs ssjconfigs;
 
@@ -29,14 +34,16 @@ public class SSJ extends JavaPlugin {
 
     private SSJPlayerConfigManager ssjplayerconfigmanager;
 
-    private SSJHologram ssjhologram;
-
-    private SSJHologramUpdater ssjhologramupdater;
+   // private SSJHologram ssjhologram;
 
     private SSJScoreBoards ssjscoreboards;
 
+    private SSJParticles ssjparticles;
+
     @Override
     public void onEnable() {
+
+        //ssjhologram = new SSJHologram(this);
 
         regClass();
 
@@ -67,10 +74,6 @@ public class SSJ extends JavaPlugin {
 
     private void regClass() {
 
-        ssjhologram = new SSJHologram(this);
-
-        ssjscoreboards = new SSJScoreBoards(this);
-
         File playerConfigsFolder = new File(getDataFolder(), "PlayerConfigs");
 
         if (!playerConfigsFolder.exists()) {
@@ -79,9 +82,7 @@ public class SSJ extends JavaPlugin {
 
         }
 
-        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
-
-        ssjhologramupdater = new SSJHologramUpdater(this, armorStand, player);
+        ssjscoreboards = new SSJScoreBoards(this);
 
         ssjconfigs = new SSJConfigs(this);
 
@@ -93,7 +94,12 @@ public class SSJ extends JavaPlugin {
 
         new SSJXPBar(this);
 
+        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
+
         ssjmethodchecks = new SSJMethodChecks(this);
+
+        ssjparticles = new SSJParticles(this, player, particleType, particleCount, particleRange);
+
     }
 
     private void regCommands(){
@@ -148,16 +154,15 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    public SSJHologram getSSJHologram(){
+   //public SSJHologram getSSJHologram(){
 
-        return ssjhologram;
+     //   return ssjhologram;
 
-    }
+    //}
 
     public SSJScoreBoards getSSJSB(){
 
         return ssjscoreboards;
 
     }
-
 }
