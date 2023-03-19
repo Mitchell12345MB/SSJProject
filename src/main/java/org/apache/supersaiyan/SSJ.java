@@ -3,7 +3,6 @@ package org.apache.supersaiyan;
 import org.apache.supersaiyan.Configs.SSJConfigs;
 import org.apache.supersaiyan.Configs.SSJPlayerConfigManager;
 import org.apache.supersaiyan.Listeners.SSJListeners;
-import org.apache.supersaiyan.MethodClasses.SSJParticles;
 import org.apache.supersaiyan.MethodClasses.*;
 import org.apache.supersaiyan.SSJCommands.SSJCommands;
 import org.bukkit.Particle;
@@ -18,9 +17,7 @@ public class SSJ extends JavaPlugin {
 
     private Particle particleType;
 
-    private int particleCount;
-
-    private Double particleRange;
+    private int integer;
 
     private SSJConfigs ssjconfigs;
 
@@ -80,6 +77,8 @@ public class SSJ extends JavaPlugin {
 
         }
 
+        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
+
         ssjscoreboards = new SSJScoreBoards(this);
 
         ssjconfigs = new SSJConfigs(this);
@@ -90,13 +89,11 @@ public class SSJ extends JavaPlugin {
 
         ssjtimers = new SSJTimers(this);
 
-        ssjxpbar = new SSJXPBar(this);
-
-        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
+        ssjxpbar = new SSJXPBar(this, player, integer);
 
         ssjmethodchecks = new SSJMethodChecks(this);
 
-        ssjparticles = new SSJParticles(this, player, particleType, particleCount, particleRange);
+        ssjparticles = new SSJParticles(this, player, particleType, integer, 0);
 
     }
 
@@ -155,12 +152,6 @@ public class SSJ extends JavaPlugin {
     public SSJScoreBoards getSSJSB(){
 
         return ssjscoreboards;
-
-    }
-
-    public SSJXPBar getSSJXPB(){
-
-        return ssjxpbar;
 
     }
 }

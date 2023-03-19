@@ -256,8 +256,6 @@ public class SSJMethodChecks {
 
                 ssj.getSSJConfigs().saveConfigs();
 
-                //ssj.getSSJHologram().removeScoreboard(online);
-
             }
 
         }

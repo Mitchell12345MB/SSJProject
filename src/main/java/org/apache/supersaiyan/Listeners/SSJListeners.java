@@ -1,6 +1,7 @@
 package org.apache.supersaiyan.Listeners;
 
 import org.apache.supersaiyan.MethodClasses.SSJParticles;
+import org.apache.supersaiyan.MethodClasses.SSJXPBar;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +19,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class SSJListeners implements Listener {
+
+    private final int MAX_ENERGY = 100;
 
     private final SSJ ssj;
 
@@ -44,6 +47,12 @@ public class SSJListeners implements Listener {
             if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
                 p.sendMessage("WOOSH");
+
+                SSJXPBar xpBar = new SSJXPBar(ssj, p, MAX_ENERGY);
+
+                xpBar.start();
+
+                xpBar.removeXP(5);
 
             } else {
 
@@ -85,6 +94,8 @@ public class SSJListeners implements Listener {
     @EventHandler
     private void onPlayerInteractCharge(PlayerInteractEvent e) {
 
+
+
         Player p = e.getPlayer();
 
         ItemStack heldItem = p.getInventory().getItemInMainHand();
@@ -95,10 +106,11 @@ public class SSJListeners implements Listener {
 
                 p.sendMessage("Charging");
 
-                int energyLevel = ssj.getSSJXPB().calculateEnergyLevel(p);
+                SSJXPBar xpBar = new SSJXPBar(ssj, p, MAX_ENERGY);
 
-                // Update XP bar
-                ssj.getSSJXPB().updateXPBar(p, energyLevel);
+                xpBar.start();
+
+                xpBar.addXP(5);
 
             } else {
 
@@ -148,10 +160,16 @@ public class SSJListeners implements Listener {
 
             if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
+                SSJXPBar xpBar = new SSJXPBar(ssj, p, MAX_ENERGY);
+
                 p.sendMessage("woosh woosh woosh");
 
                 SSJParticles ssjparticles = new SSJParticles(ssj, p, Particle.FLAME, 50, 3);
                 ssjparticles.createParticles();
+
+                xpBar.start();
+
+                xpBar.removeXP(5);
 
             } else {
 
@@ -251,8 +269,6 @@ public class SSJListeners implements Listener {
 
             ssj.getSSJTimers().bpandEnergyMultiplier();
 
-            //ssj.getSSJHologram().setScoreboard(online, ssj.getSSJPCM().getBP(online));
-
         }
 
     }
@@ -271,8 +287,6 @@ public class SSJListeners implements Listener {
                 ssj.getSSJPCM().getPlayerConfig(online);
 
                 ssj.getSSJPCM().savePlayerConfig(online, ssj.getSSJPCM().getPlayerConfig(online));
-
-                //ssj.getSSJHologram().removeScoreboard(online);
             }
         }
     }

@@ -3,50 +3,61 @@ package org.apache.supersaiyan.MethodClasses;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class SSJXPBar{
+public class SSJXPBar {
 
     private final SSJ ssj;
+    private final Player player;
+    private final int maxXP;
+    private int currentXP;
 
-    public SSJXPBar(SSJ ssj) {
+    private BukkitRunnable xpBarTask;
+
+    public SSJXPBar(SSJ ssj, Player player, int maxXP) {
         this.ssj = ssj;
+        this.player = player;
+        this.maxXP = maxXP;
+        this.currentXP = 0;
     }
-/**
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        if (event.getItem() != null && event.getItem().getType() == Material.SOMETHING) {
-            // Replace SOMETHING with the type of item that should trigger the XP bar
-            // Right-click to activate
-            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                // Calculate energy level
-                int energyLevel = calculateEnergyLevel(player);
 
-                // Update XP bar
-                updateXPBar(player, energyLevel);
+    public void start() {
+        xpBarTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                float xpPercent = (float) currentXP / (float) maxXP;
+                player.setExp(xpPercent);
+                player.setLevel(currentXP);
+
+                if (currentXP >= maxXP) {
+                    player.sendMessage(ChatColor.GREEN + "You have filled up the XP bar!");
+                    stop();
+                }
             }
+        };
+
+        xpBarTask.runTaskTimer(ssj, 0L, 1L);
+
+    }
+
+    public void stop() {
+        if (xpBarTask != null) {
+            xpBarTask.cancel();
+            xpBarTask = null;
+            player.setExp(0);
+            player.setLevel(0);
         }
     }
-**/
-    public int calculateEnergyLevel(Player player) {
-        // Replace this with your own implementation for calculating energy level based on player stats
-        // This is just a placeholder example
-        return player.getFoodLevel() + player.getLevel();
+
+    public void setXP(int xp) {
+        this.currentXP = Math.max(0, Math.min(xp, maxXP));
     }
 
-    public void updateXPBar(Player player, int energyLevel) {
-        // Calculate XP percentage based on energy level (from 0 to 100)
-        int xpPercentage = Math.min(100, energyLevel * 10);
+    public void addXP(int amount) {
+        setXP(currentXP + amount);
+    }
 
-        // Set player's XP to the percentage
-        player.setLevel(xpPercentage);
-
-        // Set player's XP bar to show the percentage
-        player.setExp(0);
-        player.setTotalExperience(0);
-        player.giveExp(xpPercentage);
-
-        // Send player a message showing their energy level and XP percentage
-        player.sendMessage(ChatColor.YELLOW + "Energy level: " + energyLevel + ", XP: " + xpPercentage + "%");
+    public void removeXP(int amount) {
+        setXP(currentXP - amount);
     }
 }
