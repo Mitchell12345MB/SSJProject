@@ -1,5 +1,6 @@
 package org.apache.supersaiyan.Listeners;
 
+import org.apache.supersaiyan.MethodClasses.SSJBossBar;
 import org.apache.supersaiyan.MethodClasses.SSJParticles;
 import org.apache.supersaiyan.MethodClasses.SSJXPBar;
 import org.apache.supersaiyan.SSJ;
@@ -18,11 +19,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class SSJListeners implements Listener {
 
     private final int MAX_ENERGY = 100;
 
     private final SSJ ssj;
+
+    private final Map<UUID, SSJBossBar> bossBars;
 
     public SSJListeners(SSJ ssj) {
 
@@ -33,6 +40,8 @@ public class SSJListeners implements Listener {
         }
 
         this.ssj = ssj;
+
+        this.bossBars = new HashMap<>();
     }
 
     @EventHandler
@@ -54,6 +63,10 @@ public class SSJListeners implements Listener {
 
                 xpBar.removeXP(5);
 
+                SSJBossBar bossBar = bossBars.computeIfAbsent(p.getUniqueId(), uuid ->
+                        new SSJBossBar(ssj, "Diamond Boss Bar", new HashMap<>()));
+                bossBar.show(p);
+                bossBar.addProgress(p, 10);
             } else {
 
                 p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
@@ -61,9 +74,11 @@ public class SSJListeners implements Listener {
                 p.sendMessage(ChatColor.RED + "So this action won't work!");
 
             }
-
+        } else if (bossBars.containsKey(p.getUniqueId())) {
+            SSJBossBar bossBar = bossBars.get(p.getUniqueId());
+            bossBar.hide(p);
+            bossBars.remove(p.getUniqueId());
         }
-
     }
 
     @EventHandler
@@ -78,6 +93,11 @@ public class SSJListeners implements Listener {
             if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
                 p.sendMessage("deWOOSH");
+
+                if (bossBars.containsKey(p.getUniqueId())) {
+                    SSJBossBar bossBar = bossBars.get(p.getUniqueId());
+                    bossBar.removeProgress(p, 10);
+                }
 
             } else {
 

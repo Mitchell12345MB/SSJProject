@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Map;
+import java.util.UUID;
 
 public class SSJ extends JavaPlugin {
 
@@ -17,7 +19,11 @@ public class SSJ extends JavaPlugin {
 
     private Particle particleType;
 
+    private String string;
+
     private int integer;
+
+    private Map<UUID, Integer> mapui;
 
     private SSJConfigs ssjconfigs;
 
@@ -36,6 +42,8 @@ public class SSJ extends JavaPlugin {
     private SSJParticles ssjparticles;
 
     private SSJXPBar ssjxpbar;
+
+    private SSJBossBar ssjbossbar;
 
     @Override
     public void onEnable() {
@@ -95,6 +103,8 @@ public class SSJ extends JavaPlugin {
 
         ssjparticles = new SSJParticles(this, player, particleType, integer, 0);
 
+        ssjbossbar = new SSJBossBar(this, string, mapui);
+
     }
 
     private void regCommands(){
@@ -152,6 +162,18 @@ public class SSJ extends JavaPlugin {
     public SSJScoreBoards getSSJSB(){
 
         return ssjscoreboards;
+
+    }
+
+    public SSJXPBar getSSJXPB(){
+
+        return ssjxpbar;
+
+    }
+
+    public SSJBossBar getSSJBB(){
+
+        return ssjbossbar;
 
     }
 }
