@@ -33,15 +33,10 @@ public class SSJListeners implements Listener {
 
     public SSJListeners(SSJ ssj) {
 
-        if (ssj == null) {
-
-            throw new IllegalArgumentException("ssj cannot be null");
-
-        }
-
         this.ssj = ssj;
 
         this.bossBars = new HashMap<>();
+
     }
 
     @EventHandler
@@ -64,9 +59,13 @@ public class SSJListeners implements Listener {
                 xpBar.removeXP(5);
 
                 SSJBossBar bossBar = bossBars.computeIfAbsent(p.getUniqueId(), uuid ->
+
                         new SSJBossBar(ssj, "Diamond Boss Bar", new HashMap<>()));
+
                 bossBar.show(p);
+
                 bossBar.addProgress(p, 10);
+
             } else {
 
                 p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
@@ -74,11 +73,17 @@ public class SSJListeners implements Listener {
                 p.sendMessage(ChatColor.RED + "So this action won't work!");
 
             }
+
         } else if (bossBars.containsKey(p.getUniqueId())) {
+
             SSJBossBar bossBar = bossBars.get(p.getUniqueId());
+
             bossBar.hide(p);
+
             bossBars.remove(p.getUniqueId());
+
         }
+
     }
 
     @EventHandler
@@ -95,8 +100,11 @@ public class SSJListeners implements Listener {
                 p.sendMessage("deWOOSH");
 
                 if (bossBars.containsKey(p.getUniqueId())) {
+
                     SSJBossBar bossBar = bossBars.get(p.getUniqueId());
+
                     bossBar.removeProgress(p, 10);
+
                 }
 
             } else {
@@ -113,8 +121,6 @@ public class SSJListeners implements Listener {
 
     @EventHandler
     private void onPlayerInteractCharge(PlayerInteractEvent e) {
-
-
 
         Player p = e.getPlayer();
 

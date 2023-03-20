@@ -171,7 +171,5 @@ public class SSJMethods {
     public int addLevel(Player p) {
 
         return ssj.getSSJPCM().getBaseBP(p) / 150;
-
     }
-
 }

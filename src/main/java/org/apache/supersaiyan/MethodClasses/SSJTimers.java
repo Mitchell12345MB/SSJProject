@@ -9,7 +9,9 @@ public class SSJTimers{
     private final SSJ ssj;
 
     public SSJTimers(SSJ ssj) {
+
         this.ssj = ssj;
+
     }
 
     public void saveTimer() {
@@ -45,13 +47,8 @@ public class SSJTimers{
                     ssj.getSSJMethods().addEnergy(p);
 
                     ssj.getSSJMethods().multBP(p);
-
                 }
-
             }
-
         }, 0, 20 * 10);
-
     }
-
 }

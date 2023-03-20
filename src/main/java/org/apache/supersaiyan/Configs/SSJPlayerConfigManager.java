@@ -4,22 +4,17 @@ import org.apache.supersaiyan.SSJ;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 
 public class SSJPlayerConfigManager {
 
-    private final JavaPlugin plugin;
-
     private final File folder;
 
     private final SSJ ssj;
 
-    public SSJPlayerConfigManager(JavaPlugin plugin, File folder, SSJ ssj) {
-
-        this.plugin = plugin;
+    public SSJPlayerConfigManager(SSJ ssj, File folder) {
 
         this.folder = folder;
 
@@ -87,7 +82,7 @@ public class SSJPlayerConfigManager {
 
     private void onFirstSet(Player p) {
 
-        plugin.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
+        ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
 
         getPlayerConfig(p);
 
@@ -121,7 +116,7 @@ public class SSJPlayerConfigManager {
 
         savePlayerConfig(p, getPlayerConfig(p));
 
-        plugin.getLogger().warning(p.getName() + "'s.yml has been created!");
+        ssj.getLogger().warning(p.getName() + "'s.yml has been created!");
 
     }
 
@@ -212,6 +207,5 @@ public class SSJPlayerConfigManager {
     public String getTransformations(Player p) {
 
         return ((String) getPlayerConfigValue(p,"Transformations_Unlocked"));
-
     }
 }

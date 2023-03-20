@@ -13,7 +13,9 @@ public class SSJConfigs {
     private final SSJ ssj;
 
     public SSJConfigs(SSJ ssj) {
+
         this.ssj = ssj;
+
     }
 
     private File ConfigFile;
@@ -189,6 +191,5 @@ public class SSJConfigs {
     public int getSAP() {
 
         return ssj.getSSJConfigs().getCFile().getInt("Starting_Action_Points");
-
     }
 }

@@ -13,7 +13,9 @@ public class SSJCommands implements CommandExecutor {
     private final SSJ ssj;
 
     public SSJCommands(SSJ ssj) {
+
         this.ssj = ssj;
+
     }
 
     @Override
@@ -94,7 +96,5 @@ public class SSJCommands implements CommandExecutor {
         }
 
         return true;
-
     }
-
 }

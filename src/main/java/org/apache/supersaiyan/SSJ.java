@@ -85,7 +85,7 @@ public class SSJ extends JavaPlugin {
 
         }
 
-        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder, this);
+        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder);
 
         ssjscoreboards = new SSJScoreBoards(this);
 
@@ -174,6 +174,12 @@ public class SSJ extends JavaPlugin {
     public SSJBossBar getSSJBB(){
 
         return ssjbossbar;
+
+    }
+
+    public SSJParticles getSSJParticles(){
+
+        return ssjparticles;
 
     }
 }
