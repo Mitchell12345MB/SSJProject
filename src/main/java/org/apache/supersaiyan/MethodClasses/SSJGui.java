@@ -58,6 +58,8 @@ public class SSJGui {
 
         final ItemMeta meta = item.getItemMeta();
 
+        assert meta != null;
+
         meta.setDisplayName(name);
 
         meta.setLore(Arrays.asList(lore));

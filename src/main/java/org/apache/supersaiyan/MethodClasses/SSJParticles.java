@@ -39,40 +39,9 @@ public class SSJParticles {
 
             double t = 0;
 
-            int particleCount = SSJParticles.this.particleCount / 2;
+            final int particleCounts = SSJParticles.this.particleCount / 2;
 
-            @Override
-            public void run() {
-
-                t += Math.PI / 8;
-
-                for (int i = 0; i < particleCount; i++) {
-
-                    double x = particleRange * Math.cos(t + 2 * Math.PI * i / particleCount);
-
-                    double y = 2 * Math.exp(-0.1 * t) * Math.sin(t) + 1.5;
-
-                    double z = particleRange * Math.sin(t + 2 * Math.PI * i / particleCount);
-
-                    Location loc = player.getLocation().add(x, y, z);
-
-                    player.spawnParticle(particleType, loc, 0);
-
-                }
-
-                if (t > Math.PI * 2) {
-
-                    this.cancel();
-
-                }
-
-            }
-
-        }.runTaskTimer(ssj, 0L, 1L);
-
-        new BukkitRunnable() {
-
-            double t = 0;
+            final int particleCounto = SSJParticles.this.particleCount;
 
             @Override
             public void run() {
@@ -85,17 +54,33 @@ public class SSJParticles {
 
                         Player p = (Player) entity;
 
-                        for (int i = 0; i < particleCount; i++) {
+                        for (int i = 0; i < particleCounto; i++) {
 
-                            double x = particleRange * Math.cos(t + 2 * Math.PI * i / particleCount);
+                            double x = particleRange * Math.cos(t + 2 * Math.PI * i / particleCounto);
 
                             double y = 2 * Math.exp(-0.1 * t) * Math.sin(t) + 1.5;
 
-                            double z = particleRange * Math.sin(t + 2 * Math.PI * i / particleCount);
+                            double z = particleRange * Math.sin(t + 2 * Math.PI * i / particleCounto);
 
                             Location loc = player.getLocation().add(x, y, z);
 
                             p.spawnParticle(particleType, loc, 0);
+
+                        }
+
+                    } else {
+
+                        for (int i = 0; i < particleCounts; i++) {
+
+                            double x = particleRange * Math.cos(t + 2 * Math.PI * i / particleCounts);
+
+                            double y = 2 * Math.exp(-0.1 * t) * Math.sin(t) + 1.5;
+
+                            double z = particleRange * Math.sin(t + 2 * Math.PI * i / particleCounts);
+
+                            Location loc = player.getLocation().add(x, y, z);
+
+                            player.spawnParticle(particleType, loc, 0);
 
                         }
 

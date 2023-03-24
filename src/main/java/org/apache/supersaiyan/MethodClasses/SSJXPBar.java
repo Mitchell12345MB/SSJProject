@@ -11,21 +11,25 @@ public class SSJXPBar {
 
     private final Player player;
 
-    private final int maxXP;
+    private int maxXP;
 
     private int currentXP;
 
     private BukkitRunnable xpBarTask;
 
-    public SSJXPBar(SSJ ssj, Player player, int maxXP) {
+    public SSJXPBar(SSJ ssj, Player player) {
 
         this.ssj = ssj;
 
         this.player = player;
 
-        this.maxXP = maxXP;
+        if (player != null) {
 
-        this.currentXP = 0;
+            this.maxXP = ssj.getSSJPCM().getLimit(player);
+
+            this.currentXP = ssj.getSSJPCM().getEnergy(player);
+
+        }
 
     }
 

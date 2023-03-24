@@ -25,8 +25,6 @@ import java.util.UUID;
 
 public class SSJListeners implements Listener {
 
-    private final int MAX_ENERGY = 100;
-
     private final SSJ ssj;
 
     private final Map<UUID, SSJBossBar> bossBars;
@@ -52,7 +50,7 @@ public class SSJListeners implements Listener {
 
                 p.sendMessage("WOOSH");
 
-                SSJXPBar xpBar = new SSJXPBar(ssj, p, MAX_ENERGY);
+                SSJXPBar xpBar = new SSJXPBar(ssj, p);
 
                 xpBar.start();
 
@@ -132,7 +130,7 @@ public class SSJListeners implements Listener {
 
                 p.sendMessage("Charging");
 
-                SSJXPBar xpBar = new SSJXPBar(ssj, p, MAX_ENERGY);
+                SSJXPBar xpBar = new SSJXPBar(ssj, p);
 
                 xpBar.start();
 
@@ -186,7 +184,7 @@ public class SSJListeners implements Listener {
 
             if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
 
-                SSJXPBar xpBar = new SSJXPBar(ssj, p, MAX_ENERGY);
+                SSJXPBar xpBar = new SSJXPBar(ssj, p);
 
                 p.sendMessage("woosh woosh woosh");
 

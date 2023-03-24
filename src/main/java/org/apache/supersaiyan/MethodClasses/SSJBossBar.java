@@ -11,15 +11,11 @@ import java.util.UUID;
 
 public class SSJBossBar {
 
-    private final SSJ ssj;
-
     private final BossBar bossBar;
 
     private final Map<UUID, Integer> playerStats;
 
     public SSJBossBar(SSJ ssj, String title, Map<UUID, Integer> playerStats) {
-
-        this.ssj = ssj;
 
         this.bossBar = ssj.getServer().createBossBar(title, BarColor.RED, BarStyle.SOLID);
 

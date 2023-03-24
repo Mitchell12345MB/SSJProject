@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SSJ extends JavaPlugin {
@@ -45,8 +46,14 @@ public class SSJ extends JavaPlugin {
 
     private SSJBossBar ssjbossbar;
 
+    private Metrics metrics;
+
     @Override
     public void onEnable() {
+
+        int pluginId = 18024;
+
+        metrics = new Metrics(this, pluginId);
 
         regClass();
 
@@ -97,7 +104,7 @@ public class SSJ extends JavaPlugin {
 
         ssjtimers = new SSJTimers(this);
 
-        ssjxpbar = new SSJXPBar(this, player, integer);
+        ssjxpbar = new SSJXPBar(this, player);
 
         ssjmethodchecks = new SSJMethodChecks(this);
 
@@ -109,7 +116,7 @@ public class SSJ extends JavaPlugin {
 
     private void regCommands(){
 
-        getCommand("ssj").setExecutor(new SSJCommands(this));
+        Objects.requireNonNull(getCommand("ssj")).setExecutor(new SSJCommands(this));
 
     }
 
