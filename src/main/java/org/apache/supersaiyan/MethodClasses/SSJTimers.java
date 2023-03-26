@@ -35,20 +35,4 @@ public class SSJTimers{
         }, 0, 20 * 10);
 
     }
-
-    public void bpandEnergyMultiplier() {
-
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(ssj, () -> {
-
-            if (!Bukkit.getOnlinePlayers().isEmpty()) {
-
-                for (Player p : Bukkit.getOnlinePlayers()) {
-
-                    ssj.getSSJMethods().addEnergy(p);
-
-                    ssj.getSSJMethods().multBP(p);
-                }
-            }
-        }, 0, 20 * 10);
-    }
 }

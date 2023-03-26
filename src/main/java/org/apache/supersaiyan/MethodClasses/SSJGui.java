@@ -32,7 +32,7 @@ public class SSJGui {
 
         inv.addItem(createGuiItem(Material.EGG, "§aLevel", String.valueOf(ssj.getSSJPCM().getLevel(p)), "§aYour current level."));
 
-        inv.addItem(createGuiItem(Material.IRON_INGOT, "§aBattle Power", String.valueOf(ssj.getSSJPCM().getBaseBP(p)), "§aYour current battle power."));
+        inv.addItem(createGuiItem(Material.IRON_INGOT, "§aBattle Power", String.valueOf(ssj.getSSJRpgSys().getBaseBP(p)), "§aYour current battle power."));
 
         inv.addItem(createGuiItem(Material.EMERALD, "§aAction Points", String.valueOf(ssj.getSSJPCM().getAP(p)), "§aYour current (spendable) action points."));
 

@@ -18,9 +18,9 @@ Lightning_Effect: true
 # This true or false the explosion effect when transforming
 Explosion_Effect: true
 
-# If the Explosion_Effect is set to "true", then you have the option to make blocks around you expload_normal when transforming.
+# If the Explosion_Effect is set to "true", then you have the option to make blocks around you explode_normal when transforming.
 # (Leave "0" if you just want the effect).
-Explosion_Radious: 0
+Explosion_Radius: 0
 
 # This true or false the sound when transforming (Sound: Ghast Firing)
 Sound_Effect: True
@@ -28,8 +28,8 @@ Sound_Effect: True
 # How many action points do you want the player to have when they first start? (Default is 10)
 Starting_Action_Points: 10
 
-# How many attribute points a player will start with. This sets all attributes such as health, attack, defence, etc... (default is 5)
-Starting_Attribute_Points: 5
+# How many stat points a player will start with. This sets all attributes such as health, attack, defence, etc... (default is 5)
+Starting_Stat_Points: 5
 
 # The multiplier for every player's Battle Power. (Default is 25)
 Base_Battle_Power_Multiplier: 25
@@ -41,4 +41,4 @@ NPGain_Energy_Multiplier: 5
 PGain_Energy_Multiplier: 5
 
 # The multiplier for every player's energy limit (Default is 5)
-Limit_Energy_Multiplier: 5
+Energy_Multiplier_Limit: 5

@@ -2,6 +2,7 @@ package org.apache.supersaiyan;
 
 import org.apache.supersaiyan.Configs.SSJConfigs;
 import org.apache.supersaiyan.Configs.SSJPlayerConfigManager;
+import org.apache.supersaiyan.Listeners.SSJActionListeners;
 import org.apache.supersaiyan.Listeners.SSJListeners;
 import org.apache.supersaiyan.MethodClasses.*;
 import org.apache.supersaiyan.SSJCommands.SSJCommands;
@@ -50,6 +51,10 @@ public class SSJ extends JavaPlugin {
 
     private SSJListeners ssjlisteners;
 
+    private SSJRpgSys ssjrpgsys;
+
+    private SSJActionListeners ssjactionlisteners;
+
     @Override
     public void onEnable() {
 
@@ -82,6 +87,10 @@ public class SSJ extends JavaPlugin {
 
         super.getServer().getPluginManager().registerEvents(ssjlisteners, this);
 
+        ssjactionlisteners = new SSJActionListeners(this);
+
+        super.getServer().getPluginManager().registerEvents(ssjactionlisteners, this);
+
     }
 
     private void regClass() {
@@ -113,6 +122,8 @@ public class SSJ extends JavaPlugin {
         ssjparticles = new SSJParticles(this, player, particleType, integer, 0);
 
         ssjbossbar = new SSJBossBar(this, string, mapui);
+
+        ssjrpgsys = new SSJRpgSys(this);
 
     }
 
@@ -189,6 +200,24 @@ public class SSJ extends JavaPlugin {
     public SSJParticles getSSJParticles(){
 
         return ssjparticles;
+
+    }
+
+    public SSJRpgSys getSSJRpgSys() {
+
+        return ssjrpgsys;
+
+    }
+
+    public SSJActionListeners getSSJAL() {
+
+        return ssjactionlisteners;
+
+    }
+
+    public SSJListeners getSSJListeners() {
+
+        return ssjlisteners;
 
     }
 }

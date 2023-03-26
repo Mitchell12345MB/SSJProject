@@ -58,9 +58,9 @@ public class SSJMethodChecks {
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Health", ssj.getSSJPCM().getHealth(p) + 1);
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJMethods().addLevel(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJMethods().addBaseBP(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
 
                 ssj.getSSJGui().openInventory(p);
 
@@ -86,9 +86,9 @@ public class SSJMethodChecks {
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Power", ssj.getSSJPCM().getPower(p) + 1);
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJMethods().addLevel(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJMethods().addBaseBP(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
 
                 ssj.getSSJGui().openInventory(p);
 
@@ -114,9 +114,9 @@ public class SSJMethodChecks {
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Strength", ssj.getSSJPCM().getStrength(p) + 1);
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJMethods().addLevel(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJMethods().addBaseBP(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
 
                 ssj.getSSJGui().openInventory(p);
 
@@ -142,9 +142,9 @@ public class SSJMethodChecks {
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Speed", ssj.getSSJPCM().getSpeed(p) + 1);
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJMethods().addLevel(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJMethods().addBaseBP(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
 
                 ssj.getSSJGui().openInventory(p);
 
@@ -170,9 +170,9 @@ public class SSJMethodChecks {
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Stamina", ssj.getSSJPCM().getStamina(p) + 1);
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJMethods().addLevel(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJMethods().addBaseBP(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
 
                 ssj.getSSJGui().openInventory(p);
 
@@ -198,9 +198,9 @@ public class SSJMethodChecks {
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Defence", ssj.getSSJPCM().getDefence(p) + 1);
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJMethods().addLevel(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJMethods().addBaseBP(p));
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
 
                 ssj.getSSJGui().openInventory(p);
 
@@ -231,8 +231,6 @@ public class SSJMethodChecks {
                 ssj.getSSJMethods().callScoreboard(online);
 
                 ssj.getSSJTimers().saveTimer();
-
-                ssj.getSSJTimers().bpandEnergyMultiplier();
 
                 ssj.getSSJConfigs().updateConfig();
 
@@ -284,7 +282,7 @@ public class SSJMethodChecks {
 
         if (ssj.getSSJPCM().getFile(p).exists()) {
 
-            if (!(p.getName().equals(ssj.getSSJPCM().getPlayerConfigValue(p, "Player_Name")))) {
+            if (!(p.getName().equals(ssj.getSSJPCM().getName(p)))) {
 
                 ssj.getSSJPCM().setPlayerConfigValue(p, "Playe_Name", p.getName());
 

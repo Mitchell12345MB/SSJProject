@@ -120,91 +120,85 @@ public class SSJPlayerConfigManager {
 
     }
 
-    public String getName(Player p) {
+    public String getName(Player p) { // Relates to the player's name in their config.
 
         return ((String) getPlayerConfigValue(p, "Player_Name"));
 
     }
 
-    public int getLimit(Player p) {
+    public int getLimit(Player p) { // Multiplies the player's Power stat with the default energy multiplier limit.
 
-        return ((int) getPlayerConfigValue(p, "Base.Power")) * ssj.getSSJConfigs().getCFile().getInt("Limit_Energy_Multiplier");
+        return ((int) getPlayerConfigValue(p, "Base.Power")) * ssj.getSSJConfigs().getEML();
 
     }
 
-    public int getHealth(Player p) {
+    public int getHealth(Player p) { //Relates to how much health the player has.
 
         return ((int) getPlayerConfigValue(p,"Base.Health"));
 
     }
 
-    public int getPower(Player p) {
+    public int getPower(Player p) { //Relates to how much energy the player can store.
 
         return ((int) getPlayerConfigValue(p,"Base.Power"));
 
     }
 
-    public int getStrength(Player p) {
+    public int getStrength(Player p) { //Relates to player's damage out-put.
 
         return ((int) getPlayerConfigValue(p,"Base.Strength"));
 
     }
 
-    public int getSpeed(Player p) {
+    public int getSpeed(Player p) { //Relates to player's speed.
 
         return ((int) getPlayerConfigValue(p,"Base.Speed"));
 
     }
 
-    public int getStamina(Player p) {
+    public int getStamina(Player p) { //Relates to how long the player can hold a form or how long the player takes to transform.
 
         return ((int) getPlayerConfigValue(p,"Base.Stamina"));
 
     }
 
-    public int getDefence(Player p) {
+    public int getDefence(Player p) { //Relates to mow much damage is mitigated to the player.
 
         return ((int) getPlayerConfigValue(p,"Base.Defence"));
 
     }
 
-    public int getEnergy(Player p) {
+    public int getEnergy(Player p) { //Gets how much energy the player has. (energy is set by
 
         return ((int) getPlayerConfigValue(p,"Energy"));
 
     }
 
-    public int getBaseBP(Player p) {
-
-        return getHealth(p) * getPower(p) + getStrength(p) * getSpeed(p) + getStamina(p) * getDefence(p);
-
-    }
-
-    public int getBP(Player p) {
+    public int getBP(Player p) { // Gets the player's current Battle power.
 
         return ((int) getPlayerConfigValue(p,"Battle_Power"));
 
     }
 
-    public int getAP(Player p) {
+    public int getAP(Player p) { //Relates to how many "action points" has. The player can spend action points on the stats below.
 
         return ((int) getPlayerConfigValue(p,"Action_Points"));
 
     }
 
-    public int getLevel(Player p) {
+    public int getLevel(Player p) { //Gets the player's level.
 
         return ((int) getPlayerConfigValue(p,"Level"));
 
     }
 
-    public String getForm(Player p) {
+    public String getForm(Player p) { //Gets the player's current form they are in.
 
         return ((String) getPlayerConfigValue(p,"Form"));
 
     }
 
-    public String getTransformations(Player p) {
+    public String getTransformations(Player p) { //Gets the current transformations the player has unlocked.
 
         return ((String) getPlayerConfigValue(p,"Transformations_Unlocked"));
     }

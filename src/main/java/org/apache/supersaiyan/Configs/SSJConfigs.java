@@ -12,12 +12,6 @@ public class SSJConfigs {
 
     private final SSJ ssj;
 
-    public SSJConfigs(SSJ ssj) {
-
-        this.ssj = ssj;
-
-    }
-
     private File ConfigFile;
 
     private FileConfiguration Config;
@@ -26,15 +20,9 @@ public class SSJConfigs {
 
     private FileConfiguration TConfig;
 
-    public FileConfiguration getCFile() {
+    public SSJConfigs(SSJ ssj) {
 
-        return this.Config;
-
-    }
-
-    public FileConfiguration getTCFile() {
-
-        return this.TConfig;
+        this.ssj = ssj;
 
     }
 
@@ -122,37 +110,11 @@ public class SSJConfigs {
 
     }
 
-    public void saveConfigs() {
-
-        try {
-
-            Config.load(ConfigFile);
-
-            TConfig.load(TConfigFile);
-
-            Config.save(ConfigFile);
-
-            TConfig.save(TConfigFile);
-
-        } catch (IOException | InvalidConfigurationException e) {
-
-            e.printStackTrace();
-        }
-    }
-
     public void loadConfigs() {
 
-        try {
+        loadConfig();
 
-            Config.load(ConfigFile);
-
-            TConfig.load(TConfigFile);
-
-        } catch (IOException | InvalidConfigurationException xp) {
-
-            xp.printStackTrace();
-
-        }
+        loadTConfig();
 
     }
 
@@ -182,14 +144,126 @@ public class SSJConfigs {
         }
     }
 
-    public int getBPM() {
+    public void saveConfigs() {
+
+        saveConfig();
+
+        saveTConfig();
+
+
+    }
+
+    public void saveTConfig() {
+
+        try {
+
+            loadTConfig();
+
+            TConfig.save(TConfigFile);
+
+        } catch (IOException xp) {
+
+            xp.printStackTrace();
+
+        }
+
+    }
+
+    public void saveConfig() {
+
+        try {
+
+            loadConfig();
+
+            Config.save(ConfigFile);
+
+        } catch (IOException xp) {
+
+            xp.printStackTrace();
+        }
+    }
+
+    public FileConfiguration getCFile() {
+
+        return this.Config;
+
+    }
+
+    public FileConfiguration getTCFile() {
+
+        return this.TConfig;
+
+    }
+
+    public int getVr() { //Gets the plugin's current version from the config.
+
+        return ssj.getSSJConfigs().getCFile().getInt("Version");
+
+    }
+
+    public boolean getTR() { //Gets if the server admin wants to enable or disable the removal of the player's transformation when the player teleports via command or plugin.
+
+        return ssj.getSSJConfigs().getCFile().getBoolean("Teleportation_Removal");
+
+    }
+
+    public boolean getLF() { //Gets if the server admin wants to enable or disable the lightning effect when the player(s) transform.
+
+        return ssj.getSSJConfigs().getCFile().getBoolean("Explosion_Effect");
+
+    }
+
+    public boolean getEE() { //Gets if the server admin wants to enable or disable the explosion effect when the player(s) transform.
+
+        return ssj.getSSJConfigs().getCFile().getBoolean("Explosion_Effect");
+
+    }
+
+    public int getER() { //Gets the default explosion radius from the config.
+
+        return ssj.getSSJConfigs().getCFile().getInt("Explosion_Radius");
+
+    }
+
+    public boolean getSE() { //Gets if the server admin wants to enable or disable the sound effect when the player(s) transform.
+
+        return ssj.getSSJConfigs().getCFile().getBoolean("Sound_Effect");
+
+    }
+
+    public int getSAP() { //Gets the default starting actions points from the config.
+
+        return ssj.getSSJConfigs().getCFile().getInt("Starting_Action_Points");
+
+    }
+
+    public int getSSP() { //Gets the default starting stat points from the config.
+
+        return ssj.getSSJConfigs().getCFile().getInt("Starting_Stat_Points");
+
+    }
+
+    public int getBPM() { //Gets the default base battle power multiplier from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("Base_Battle_Power_Multiplier");
 
     }
 
-    public int getSAP() {
+    public int getNPEMG() { //Gets the default non-passive (action) energy multiplier gain from the config.
 
-        return ssj.getSSJConfigs().getCFile().getInt("Starting_Action_Points");
+        return ssj.getSSJConfigs().getCFile().getInt("NGain_Energy_Multiplier");
+
+    }
+
+    public int getPEMG() { //Gets the default passive energy multiplier gain from the config.
+
+        return ssj.getSSJConfigs().getCFile().getInt("PGain_Energy_Multiplier");
+
+    }
+
+    public int getEML() { //Gets the default energy multiplier limit from the config.
+
+        return ssj.getSSJConfigs().getCFile().getInt("Energy_Multiplier_Limit");
+
     }
 }
