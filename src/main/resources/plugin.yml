@@ -7,7 +7,6 @@ load: STARTUP
 authors: [ SauSAliens ]
 description: Simple super saiyan plugin
 website: https://www.spigotmc.org/resources/super-saiyan-transformations.18212/
-depend: [ProtocolLib]
 commands:
   ssj:
     description:

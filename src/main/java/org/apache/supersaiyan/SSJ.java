@@ -48,6 +48,8 @@ public class SSJ extends JavaPlugin {
 
     private Metrics metrics;
 
+    private SSJListeners ssjlisteners;
+
     @Override
     public void onEnable() {
 
@@ -76,9 +78,9 @@ public class SSJ extends JavaPlugin {
 
     private void regListeners(){
 
-        SSJListeners ssjlistener = new SSJListeners(this);
+        ssjlisteners = new SSJListeners(this);
 
-        super.getServer().getPluginManager().registerEvents(ssjlistener, this);
+        super.getServer().getPluginManager().registerEvents(ssjlisteners, this);
 
     }
 
