@@ -41,7 +41,7 @@ public class SSJActionListeners implements Listener {
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.BLAZE_POWDER) {
 
-            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+            if (ssj.getSSJPCM().getStart(p)) {
 
                 p.sendMessage("WOOSH");
 
@@ -88,7 +88,7 @@ public class SSJActionListeners implements Listener {
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.PHANTOM_MEMBRANE) {
 
-            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+            if (ssj.getSSJPCM().getStart(p)) {
 
                 p.sendMessage("deWOOSH");
 
@@ -121,7 +121,7 @@ public class SSJActionListeners implements Listener {
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.MAGMA_CREAM) {
 
-            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+            if (ssj.getSSJPCM().getStart(p)) {
 
                 p.sendMessage("Charging");
 
@@ -152,7 +152,7 @@ public class SSJActionListeners implements Listener {
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.GHAST_TEAR) {
 
-            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+            if (ssj.getSSJPCM().getStart(p)) {
 
                 SSJXPBar xpBar = new SSJXPBar(ssj, p);
 
@@ -186,7 +186,7 @@ public class SSJActionListeners implements Listener {
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.GHAST_TEAR) {
 
-            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+            if (ssj.getSSJPCM().getStart(p)) {
 
                 SSJXPBar xpBar = new SSJXPBar(ssj, p);
 
@@ -222,7 +222,7 @@ public class SSJActionListeners implements Listener {
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.PAPER) {
 
-            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+            if (ssj.getSSJPCM().getStart(p)) {
 
                 ssj.getSSJGui().openInventory(e.getPlayer());
 
@@ -247,7 +247,7 @@ public class SSJActionListeners implements Listener {
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.TNT) {
 
-            if (ssj.getSSJPCM().getPlayerConfig(e.getPlayer()).getBoolean("Start")) {
+            if (ssj.getSSJPCM().getStart(p)) {
 
                 if (ssj.getSSJSB().hasScore(p)) {
 

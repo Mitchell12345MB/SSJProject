@@ -126,9 +126,39 @@ public class SSJPlayerConfigManager {
 
     }
 
-    public int getLimit(Player p) { // Multiplies the player's Power stat with the default energy multiplier limit.
+    public boolean getStart(Player p) {
 
-        return ((int) getPlayerConfigValue(p, "Base.Power")) * ssj.getSSJConfigs().getEML();
+        return (boolean) getPlayerConfigValue(p, "Start");
+
+    }
+
+    public int getLevel(Player p) { //Gets the player's level.
+
+        return ((int) getPlayerConfigValue(p,"Level"));
+
+    }
+
+    public int getBattlePower(Player p) { // Gets the player's current Battle power.
+
+        return ((int) getPlayerConfigValue(p,"Battle_Power"));
+
+    }
+
+    public int getEnergy(Player p) { //Gets how much energy the player has. (energy is set by
+
+        return ((int) getPlayerConfigValue(p,"Energy"));
+
+    }
+
+    public String getForm(Player p) { //Gets the player's current form they are in.
+
+        return ((String) getPlayerConfigValue(p,"Form"));
+
+    }
+
+    public int getActionPoints(Player p) { //Relates to how many "action points" has. The player can spend action points on the stats below.
+
+        return ((int) getPlayerConfigValue(p,"Action_Points"));
 
     }
 
@@ -168,38 +198,15 @@ public class SSJPlayerConfigManager {
 
     }
 
-    public int getEnergy(Player p) { //Gets how much energy the player has. (energy is set by
+    public int getLimit(Player p) { // Multiplies the player's Power stat with the default energy multiplier limit.
 
-        return ((int) getPlayerConfigValue(p,"Energy"));
-
-    }
-
-    public int getBP(Player p) { // Gets the player's current Battle power.
-
-        return ((int) getPlayerConfigValue(p,"Battle_Power"));
+        return ((int) getPlayerConfigValue(p, "Base.Power")) * ssj.getSSJConfigs().getEML();
 
     }
-
-    public int getAP(Player p) { //Relates to how many "action points" has. The player can spend action points on the stats below.
-
-        return ((int) getPlayerConfigValue(p,"Action_Points"));
-
-    }
-
-    public int getLevel(Player p) { //Gets the player's level.
-
-        return ((int) getPlayerConfigValue(p,"Level"));
-
-    }
-
-    public String getForm(Player p) { //Gets the player's current form they are in.
-
-        return ((String) getPlayerConfigValue(p,"Form"));
-
-    }
-
+  
     public String getTransformations(Player p) { //Gets the current transformations the player has unlocked.
 
         return ((String) getPlayerConfigValue(p,"Transformations_Unlocked"));
     }
+
 }

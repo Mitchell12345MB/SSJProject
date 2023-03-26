@@ -41,7 +41,7 @@ public class SSJRpgSys {
 
         int multbp = ((ssj.getSSJPCM().getEnergy(p) + getBaseBP(p)) * ssj.getSSJConfigs().getBPM());
 
-        if (ssj.getSSJPCM().getBP(p) == 0) {
+        if (ssj.getSSJPCM().getBattlePower(p) == 0) {
 
             ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", addBaseBP(p));
 

@@ -18,7 +18,7 @@ public class SSJMethodChecks {
 
     public void checkStartCommandMethod(Player p) {
 
-        if (ssj.getSSJPCM().getFile(p).exists() && ssj.getSSJPCM().getPlayerConfig(p.getPlayer()).getBoolean("Start")) {
+        if (ssj.getSSJPCM().getFile(p).exists() && ssj.getSSJPCM().getStart(p)) {
 
             p.sendMessage(ChatColor.RED + "You've already started your Saiyan journey!");
 
@@ -32,7 +32,7 @@ public class SSJMethodChecks {
 
         }
 
-        if (ssj.getSSJPCM().getFile(p).exists() && !ssj.getSSJPCM().getPlayerConfig(p.getPlayer()).getBoolean("Start")) {
+        if (ssj.getSSJPCM().getFile(p).exists() && !ssj.getSSJPCM().getStart(p)) {
 
             ssj.getSSJMethods().callStartingItems(p);
 
@@ -52,9 +52,9 @@ public class SSJMethodChecks {
 
         if (e.getRawSlot() == 3) {
 
-            if (ssj.getSSJPCM().getAP(p) > 0) {
+            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getAP(p) - 1);
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Health", ssj.getSSJPCM().getHealth(p) + 1);
 
@@ -70,7 +70,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callOtherScoreboards();
 
-            } else if (ssj.getSSJPCM().getAP(p) <= 0) {
+            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -80,9 +80,9 @@ public class SSJMethodChecks {
 
         if (e.getRawSlot() == 4) {
 
-            if (ssj.getSSJPCM().getAP(p) > 0) {
+            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getAP(p) - 1);
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Power", ssj.getSSJPCM().getPower(p) + 1);
 
@@ -98,7 +98,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callOtherScoreboards();
 
-            } else if (ssj.getSSJPCM().getAP(p) <= 0) {
+            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -108,9 +108,9 @@ public class SSJMethodChecks {
 
         if (e.getRawSlot() == 5) {
 
-            if (ssj.getSSJPCM().getAP(p) > 0) {
+            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getAP(p) - 1);
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Strength", ssj.getSSJPCM().getStrength(p) + 1);
 
@@ -126,7 +126,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callOtherScoreboards();
 
-            } else if (ssj.getSSJPCM().getAP(p) <= 0) {
+            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -136,9 +136,9 @@ public class SSJMethodChecks {
 
         if (e.getRawSlot() == 6) {
 
-            if (ssj.getSSJPCM().getAP(p) > 0) {
+            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getAP(p) - 1);
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Speed", ssj.getSSJPCM().getSpeed(p) + 1);
 
@@ -154,7 +154,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callOtherScoreboards();
 
-            } else if (ssj.getSSJPCM().getAP(p) <= 0) {
+            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -164,9 +164,9 @@ public class SSJMethodChecks {
 
         if (e.getRawSlot() == 7) {
 
-            if (ssj.getSSJPCM().getAP(p) > 0) {
+            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getAP(p) - 1);
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Stamina", ssj.getSSJPCM().getStamina(p) + 1);
 
@@ -182,7 +182,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callOtherScoreboards();
 
-            } else if (ssj.getSSJPCM().getAP(p) <= 0) {
+            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 
@@ -192,9 +192,9 @@ public class SSJMethodChecks {
 
         if (e.getRawSlot() == 8) {
 
-            if (ssj.getSSJPCM().getAP(p) > 0) {
+            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
 
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getAP(p) - 1);
+                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
 
                 ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Defence", ssj.getSSJPCM().getDefence(p) + 1);
 
@@ -210,7 +210,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callOtherScoreboards();
 
-            } else if (ssj.getSSJPCM().getAP(p) <= 0) {
+            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
 

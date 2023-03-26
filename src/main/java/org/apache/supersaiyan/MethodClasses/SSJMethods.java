@@ -96,7 +96,7 @@ public class SSJMethods {
 
         ssjsb.setSlot(5, " ");
 
-        ssjsb.setSlot(4, "BP: " + ssj.getSSJPCM().getBP(p));
+        ssjsb.setSlot(4, "BP: " + ssj.getSSJPCM().getBattlePower(p));
 
         ssjsb.setSlot(3, " ");
 

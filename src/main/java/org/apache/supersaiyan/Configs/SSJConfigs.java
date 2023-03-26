@@ -84,7 +84,7 @@ public class SSJConfigs {
 
     public void updateConfig(){
 
-        if (getCFile().getDouble("Version") < Double.parseDouble(ssj.getDescription().getVersion())) {
+        if (getDVr() < Double.parseDouble(ssj.getDescription().getVersion())) {
 
             File configFile = new File(ssj.getDataFolder(), "config.yml");
 
@@ -194,6 +194,14 @@ public class SSJConfigs {
         return this.TConfig;
 
     }
+
+    private double getDVr() {
+
+        return ssj.getSSJConfigs().getCFile().getDouble("Version");
+
+    }
+
+    //Config.yml content
 
     public int getVr() { //Gets the plugin's current version from the config.
 
