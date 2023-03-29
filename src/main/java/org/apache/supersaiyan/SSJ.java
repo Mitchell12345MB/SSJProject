@@ -103,6 +103,16 @@ public class SSJ extends JavaPlugin {
 
         }
 
+        new SSJUpdateChecker(this, 12345).getVersion(version -> {
+
+            if (!this.getDescription().getVersion().equals(version)) {
+
+                getLogger().info("There is a new update available.");
+
+            }
+
+        });
+
         ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder);
 
         ssjscoreboards = new SSJScoreBoards(this);
@@ -139,7 +149,7 @@ public class SSJ extends JavaPlugin {
 
         ssjconfigs.createTConfig();
 
-        ssjconfigs.updateConfig();
+        ssjconfigs.updateConfigs();
 
     }
 

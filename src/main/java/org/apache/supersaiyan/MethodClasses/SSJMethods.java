@@ -1,7 +1,6 @@
 package org.apache.supersaiyan.MethodClasses;
 
 import org.apache.supersaiyan.SSJ;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -54,6 +53,14 @@ public class SSJMethods {
 
     }
 
+    public void callRemoveorAddHoloItem(Player p) {
+
+        ItemStack menu = new ItemStack(Material.TNT);
+
+        p.getInventory().addItem(menu);
+
+    }
+
     public void callStartingItems(Player p) {
 
         callTransformItem(p);
@@ -66,43 +73,35 @@ public class SSJMethods {
 
         callMenuItem(p);
 
-    }
-
-    public void callOtherScoreboards() {
-
-        for (Player online : Bukkit.getOnlinePlayers()) {
-
-            ssj.getSSJMethodChecks().scoreBoardCheck();
-
-            callScoreboard(online);
-
-        }
+        callRemoveorAddHoloItem(p);
 
     }
 
     public void callScoreboard(Player p) {
 
-        SSJScoreBoards ssjsb = ssj.getSSJSB().createScore(p);
+        if (ssj.getSSJPCM().getStart(p)) {
 
-        ssjsb.setTitle("&aCurrent Stats");
+            SSJScoreBoards ssjsb = ssj.getSSJSB().createScore(p);
 
-        ssjsb.setSlot(9, "&7&m--------------------------------");
+            ssjsb.setTitle("&aCurrent Stats");
 
-        ssjsb.setSlot(8, "&aPlayer&f: " + p.getName());
+            ssjsb.setSlot(9, "&7&m--------------------------------");
 
-        ssjsb.setSlot(7, " ");
+            ssjsb.setSlot(8, "&aPlayer&f: " + p.getName());
 
-        ssjsb.setSlot(6, "Level: " + ssj.getSSJPCM().getLevel(p));
+            ssjsb.setSlot(7, " ");
 
-        ssjsb.setSlot(5, " ");
+            ssjsb.setSlot(6, "Level: " + ssj.getSSJPCM().getLevel(p));
 
-        ssjsb.setSlot(4, "BP: " + ssj.getSSJPCM().getBattlePower(p));
+            ssjsb.setSlot(5, " ");
 
-        ssjsb.setSlot(3, " ");
+            ssjsb.setSlot(4, "BP: " + ssj.getSSJPCM().getBattlePower(p));
 
-        ssjsb.setSlot(2, "Current Form: " + ssj.getSSJPCM().getForm(p));
+            ssjsb.setSlot(3, " ");
 
-        ssjsb.setSlot(1, "&7&m--------------------------------");
+            ssjsb.setSlot(2, "Current Form: " + ssj.getSSJPCM().getForm(p));
 
+            ssjsb.setSlot(1, "&7&m--------------------------------");
+        }
     }
 }

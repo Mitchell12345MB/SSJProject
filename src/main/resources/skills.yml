@@ -1,0 +1,7 @@
+Fly:
+  SkillId: 1
+  Desc: "Allows the ability to fly."
+  APReq: 20
+  Stat_Req:
+    Power: 10
+    Strength: 10

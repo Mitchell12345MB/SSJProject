@@ -90,27 +90,35 @@ public class SSJPlayerConfigManager {
 
         setPlayerConfigValue(p,"Start", false);
 
+        setPlayerConfigValue(p,"See_Lightning_Effects", true);
+
+        setPlayerConfigValue(p,"See_Explosion_Effects", true);
+
+        setPlayerConfigValue(p,"Hear_Sound_Effects", true);
+
         setPlayerConfigValue(p,"Level", 0);
 
         setPlayerConfigValue(p,"Battle_Power", 0);
 
         setPlayerConfigValue(p,"Energy", 0);
 
+        setPlayerConfigValue(p,"Saiyan_Ability", 0);
+
         setPlayerConfigValue(p,"Form", "Base");
 
         setPlayerConfigValue(p,"Action_Points", ssj.getSSJConfigs().getSAP());
 
-        setPlayerConfigValue(p,"Base.Health", ssj.getSSJConfigs().getSAP());
+        setPlayerConfigValue(p,"Base.Health", ssj.getSSJConfigs().getSSP());
 
-        setPlayerConfigValue(p,"Base.Power", ssj.getSSJConfigs().getSAP());
+        setPlayerConfigValue(p,"Base.Power", ssj.getSSJConfigs().getSSP());
 
-        setPlayerConfigValue(p,"Base.Strength", ssj.getSSJConfigs().getSAP());
+        setPlayerConfigValue(p,"Base.Strength", ssj.getSSJConfigs().getSSP());
 
-        setPlayerConfigValue(p,"Base.Speed", ssj.getSSJConfigs().getSAP());
+        setPlayerConfigValue(p,"Base.Speed", ssj.getSSJConfigs().getSSP());
 
-        setPlayerConfigValue(p,"Base.Stamina", ssj.getSSJConfigs().getSAP());
+        setPlayerConfigValue(p,"Base.Stamina", ssj.getSSJConfigs().getSSP());
 
-        setPlayerConfigValue(p,"Base.Defence", ssj.getSSJConfigs().getSAP());
+        setPlayerConfigValue(p,"Base.Defence", ssj.getSSJConfigs().getSSP());
 
         setPlayerConfigValue(p,"Transformations_Unlocked", "");
 
@@ -126,9 +134,27 @@ public class SSJPlayerConfigManager {
 
     }
 
-    public boolean getStart(Player p) {
+    public boolean getStart(Player p) { // Gets if the player has preformed "/ssj start" or not.
 
         return (boolean) getPlayerConfigValue(p, "Start");
+
+    }
+
+    public boolean getLightningEffects(Player p) { // Gets weather the player wants to see lightning effects when the player or other players transform.
+
+        return (boolean) getPlayerConfigValue(p, "See_Lightning_Effects");
+
+    }
+
+    public boolean getExplosionEffects(Player p) { // Gets weather the player wants to see explosion effects when the player or other players transform.
+
+        return (boolean) getPlayerConfigValue(p, "See_Explosion_Effects");
+
+    }
+
+    public boolean getSoundEffects(Player p) { // Gets weather the player wants to hear transforming sound effects when the player or other players transform.
+
+        return (boolean) getPlayerConfigValue(p, "Hear_Sound_Effects");
 
     }
 

@@ -68,8 +68,6 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callScoreboard(p);
 
-                ssj.getSSJMethods().callOtherScoreboards();
-
             } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
@@ -95,8 +93,6 @@ public class SSJMethodChecks {
                 scoreBoardCheck();
 
                 ssj.getSSJMethods().callScoreboard(p);
-
-                ssj.getSSJMethods().callOtherScoreboards();
 
             } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
@@ -124,8 +120,6 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callScoreboard(p);
 
-                ssj.getSSJMethods().callOtherScoreboards();
-
             } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
@@ -151,8 +145,6 @@ public class SSJMethodChecks {
                 scoreBoardCheck();
 
                 ssj.getSSJMethods().callScoreboard(p);
-
-                ssj.getSSJMethods().callOtherScoreboards();
 
             } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
@@ -180,8 +172,6 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callScoreboard(p);
 
-                ssj.getSSJMethods().callOtherScoreboards();
-
             } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
@@ -208,8 +198,6 @@ public class SSJMethodChecks {
 
                 ssj.getSSJMethods().callScoreboard(p);
 
-                ssj.getSSJMethods().callOtherScoreboards();
-
             } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
 
                 p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
@@ -232,7 +220,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJTimers().saveTimer();
 
-                ssj.getSSJConfigs().updateConfig();
+                ssj.getSSJConfigs().updateConfigs();
 
                 ssj.getSSJConfigs().loadConfigs();
 

@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class SSJConfigs {
 
@@ -19,6 +20,10 @@ public class SSJConfigs {
     private File TConfigFile;
 
     private FileConfiguration TConfig;
+
+    private File SConfigFile;
+
+    private FileConfiguration SConfig;
 
     public SSJConfigs(SSJ ssj) {
 
@@ -82,7 +87,33 @@ public class SSJConfigs {
 
     }
 
-    public void updateConfig(){
+    public void createSConfig() {
+
+        SConfigFile = new File(ssj.getDataFolder(), "skills.yml");
+
+        if (!SConfigFile.exists()) {
+
+            SConfigFile.getParentFile().mkdirs();
+
+            ssj.saveResource("skills.yml", false);
+
+        }
+
+        SConfig = new YamlConfiguration();
+
+        try {
+
+            SConfig.load(SConfigFile);
+
+        } catch (IOException | InvalidConfigurationException e) {
+
+            e.printStackTrace();
+
+        }
+
+    }
+
+    public void updateConfigs(){
 
         if (getDVr() < Double.parseDouble(ssj.getDescription().getVersion())) {
 
@@ -90,13 +121,19 @@ public class SSJConfigs {
 
             File tConfigFile = new File(ssj.getDataFolder(), "transformations.yml");
 
+            File sConfigFile = new File(ssj.getDataFolder(), "skills.yml");
+
             configFile.delete();
 
             tConfigFile.delete();
 
+            sConfigFile.delete();
+
             createConfig();
 
             createTConfig();
+
+            createSConfig();
 
             ssj.saveDefaultConfig();
 
@@ -105,6 +142,8 @@ public class SSJConfigs {
             ssj.getLogger().warning("Config.yml has been updated!");
 
             ssj.getLogger().warning("Transformations.yml has been updated!");
+
+            ssj.getLogger().warning("skills.yml has been updated!");
 
         }
 
@@ -116,6 +155,8 @@ public class SSJConfigs {
 
         loadTConfig();
 
+        loadSConfig();
+
     }
 
     public void loadTConfig() {
@@ -123,6 +164,20 @@ public class SSJConfigs {
         try {
 
             TConfig.load(TConfigFile);
+
+        } catch (IOException | InvalidConfigurationException xp) {
+
+            xp.printStackTrace();
+
+        }
+
+    }
+
+    public void loadSConfig() {
+
+        try {
+
+            SConfig.load(SConfigFile);
 
         } catch (IOException | InvalidConfigurationException xp) {
 
@@ -150,6 +205,7 @@ public class SSJConfigs {
 
         saveTConfig();
 
+        saveSConfig();
 
     }
 
@@ -160,6 +216,22 @@ public class SSJConfigs {
             loadTConfig();
 
             TConfig.save(TConfigFile);
+
+        } catch (IOException xp) {
+
+            xp.printStackTrace();
+
+        }
+
+    }
+
+    public void saveSConfig() {
+
+        try {
+
+            loadTConfig();
+
+            SConfig.save(SConfigFile);
 
         } catch (IOException xp) {
 
@@ -192,6 +264,12 @@ public class SSJConfigs {
     public FileConfiguration getTCFile() {
 
         return this.TConfig;
+
+    }
+
+    public FileConfiguration getSCFile() {
+
+        return this.SConfig;
 
     }
 
@@ -274,4 +352,37 @@ public class SSJConfigs {
         return ssj.getSSJConfigs().getCFile().getInt("Energy_Multiplier_Limit");
 
     }
+
+    //transformations.yml stuff
+
+    public List getBaseForms() {
+
+        return ssj.getSSJConfigs().getTCFile().getList("Base_Forms");
+
+    }
+
+    public List getKaiokenForms() {
+
+        return ssj.getSSJConfigs().getTCFile().getList("Kaioken_Forms");
+
+    }
+
+    public List getSaiyanForms() {
+
+        return ssj.getSSJConfigs().getTCFile().getList("Saiyan_Forms");
+
+    }
+
+    public List getSaiyanGodForms() {
+
+        return ssj.getSSJConfigs().getTCFile().getList("Saiyan_God_Forms");
+
+    }
+
+    public List getSaiyanGodKaiokenForms() {
+
+        return ssj.getSSJConfigs().getTCFile().getList("Kaioken_and_Saiyan_God_Forms");
+
+    }
+
 }
