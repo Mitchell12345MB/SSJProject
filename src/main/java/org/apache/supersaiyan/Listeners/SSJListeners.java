@@ -22,9 +22,9 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(final InventoryClickEvent e) {
+    public void onGenStatsInventoryClick(final InventoryClickEvent e) {
 
-        if (!e.getInventory().equals(ssj.getSSJGui().inv)) return;
+        if (!e.getInventory().equals(ssj.getSSJGui().genstatinv)) return;
 
         e.setCancelled(true);
 
@@ -38,14 +38,57 @@ public class SSJListeners implements Listener {
 
         ssj.getSSJMethods().callScoreboard(p);
 
-        ssj.getSSJMethodChecks().callMenuChecks(p, e);
+        ssj.getSSJMethodChecks().callGenStatMenuChecks(p, e);
 
     }
 
     @EventHandler
-    public void onInventoryClick(final InventoryDragEvent e) {
+    public void onSkillStatsInventoryClick(final InventoryClickEvent e) {
 
-        if (e.getInventory().equals(ssj.getSSJGui().inv)) {
+        if (!e.getInventory().equals(ssj.getSSJGui().skillstatinv)) return;
+
+        e.setCancelled(true);
+
+        final ItemStack clickedItem = e.getCurrentItem();
+
+        if (clickedItem == null || clickedItem.getType().isAir()) return;
+
+        final Player p = (Player) e.getWhoClicked();
+
+        ssj.getSSJMethodChecks().scoreBoardCheck();
+
+        ssj.getSSJMethods().callScoreboard(p);
+
+        ssj.getSSJMethodChecks().callSkillStatMenuChecks(p, e);
+
+    }
+
+    @EventHandler
+    public void onSettingsInventoryClick(final InventoryClickEvent e) {
+
+        if (!e.getInventory().equals(ssj.getSSJGui().settingsinv)) return;
+
+        e.setCancelled(true);
+
+        final ItemStack clickedItem = e.getCurrentItem();
+
+        if (clickedItem == null || clickedItem.getType().isAir()) return;
+
+        final Player p = (Player) e.getWhoClicked();
+
+        ssj.getSSJMethodChecks().scoreBoardCheck();
+
+        ssj.getSSJMethods().callScoreboard(p);
+
+        ssj.getSSJMethodChecks().callSettingsMenuChecks(p, e);
+
+    }
+
+    @EventHandler
+    public void onInventoryDrag(final InventoryDragEvent e) {
+
+        if (e.getInventory().equals(ssj.getSSJGui().genstatinv) || e.getInventory().equals(ssj.getSSJGui().skillstatinv) ||
+                e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
 
             e.setCancelled(true);
 

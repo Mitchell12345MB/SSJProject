@@ -170,9 +170,15 @@ public class SSJPlayerConfigManager {
 
     }
 
-    public int getEnergy(Player p) { //Gets how much energy the player has. (energy is set by
+    public int getEnergy(Player p) { //Gets how much energy the player has.
 
         return ((int) getPlayerConfigValue(p,"Energy"));
+
+    }
+
+    public int getSaiyanAbility(Player p) { //Gets the player's Saiyan Ability stat.
+
+        return ((int) getPlayerConfigValue(p,"Saiyan_Ability"));
 
     }
 

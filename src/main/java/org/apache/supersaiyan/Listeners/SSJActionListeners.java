@@ -224,7 +224,7 @@ public class SSJActionListeners implements Listener {
 
             if (ssj.getSSJPCM().getStart(p)) {
 
-                ssj.getSSJGui().openInventory(e.getPlayer());
+                ssj.getSSJGui().openGenStatInventory(e.getPlayer());
 
             } else {
 

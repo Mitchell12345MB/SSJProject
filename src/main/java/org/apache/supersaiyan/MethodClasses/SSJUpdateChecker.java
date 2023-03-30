@@ -1,4 +1,4 @@
-package org.apache.supersaiyan.MethodClasses;
+/**package org.apache.supersaiyan.MethodClasses;
 
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
@@ -42,4 +42,4 @@ public class SSJUpdateChecker {
             }
         });
     }
-}
+}**/
