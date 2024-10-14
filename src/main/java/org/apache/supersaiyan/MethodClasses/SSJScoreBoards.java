@@ -16,8 +16,11 @@ import java.util.UUID;
 public class SSJScoreBoards {
 
     private final SSJ ssj;
+
     private final HashMap<UUID, SSJScoreBoards> players = new HashMap<>();
+
     private Scoreboard scoreboard;
+
     private Objective sidebar;
 
     public SSJScoreBoards(SSJ ssj) {
@@ -50,14 +53,16 @@ public class SSJScoreBoards {
 
     }
 
+    @SuppressWarnings("deprecation")
+
     private SSJScoreBoards(SSJ ssj, Player player) {
 
         this.ssj = ssj;
 
         scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
 
-        sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
-
+        sidebar = scoreboard.registerNewObjective("sidebar", "dummy", "Sidebar Title");
+        
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         for (int i = 1; i <= 15; i++) {
@@ -101,9 +106,9 @@ public class SSJScoreBoards {
         String suf = getFirstSplit(ChatColor.getLastColors(pre) + getSecondSplit(text));
 
         if (team != null) {
-
+            
             team.setPrefix(pre);
-
+            
         }
 
         if (team != null) {
@@ -111,7 +116,7 @@ public class SSJScoreBoards {
             team.setSuffix(suf);
 
         }
-
+        
     }
 
     private String genEntry(int slot) {
@@ -135,5 +140,7 @@ public class SSJScoreBoards {
         }
 
         return s.length() > 16 ? s.substring(16) : "";
+
     }
+
 }

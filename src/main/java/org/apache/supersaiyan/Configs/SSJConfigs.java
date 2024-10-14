@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SSJConfigs {
 
@@ -30,6 +31,7 @@ public class SSJConfigs {
         this.ssj = ssj;
 
     }
+
 
     public void createConfig() {
 
@@ -293,96 +295,116 @@ public class SSJConfigs {
 
     }
 
-    public boolean getLF() { //Gets if the server admin wants to enable or disable the lightning effect when the player(s) transform.
+    public boolean getLF() { // Gets if the server admin wants to enable or disable the lightning effect when the player(s) transform.
 
         return ssj.getSSJConfigs().getCFile().getBoolean("Explosion_Effect");
 
     }
 
-    public boolean getEE() { //Gets if the server admin wants to enable or disable the explosion effect when the player(s) transform.
+    public boolean getEE() { // Gets if the server admin wants to enable or disable the explosion effect when the player(s) transform.
 
         return ssj.getSSJConfigs().getCFile().getBoolean("Explosion_Effect");
 
     }
 
-    public int getER() { //Gets the default explosion radius from the config.
+    public int getER() { // Gets the default explosion radius from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("Explosion_Radius");
 
     }
 
-    public boolean getSE() { //Gets if the server admin wants to enable or disable the sound effect when the player(s) transform.
+    public boolean getSE() { // Gets if the server admin wants to enable or disable the sound effect when the player(s) transform.
 
         return ssj.getSSJConfigs().getCFile().getBoolean("Sound_Effect");
 
     }
 
-    public int getSAP() { //Gets the default starting actions points from the config.
+    public int getSAP() { // Gets the default starting actions points from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("Starting_Action_Points");
 
     }
 
-    public int getSSP() { //Gets the default starting stat points from the config.
+    public int getSSP() { // Gets the default starting stat points from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("Starting_Stat_Points");
 
     }
 
-    public int getBPM() { //Gets the default base battle power multiplier from the config.
+    public int getBPM() { // Gets the default base battle power multiplier from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("Base_Battle_Power_Multiplier");
 
     }
 
-    public int getNPEMG() { //Gets the default non-passive (action) energy multiplier gain from the config.
+    public int getNPEMG() { // Gets the default non-passive (action) energy multiplier gain from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("NGain_Energy_Multiplier");
 
     }
 
-    public int getPEMG() { //Gets the default passive energy multiplier gain from the config.
+    public int getPEMG() { // Gets the default passive energy multiplier gain from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("PGain_Energy_Multiplier");
 
     }
 
-    public int getEML() { //Gets the default energy multiplier limit from the config.
+    public int getEML() { // Gets the default energy multiplier limit from the config.
 
         return ssj.getSSJConfigs().getCFile().getInt("Energy_Multiplier_Limit");
 
     }
 
-    //transformations.yml stuff
+    // transformations.yml stuff
 
-    public List getBaseForms() {
+    public List<String> getBaseForms() {
 
-        return ssj.getSSJConfigs().getTCFile().getList("Base_Forms");
-
-    }
-
-    public List getKaiokenForms() {
-
-        return ssj.getSSJConfigs().getTCFile().getList("Kaioken_Forms");
+        return getStringListFromConfig(ssj.getSSJConfigs().getTCFile(), "Base_Forms");
 
     }
 
-    public List getSaiyanForms() {
+    public List<String> getKaiokenForms() {
 
-        return ssj.getSSJConfigs().getTCFile().getList("Saiyan_Forms");
-
-    }
-
-    public List getSaiyanGodForms() {
-
-        return ssj.getSSJConfigs().getTCFile().getList("Saiyan_God_Forms");
+        return getStringListFromConfig(ssj.getSSJConfigs().getTCFile(), "Kaioken_Forms");
 
     }
 
-    public List getSaiyanGodKaiokenForms() {
+    public List<String> getSaiyanForms() {
 
-        return ssj.getSSJConfigs().getTCFile().getList("Kaioken_and_Saiyan_God_Forms");
+        return getStringListFromConfig(ssj.getSSJConfigs().getTCFile(), "Saiyan_Forms");
 
+    }
+
+    public List<String> getSaiyanGodForms() {
+
+        return getStringListFromConfig(ssj.getSSJConfigs().getTCFile(), "Saiyan_God_Forms");
+
+    }
+
+    public List<String> getSaiyanGodKaiokenForms() {
+
+        return getStringListFromConfig(ssj.getSSJConfigs().getTCFile(), "Kaioken_and_Saiyan_God_Forms");
+
+    }
+
+    private List<String> getStringListFromConfig(FileConfiguration config, String path) {
+
+        List<?> list = config.getList(path);
+
+        if (list == null) {
+
+            return null;
+
+        }
+
+        return list.stream()
+
+                   .filter(item -> item instanceof String)
+
+                   .map(item -> (String) item)
+
+                   .collect(Collectors.toList());
+                   
     }
 
 }

@@ -5,76 +5,59 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
 public class SSJMethods {
 
     private final SSJ ssj;
+    private final Map<Material, Consumer<Player>> itemActions = new HashMap<>();
 
     public SSJMethods(SSJ ssj) {
         this.ssj = ssj;
+        initializeItemActions();
     }
 
-    public void callTransformItem(Player p) {
-
-        ItemStack transformitem = new ItemStack(Material.BLAZE_POWDER);
-
-        p.getInventory().addItem(transformitem);
-
+    private void initializeItemActions() {
+        itemActions.put(Material.BLAZE_POWDER, this::giveTransformItem);
+        itemActions.put(Material.PHANTOM_MEMBRANE, this::giveDeChargeItem);
+        itemActions.put(Material.MAGMA_CREAM, this::giveChargeItem);
+        itemActions.put(Material.GHAST_TEAR, this::giveAuraReleaseItem);
+        itemActions.put(Material.PAPER, this::giveMenuItem);
+        itemActions.put(Material.TNT, this::giveRemoveOrAddHoloItem);
     }
 
-    public void callDeChargeItem(Player p) {
-
-        ItemStack detransformitem = new ItemStack(Material.PHANTOM_MEMBRANE);
-
-        p.getInventory().addItem(detransformitem);
-
+    public void giveItem(Player p, Material material) {
+        itemActions.getOrDefault(material, player -> {}).accept(p);
     }
 
-    public void callChargeItem(Player p) {
-
-        ItemStack chargeitem = new ItemStack(Material.MAGMA_CREAM);
-
-        p.getInventory().addItem(chargeitem);
-
+    private void giveTransformItem(Player p) {
+        p.getInventory().addItem(new ItemStack(Material.BLAZE_POWDER));
     }
 
-    public void callAuraReleaseItem(Player p) {
-
-        ItemStack aurareleaseitem = new ItemStack(Material.GHAST_TEAR);
-
-        p.getInventory().addItem(aurareleaseitem);
-
+    private void giveDeChargeItem(Player p) {
+        p.getInventory().addItem(new ItemStack(Material.PHANTOM_MEMBRANE));
     }
 
-    public void callMenuItem(Player p) {
-
-        ItemStack menu = new ItemStack(Material.PAPER);
-
-        p.getInventory().addItem(menu);
-
+    private void giveChargeItem(Player p) {
+        p.getInventory().addItem(new ItemStack(Material.MAGMA_CREAM));
     }
 
-    public void callRemoveorAddHoloItem(Player p) {
+    private void giveAuraReleaseItem(Player p) {
+        p.getInventory().addItem(new ItemStack(Material.GHAST_TEAR));
+    }
 
-        ItemStack menu = new ItemStack(Material.TNT);
+    private void giveMenuItem(Player p) {
+        p.getInventory().addItem(new ItemStack(Material.PAPER));
+    }
 
-        p.getInventory().addItem(menu);
-
+    private void giveRemoveOrAddHoloItem(Player p) {
+        p.getInventory().addItem(new ItemStack(Material.TNT));
     }
 
     public void callStartingItems(Player p) {
-
-        callTransformItem(p);
-
-        callDeChargeItem(p);
-
-        callChargeItem(p);
-
-        callAuraReleaseItem(p);
-
-        callMenuItem(p);
-
-        callRemoveorAddHoloItem(p);
-
+        itemActions.keySet().forEach(material -> giveItem(p, material));
     }
 
     public void callScoreboard(Player p) {

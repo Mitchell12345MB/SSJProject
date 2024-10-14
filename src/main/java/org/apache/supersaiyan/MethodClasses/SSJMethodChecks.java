@@ -24,6 +24,7 @@ public class SSJMethodChecks {
 
         }
 
+
         if (!ssj.getSSJPCM().getFile(p).exists()) {
 
             p.sendMessage(ChatColor.RED + "Your player file doesn't exist!");
@@ -48,288 +49,93 @@ public class SSJMethodChecks {
 
     }
 
-    public void callGenStatMenuChecks(Player p, InventoryClickEvent e) { //When the player clicks in the general stats inv, do this;
+    public void callGenStatMenuChecks(Player p, InventoryClickEvent e) {
+        if (!e.getInventory().equals(ssj.getSSJGui().genstatinv)) return;
 
-        if (e.getRawSlot() == 3 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Health", ssj.getSSJPCM().getHealth(p) + 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-
-                ssj.getSSJGui().openGenStatInventory(p);
-
-                scoreBoardCheck();
-
-                ssj.getSSJMethods().callScoreboard(p);
-
-            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
-
-                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
-
-            }
-
+        switch (e.getRawSlot()) {
+            case 3:
+                handleStatIncrease(p, "Base.Health", ssj.getSSJPCM().getHealth(p));
+                break;
+            case 4:
+                handleStatIncrease(p, "Base.Power", ssj.getSSJPCM().getPower(p));
+                break;
+            case 5:
+                handleStatIncrease(p, "Base.Strength", ssj.getSSJPCM().getStrength(p));
+                break;
+            case 6:
+                handleStatIncrease(p, "Base.Speed", ssj.getSSJPCM().getSpeed(p));
+                break;
+            case 7:
+                handleStatIncrease(p, "Base.Stamina", ssj.getSSJPCM().getStamina(p));
+                break;
+            case 10:
+                ssj.getSSJGui().openSkillStatInventory(p);
+                break;
+            case 11:
+                ssj.getSSJGui().openSettingsInventory(p);
+                break;
+            default:
+                break;
         }
-
-        if (e.getRawSlot() == 4 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Power", ssj.getSSJPCM().getPower(p) + 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-
-                ssj.getSSJGui().openGenStatInventory(p);
-
-                scoreBoardCheck();
-
-                ssj.getSSJMethods().callScoreboard(p);
-
-            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
-
-                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
-
-            }
-
-        }
-
-        if (e.getRawSlot() == 5 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Strength", ssj.getSSJPCM().getStrength(p) + 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-
-                ssj.getSSJGui().openGenStatInventory(p);
-
-                scoreBoardCheck();
-
-                ssj.getSSJMethods().callScoreboard(p);
-
-            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
-
-                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
-
-            }
-
-        }
-
-        if (e.getRawSlot() == 6 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Speed", ssj.getSSJPCM().getSpeed(p) + 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-
-                ssj.getSSJGui().openGenStatInventory(p);
-
-                scoreBoardCheck();
-
-                ssj.getSSJMethods().callScoreboard(p);
-
-            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
-
-                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
-
-            }
-
-        }
-
-        if (e.getRawSlot() == 7 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Stamina", ssj.getSSJPCM().getStamina(p) + 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-
-                ssj.getSSJGui().openGenStatInventory(p);
-
-                scoreBoardCheck();
-
-                ssj.getSSJMethods().callScoreboard(p);
-
-            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
-
-                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
-
-            }
-
-        }
-
-        if (e.getRawSlot() == 8 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Base.Defence", ssj.getSSJPCM().getDefence(p) + 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-
-                ssj.getSSJGui().openGenStatInventory(p);
-
-                scoreBoardCheck();
-
-                ssj.getSSJMethods().callScoreboard(p);
-
-            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
-
-                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
-
-            }
-
-        }
-
-        if (e.getRawSlot() == 9 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Saiyan_Ability", ssj.getSSJPCM().getSaiyanAbility(p) + 1);
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Level", ssj.getSSJRpgSys().addLevel(p));
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-
-                ssj.getSSJGui().openGenStatInventory(p);
-
-                scoreBoardCheck();
-
-                ssj.getSSJMethods().callScoreboard(p);
-
-            } else if (ssj.getSSJPCM().getActionPoints(p) <= 0) {
-
-                p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
-
-            }
-
-        }
-
-        if (e.getRawSlot() == 10 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            ssj.getSSJGui().openSkillStatInventory(p);
-
-        }
-
-        if (e.getRawSlot() == 11 && e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-
-            ssj.getSSJGui().openSettingsInventory(p);
-
-        }
-
     }
 
-    public void callSkillStatMenuChecks(Player p, InventoryClickEvent e) { //When the player clicks in the general stats inv, do this;
-
-        if (e.getRawSlot() == 1 && e.getInventory().equals(ssj.getSSJGui().skillstatinv)) {
-
+    private void handleStatIncrease(Player p, String statKey, int currentValue) {
+        if (ssj.getSSJPCM().getActionPoints(p) > 0) {
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
+            ssj.getSSJPCM().setPlayerConfigValue(p, statKey, currentValue + 1);
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Level", ssj.getSSJRpgSys().addLevel(p));
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
             ssj.getSSJGui().openGenStatInventory(p);
-
+            scoreBoardCheck();
+            ssj.getSSJMethods().callScoreboard(p);
+        } else {
+            p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
         }
-
-        if (e.getRawSlot() == 2 && e.getInventory().equals(ssj.getSSJGui().skillstatinv)) {
-
-            ssj.getSSJGui().openSettingsInventory(p);
-
-        }
-
     }
 
-    public void callSettingsMenuChecks(Player p, InventoryClickEvent e) { //When the player clicks in the general stats inv, do this;
+    public void callSkillStatMenuChecks(Player p, InventoryClickEvent e) {
+        if (!e.getInventory().equals(ssj.getSSJGui().skillstatinv)) return;
 
-        if (e.getRawSlot() == 0 && e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
-
-            if (ssj.getSSJPCM().getExplosionEffects(p)) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"See_Explosion_Effects", false);
-
+        switch (e.getRawSlot()) {
+            case 1:
+                ssj.getSSJGui().openGenStatInventory(p);
+                break;
+            case 2:
                 ssj.getSSJGui().openSettingsInventory(p);
-
-            } else {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"See_Explosion_Effects", true);
-
-                ssj.getSSJGui().openSettingsInventory(p);
-
-            }
-
+                break;
+            default:
+                break;
         }
+    }
 
-        if (e.getRawSlot() == 1 && e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
+    public void callSettingsMenuChecks(Player p, InventoryClickEvent e) {
+        if (!e.getInventory().equals(ssj.getSSJGui().settingsinv)) return;
 
-            if (ssj.getSSJPCM().getLightningEffects(p)) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"See_Lightning_Effects", false);
-
-                ssj.getSSJGui().openSettingsInventory(p);
-
-            } else {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"See_Lightning_Effects", true);
-
-                ssj.getSSJGui().openSettingsInventory(p);
-
-            }
-
+        switch (e.getRawSlot()) {
+            case 0:
+                toggleSetting(p, "See_Explosion_Effects");
+                break;
+            case 1:
+                toggleSetting(p, "See_Lightning_Effects");
+                break;
+            case 2:
+                toggleSetting(p, "Hear_Sound_Effects");
+                break;
+            case 3:
+                ssj.getSSJGui().openGenStatInventory(p);
+                break;
+            case 4:
+                ssj.getSSJGui().openSkillStatInventory(p);
+                break;
+            default:
+                break;
         }
+    }
 
-        if (e.getRawSlot() == 2 && e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
-
-            if (ssj.getSSJPCM().getSoundEffects(p)) {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Hear_Sound_Effects", false);
-
-                ssj.getSSJGui().openSettingsInventory(p);
-
-            } else {
-
-                ssj.getSSJPCM().setPlayerConfigValue(p,"Hear_Sound_Effects", true);
-
-                ssj.getSSJGui().openSettingsInventory(p);
-
-            }
-
-        }
-
-        if (e.getRawSlot() == 3 && e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
-
-            ssj.getSSJGui().openGenStatInventory(p);
-
-        }
-
-        if (e.getRawSlot() == 4 && e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
-
-            ssj.getSSJGui().openSkillStatInventory(p);
-
-        }
-
+    private void toggleSetting(Player p, String settingKey) {
+        boolean currentValue = (boolean) ssj.getSSJPCM().getPlayerConfigValue(p, settingKey).orElse(false);
+        ssj.getSSJPCM().setPlayerConfigValue(p, settingKey, !currentValue);
+        ssj.getSSJGui().openSettingsInventory(p);
     }
 
     public void onEnableChecks() {

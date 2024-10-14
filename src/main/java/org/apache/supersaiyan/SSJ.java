@@ -47,8 +47,6 @@ public class SSJ extends JavaPlugin {
 
     private SSJBossBar ssjbossbar;
 
-    private Metrics metrics;
-
     private SSJListeners ssjlisteners;
 
     private SSJRpgSys ssjrpgsys;
@@ -57,10 +55,6 @@ public class SSJ extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
-        int pluginId = 18024;
-
-        metrics = new Metrics(this, pluginId);
 
         regClass();
 
