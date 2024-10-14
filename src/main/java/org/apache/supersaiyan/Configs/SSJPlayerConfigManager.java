@@ -77,7 +77,7 @@ public class SSJPlayerConfigManager {
             onFirstSet(p);
         }
     }
-
+    
     private void onFirstSet(Player p) {
         ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
         var config = getPlayerConfig(p);
