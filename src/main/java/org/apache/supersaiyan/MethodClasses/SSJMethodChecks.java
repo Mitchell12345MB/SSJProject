@@ -68,6 +68,9 @@ public class SSJMethodChecks {
             case 7:
                 handleStatIncrease(p, "Base.Stamina", ssj.getSSJPCM().getStamina(p));
                 break;
+            case 8:
+                handleStatIncrease(p, "Base.Defence", ssj.getSSJPCM().getDefence(p));
+                break;
             case 10:
                 ssj.getSSJGui().openSkillStatInventory(p);
                 break;
@@ -85,6 +88,10 @@ public class SSJMethodChecks {
             ssj.getSSJPCM().setPlayerConfigValue(p, statKey, currentValue + 1);
             ssj.getSSJPCM().setPlayerConfigValue(p, "Level", ssj.getSSJRpgSys().addLevel(p));
             ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
+            
+            // Update all stat boosts whenever any stat increases
+            ssj.getSSJRpgSys().updateAllStatBoosts(p);
+            
             ssj.getSSJGui().openGenStatInventory(p);
             scoreBoardCheck();
             ssj.getSSJMethods().callScoreboard(p);

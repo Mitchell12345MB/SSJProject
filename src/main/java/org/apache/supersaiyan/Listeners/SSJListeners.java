@@ -97,22 +97,18 @@ public class SSJListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent e){
-
-        for (Player online : Bukkit.getOnlinePlayers()) {
-
-            ssj.getSSJPCM().createUserCheck(online);
-
-            ssj.getSSJPCM().getPlayerConfig(online);
-
-            ssj.getSSJMethodChecks().checkPPCPlayerName(online);
-
-            ssj.getSSJMethods().callScoreboard(online);
-
-            ssj.getSSJTimers().saveTimer();
-
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        
+        // Only apply stats if they've started their journey
+        if (ssj.getSSJPCM().getStart(player)) {
+            // Apply all base stat boosts
+            ssj.getSSJRpgSys().updateAllStatBoosts(player);
+            
+            // Update scoreboard
+            ssj.getSSJMethodChecks().scoreBoardCheck();
+            ssj.getSSJMethods().callScoreboard(player);
         }
-
     }
 
     @EventHandler

@@ -20,10 +20,10 @@ Explosion_Effect: true
 
 # If the Explosion_Effect is set to "true", then you have the option to make blocks around you explode_normal when transforming.
 # (Leave "0" if you just want the effect).
-Explosion_Radius: 0
+Explosion_Radius: 3
 
 # This true or false the sound when transforming (Sound: Ghast Firing)
-Sound_Effect: True
+Sound_Effect: true
 
 # How many action points do you want the player to have when they first start? (Default is 10)
 Starting_Action_Points: 10
@@ -31,14 +31,23 @@ Starting_Action_Points: 10
 # How many stat points a player will start with. This sets all attributes such as health, attack, defence, etc... (default is 5)
 Starting_Stat_Points: 5
 
-# The multiplier for every player's Battle Power. (Default is 25)
-Base_Battle_Power_Multiplier: 25
+# The multiplier for every player's Battle Power. (Default is 2)
+Base_Battle_Power_Multiplier: 2
 
-# The non-passive (When they hold the charge item) multiplier for every player's energy gain (Default is 5)
-NPGain_Energy_Multiplier: 5
+# The non-passive (When they hold the charge item) multiplier for every player's energy gain (Default is 2)
+NGain_Energy_Multiplier: 2
 
-# The passive multiplier (How much energy they gain over time) for every player's energy gain (Default is 5)
-PGain_Energy_Multiplier: 5
+# The passive multiplier (How much energy they gain over time) for every player's energy gain (Default is 1)
+PGain_Energy_Multiplier: 1
 
-# The multiplier for every player's energy limit (Default is 5)
-Energy_Multiplier_Limit: 5
+# The multiplier for every player's energy limit (Default is 100)
+Energy_Multiplier_Limit: 100
+
+# Hold the charge item or click the charge button to gain energy.
+Hold_Charge_Item: true
+
+# Passive or active energy gain.
+Passive_Energy_Gain: false
+
+# Make the energy bar visible at all times?
+Energy_Bar_Visible: false

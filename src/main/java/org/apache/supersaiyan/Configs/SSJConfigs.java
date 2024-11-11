@@ -167,9 +167,11 @@ public class SSJConfigs {
 
             TConfig.load(TConfigFile);
 
-        } catch (IOException | InvalidConfigurationException xp) {
+        } catch (IOException | InvalidConfigurationException e) {
 
-            xp.printStackTrace();
+            ssj.getLogger().warning("Missing transformations.yml, creating one now...");
+
+            createTConfig();
 
         }
 
@@ -181,9 +183,11 @@ public class SSJConfigs {
 
             SConfig.load(SConfigFile);
 
-        } catch (IOException | InvalidConfigurationException xp) {
+        } catch (IOException | InvalidConfigurationException e) {
 
-            xp.printStackTrace();
+            ssj.getLogger().warning("Missing skills.yml, creating one now...");
+
+            createSConfig();
 
         }
 
@@ -195,10 +199,14 @@ public class SSJConfigs {
 
             Config.load(ConfigFile);
 
-        } catch (IOException | InvalidConfigurationException xp) {
+        } catch (IOException | InvalidConfigurationException e) {
 
-            xp.printStackTrace();
+            ssj.getLogger().warning("Missing config.yml, creating one now...");
+
+            createConfig();
+
         }
+
     }
 
     public void saveConfigs() {
@@ -219,9 +227,9 @@ public class SSJConfigs {
 
             TConfig.save(TConfigFile);
 
-        } catch (IOException xp) {
+        } catch (IOException e) {
 
-            xp.printStackTrace();
+            ssj.getLogger().warning("Error saving transformations.yml");
 
         }
 
@@ -231,13 +239,13 @@ public class SSJConfigs {
 
         try {
 
-            loadTConfig();
+            loadSConfig();
 
             SConfig.save(SConfigFile);
 
-        } catch (IOException xp) {
+        } catch (IOException e) {
 
-            xp.printStackTrace();
+            ssj.getLogger().warning("Error saving skills.yml");
 
         }
 
@@ -251,10 +259,12 @@ public class SSJConfigs {
 
             Config.save(ConfigFile);
 
-        } catch (IOException xp) {
+        } catch (IOException e) {
 
-            xp.printStackTrace();
+            ssj.getLogger().warning("Error saving config.yml");
+
         }
+
     }
 
     public FileConfiguration getCFile() {
@@ -297,7 +307,7 @@ public class SSJConfigs {
 
     public boolean getLF() { // Gets if the server admin wants to enable or disable the lightning effect when the player(s) transform.
 
-        return ssj.getSSJConfigs().getCFile().getBoolean("Explosion_Effect");
+        return ssj.getSSJConfigs().getCFile().getBoolean("Lightning_Effect");
 
     }
 
@@ -353,6 +363,24 @@ public class SSJConfigs {
 
         return ssj.getSSJConfigs().getCFile().getInt("Energy_Multiplier_Limit");
 
+    }
+
+    public boolean getHoldChargeItem() {
+
+        return ssj.getSSJConfigs().getCFile().getBoolean("Hold_Charge_Item");
+
+    }
+
+    public boolean getPassiveEnergyGain() {
+
+        return ssj.getSSJConfigs().getCFile().getBoolean("Passive_Energy_Gain");
+        
+    }
+
+    public boolean getEnergyBarVisible() {
+
+        return ssj.getSSJConfigs().getCFile().getBoolean("Energy_Bar_Visible");
+        
     }
 
     // transformations.yml stuff

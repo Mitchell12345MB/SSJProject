@@ -40,10 +40,8 @@ public class SSJ extends JavaPlugin {
     private SSJPlayerConfigManager ssjplayerconfigmanager;
 
     private SSJScoreBoards ssjscoreboards;
-
+    
     private SSJParticles ssjparticles;
-
-    private SSJXPBar ssjxpbar;
 
     private SSJBossBar ssjbossbar;
 
@@ -53,26 +51,49 @@ public class SSJ extends JavaPlugin {
 
     private SSJActionListeners ssjactionlisteners;
 
+    private SSJTransformationManager ssjtransformationmanager;
+
+    private SSJChargeSystem ssjchargesystem;
+
+    private SSJSkillManager ssjskillmanager;
+
     @Override
     public void onEnable() {
-
+        // Save default config files first
+        saveDefaultConfig();
+        
+        // Initialize configs before anything else
+        ssjconfigs = new SSJConfigs(this);
+        ssjconfigs.createConfig();
+        ssjconfigs.createTConfig(); 
+        ssjconfigs.createSConfig();
+        ssjconfigs.loadConfigs();
+        
+        // Then proceed with other initialization
         regClass();
-
-        regListeners();
-
         regCommands();
-
         configUICall();
-
-        ssjmethodchecks.onEnableChecks();
-
+        
+        if (ssjmethodchecks != null) {
+            ssjmethodchecks.onEnableChecks();
+        }
     }
 
     @Override
     public void onDisable() {
+        // Clean up boss bars
+        for (SSJBossBar bossBar : getSSJActionListeners().getBossBars().values()) {
+            for (Player player : getServer().getOnlinePlayers()) {
+                bossBar.hide(player);
+            }
+        }
+        getSSJActionListeners().getBossBars().clear();
 
-        ssjmethodchecks.onDisableChecks();
+        if (ssjmethodchecks != null) {
+            ssjmethodchecks.onDisableChecks();
+        }
 
+        ssjrpgsys.stopPassiveEnergyGain();
     }
 
     private void regListeners(){
@@ -111,24 +132,28 @@ public class SSJ extends JavaPlugin {
 
         ssjscoreboards = new SSJScoreBoards(this);
 
-        ssjconfigs = new SSJConfigs(this);
-
         ssjgui = new SSJGui(this);
 
         ssjmethods = new SSJMethods(this);
 
         ssjtimers = new SSJTimers(this);
 
-        ssjxpbar = new SSJXPBar(this, player);
-
         ssjmethodchecks = new SSJMethodChecks(this);
 
         ssjparticles = new SSJParticles(this, player, particleType, integer, 0);
 
-        ssjbossbar = new SSJBossBar(this, string, mapui);
+        ssjbossbar = new SSJBossBar(this, string, mapui, false);
 
         ssjrpgsys = new SSJRpgSys(this);
 
+        ssjtransformationmanager = new SSJTransformationManager(this);
+
+        ssjchargesystem = new SSJChargeSystem(this);
+
+        ssjskillmanager = new SSJSkillManager(this);
+
+        // Initialize listeners after systems
+        regListeners();
     }
 
     private void regCommands(){
@@ -146,6 +171,12 @@ public class SSJ extends JavaPlugin {
         ssjconfigs.createSConfig();
 
         ssjconfigs.updateConfigs();
+
+    }
+
+    public SSJTransformationManager getSSJTransformationManager() {
+
+        return ssjtransformationmanager;
 
     }
 
@@ -191,12 +222,6 @@ public class SSJ extends JavaPlugin {
 
     }
 
-    public SSJXPBar getSSJXPB(){
-
-        return ssjxpbar;
-
-    }
-
     public SSJBossBar getSSJBB(){
 
         return ssjbossbar;
@@ -225,5 +250,23 @@ public class SSJ extends JavaPlugin {
 
         return ssjlisteners;
 
+    }
+
+    public SSJActionListeners getSSJActionListeners() {
+
+        return ssjactionlisteners;
+        
+    }
+
+    public SSJChargeSystem getSSJChargeSystem() {
+
+        return ssjchargesystem;
+        
+    }
+
+    public SSJSkillManager getSSJSkillManager() {
+
+        return ssjskillmanager;
+        
     }
 }
