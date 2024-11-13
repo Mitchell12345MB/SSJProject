@@ -2,11 +2,9 @@ package org.apache.supersaiyan.MethodClasses;
 
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -30,11 +28,31 @@ public class SSJChargeSystem {
             return;
         }
         
-        @SuppressWarnings("unused")
         String currentForm = ssj.getSSJPCM().getForm(player);
-        String particleType = "FLAME";
+        String particleType = "FLAME"; // Default particle
         
-        particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 50, 3);
+        if (!currentForm.equals("Base")) {
+            String[] categories = {"Base_Forms", "Kaioken_Forms", "Saiyan_Forms", 
+                                 "Legendary_Saiyan_Forms", "Saiyan_God_Forms"};
+            
+            for (String category : categories) {
+                ConfigurationSection section = ssj.getSSJConfigs().getTCFile().getConfigurationSection(category);
+                if (section != null) {
+                    for (String key : section.getKeys(false)) {
+                        String desc = section.getString(key + ".Desc");
+                        if (currentForm.equals(desc)) {
+                            String particlePath = category + "." + key + ".Particle.Type";
+                            if (ssj.getSSJConfigs().getTCFile().contains(particlePath)) {
+                                particleType = ssj.getSSJConfigs().getTCFile().getString(particlePath);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 10, 3);
         energyBar = new SSJBossBar(ssj, ChatColor.GOLD + "Energy: ", new HashMap<>(), ssj.getSSJConfigs().getEnergyBarVisible());
         energyBar.show(player);
         
@@ -54,15 +72,6 @@ public class SSJChargeSystem {
                 if (!player.isOnline()) {
                     stopCharging(player);
                     return;
-                }
-                
-                // For hold-to-charge, check if player is still holding right-click
-                if (ssj.getSSJConfigs().getHoldChargeItem()) {
-                    ItemStack heldItem = player.getInventory().getItemInMainHand();
-                    if (heldItem.getType() != Material.MAGMA_CREAM || !player.isHandRaised()) {
-                        stopCharging(player);
-                        return;
-                    }
                 }
                 
                 // Create particles every tick
@@ -136,16 +145,16 @@ public class SSJChargeSystem {
                             String particlePath = category + "." + key + ".Particle.Type";
                             if (ssj.getSSJConfigs().getTCFile().contains(particlePath)) {
                                 particleType = ssj.getSSJConfigs().getTCFile().getString(particlePath);
+                                break;
                             }
-                            break;
                         }
                     }
                 }
             }
         }
         
-        if (isCharging(player)) {
-            particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 50, 3);
+        if (particleEffect != null) {
+            particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 10, 3);
         }
     }
 }

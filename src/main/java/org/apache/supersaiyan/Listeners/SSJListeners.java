@@ -128,4 +128,28 @@ public class SSJListeners implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onTransformationsInventoryClick(final InventoryClickEvent e) {
+        if (!e.getInventory().equals(ssj.getSSJGui().transformationsinv)) return;
+        
+        e.setCancelled(true);
+        final ItemStack clickedItem = e.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType().isAir()) return;
+        
+        final Player p = (Player) e.getWhoClicked();
+        ssj.getSSJMethodChecks().callTransformationsMenuChecks(p, e);
+    }
+
+    @EventHandler
+    public void onSkillsInventoryClick(final InventoryClickEvent e) {
+        if (!e.getInventory().equals(ssj.getSSJGui().skillsinv)) return;
+        
+        e.setCancelled(true);
+        final ItemStack clickedItem = e.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType().isAir()) return;
+        
+        final Player p = (Player) e.getWhoClicked();
+        ssj.getSSJMethodChecks().callSkillsMenuChecks(p, e);
+    }
 }

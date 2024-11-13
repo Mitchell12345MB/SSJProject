@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class SSJMethodChecks {
 
@@ -72,9 +73,12 @@ public class SSJMethodChecks {
                 handleStatIncrease(p, "Base.Defence", ssj.getSSJPCM().getDefence(p));
                 break;
             case 10:
-                ssj.getSSJGui().openSkillStatInventory(p);
+                ssj.getSSJGui().openTransformationsInventory(p);
                 break;
             case 11:
+                ssj.getSSJGui().openSkillsInventory(p);
+                break;
+            case 12:
                 ssj.getSSJGui().openSettingsInventory(p);
                 break;
             default:
@@ -214,5 +218,49 @@ public class SSJMethodChecks {
                 ssj.getLogger().warning(p.getName() + "'s.yml has been updated!");
             }
         }
+    }
+
+    public void callTransformationsMenuChecks(Player p, InventoryClickEvent e) {
+        if (!e.getInventory().equals(ssj.getSSJGui().transformationsinv)) return;
+
+        switch (e.getRawSlot()) {
+            case 26: // Back button
+                ssj.getSSJGui().openGenStatInventory(p);
+                break;
+            default:
+                ItemStack clicked = e.getCurrentItem();
+                if (clicked != null && clicked.hasItemMeta()) {
+                    String name = clicked.getItemMeta().getDisplayName();
+                    handleTransformationClick(p, name);
+                }
+                break;
+        }
+    }
+
+    public void callSkillsMenuChecks(Player p, InventoryClickEvent e) {
+        if (!e.getInventory().equals(ssj.getSSJGui().skillsinv)) return;
+
+        switch (e.getRawSlot()) {
+            case 17: // Back button
+                ssj.getSSJGui().openGenStatInventory(p);
+                break;
+            default:
+                ItemStack clicked = e.getCurrentItem();
+                if (clicked != null && clicked.hasItemMeta()) {
+                    String name = clicked.getItemMeta().getDisplayName();
+                    handleSkillClick(p, name);
+                }
+                break;
+        }
+    }
+
+    private void handleTransformationClick(Player p, String transformName) {
+        // Handle transformation activation based on the clicked transformation
+        // This should integrate with your existing transformation system
+    }
+
+    private void handleSkillClick(Player p, String skillName) {
+        // Handle skill activation/learning based on the clicked skill
+        // This should integrate with your existing skill system
     }
 }

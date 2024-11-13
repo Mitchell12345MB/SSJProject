@@ -30,6 +30,10 @@ Base_Forms:
  Potential_Unleashed:
   TransformationID: "potential"
   Desc: "Potential Unleashed"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "fireworks_spark"
     Count: 10
@@ -48,6 +52,11 @@ Base_Forms:
     SATURATION: 6
     SPEED: 6
     HEALTH_BOOST: 6
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
 
 Kaioken_Forms:
@@ -55,6 +64,10 @@ Kaioken_Forms:
  Kaioken_x1:
   TransformationID: "x1"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -73,10 +86,19 @@ Kaioken_Forms:
     SATURATION: 1
     SPEED: 1
     HEALTH_BOOST: 1
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x2:
   TransformationID: "x2"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -95,10 +117,19 @@ Kaioken_Forms:
     SATURATION: 1
     SPEED: 1
     HEALTH_BOOST: 1
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x3:
   TransformationID: "x3"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -117,10 +148,19 @@ Kaioken_Forms:
     SATURATION: 2
     SPEED: 2
     HEALTH_BOOST: 2
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x4:
   TransformationID: "x4"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -139,10 +179,19 @@ Kaioken_Forms:
     SATURATION: 2
     SPEED: 2
     HEALTH_BOOST: 2
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x20:
   TransformationID: "x20"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -161,10 +210,19 @@ Kaioken_Forms:
     SATURATION: 3
     SPEED: 3
     HEALTH_BOOST: 3
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x30:
   TransformationID: "x30"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -183,10 +241,19 @@ Kaioken_Forms:
     SATURATION: 3
     SPEED: 3
     HEALTH_BOOST: 3
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x40:
   TransformationID: "x40"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -205,10 +272,19 @@ Kaioken_Forms:
     SATURATION: 4
     SPEED: 4
     HEALTH_BOOST: 4
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x50:
   TransformationID: "x50"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -227,10 +303,19 @@ Kaioken_Forms:
     SATURATION: 5
     SPEED: 5
     HEALTH_BOOST: 5
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Kaioken_x100:
   TransformationID: "x100"
   Desc: "Kaioken Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 10
@@ -249,12 +334,21 @@ Kaioken_Forms:
     SATURATION: 5
     SPEED: 5
     HEALTH_BOOST: 5
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
 Saiyan_Forms:
 
  False_Super_Saiyan:
   TransformationID: "false"
   Desc: "False Super Saiyan"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "flame"
     Count: 10
@@ -273,10 +367,19 @@ Saiyan_Forms:
     SATURATION: 4
     SPEED: 4
     HEALTH_BOOST: 1
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_1:
   TransformationID: "1"
   Desc: "Super Saiyan 1"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "flame"
     Count: 10
@@ -295,10 +398,19 @@ Saiyan_Forms:
     SATURATION: 5
     SPEED: 5
     HEALTH_BOOST: 1
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_2:
   TransformationID: "2"
   Desc: "Super Saiyan 2"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "flame"
     Count: 10
@@ -317,10 +429,19 @@ Saiyan_Forms:
     SATURATION: 10
     SPEED: 10
     HEALTH_BOOST: 2
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Ultimate_Super_Saiyan:
   TransformationID: "2.5"
   Desc: "Super Saiyan Ultimate"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "flame"
     Count: 10
@@ -339,10 +460,19 @@ Saiyan_Forms:
     SATURATION: 5
     SPEED: 3
     HEALTH_BOOST: 2
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_3:
   TransformationID: "3"
   Desc: "Super Saiyan 3"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "flame"
     Count: 10
@@ -361,10 +491,19 @@ Saiyan_Forms:
     SATURATION: 15
     SPEED: 15
     HEALTH_BOOST: 2
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_4:
   TransformationID: "4"
   Desc: "Super Saiyan 4"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "lava"
     Count: 10
@@ -383,10 +522,19 @@ Saiyan_Forms:
     SATURATION: 20
     SPEED: 20
     HEALTH_BOOST: 3
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_5:
   TransformationID: "5"
   Desc: "Super Saiyan 5"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "spell_instant"
     Count: 10
@@ -405,12 +553,21 @@ Saiyan_Forms:
     SATURATION: 25
     SPEED: 25
     HEALTH_BOOST: 4
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
 Kaioken_and_Saiyan_Forms:
 
  Super_Kaioken:
   TransformationID: "super"
   Desc: "Kaioken & Super Saiyan Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "flame"
     Count: 5
@@ -429,6 +586,11 @@ Kaioken_and_Saiyan_Forms:
     SATURATION: 6
     SPEED: 6
     HEALTH_BOOST: 2
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
 
 Legendary_Saiyan_Forms:
@@ -436,6 +598,10 @@ Legendary_Saiyan_Forms:
  Legendary_Super_Saiyan_1:
   TransformationID: "legendary"
   Desc: "Legendary Super Saiyan"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "villager_happy"
     Count: 10
@@ -454,12 +620,21 @@ Legendary_Saiyan_Forms:
     SATURATION: 11
     SPEED: 11
     HEALTH_BOOST: 3
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
 Saiyan_God_Forms:
 
  Super_Saiyan_God:
   TransformationID: "god"
   Desc: "Super Saiyan God"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "redstone"
     Count: 5
@@ -478,11 +653,19 @@ Saiyan_God_Forms:
     SATURATION: 30
     SPEED: 30
     HEALTH_BOOST: 4
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_Blue_1:
   TransformationID: "blue"
   Desc: "Super Saiyan Blue"
-  DescBoost: "x350"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "spell_instant"
     Count: 10
@@ -501,10 +684,19 @@ Saiyan_God_Forms:
     SATURATION: 35
     SPEED: 35
     HEALTH_BOOST: 7
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_Rose_1:
   TransformationID: "rose"
   Desc: "Super Saiyan Rose"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "dragon_breath"
     Count: 5
@@ -523,10 +715,19 @@ Saiyan_God_Forms:
     SATURATION: 36
     SPEED: 36
     HEALTH_BOOST: 8
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_Rage:
   TransformationID: "rage"
   Desc: "Super Saiyan Rage"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "spell_instant"
     Count: 5
@@ -545,10 +746,19 @@ Saiyan_God_Forms:
     SATURATION: 30
     SPEED: 30
     HEALTH_BOOST: 8
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
  Super_Saiyan_Blue_2:
   TransformationID: "blue2"
   Desc: "Super Saiyan Blue Evolution"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "spell_instant"
     Count: 5
@@ -567,12 +777,21 @@ Saiyan_God_Forms:
     SATURATION: 40
     SPEED: 40
     HEALTH_BOOST: 8
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100
 
 Kaioken_and_Saiyan_God_Forms:
 
  Kaioken_Super_Saiyan_Blue_1_x10:
   TransformationID: "bluex10"
   Desc: "Kaioken & Super Saiyan Blue Transformation"
+  Level_Lock: 100
+  Saiyan_Ability_Lock: 100
+  Acion_Points_Cost: 100
+  Upgrade_Acion_Points_Cost: 100
   Particle:
     Type: "spell_instant"
     Count: 5
@@ -591,3 +810,8 @@ Kaioken_and_Saiyan_God_Forms:
     SATURATION: 70
     SPEED: 55
     HEALTH_BOOST: 14
+    BP_MULTIPLIER: 50
+    ENERGY_GAIN_MULTIPLIER: 50
+    ENERGY_LIMIT_MULTIPLIER: 50
+    ENERGY_DRAIN_MULTIPLIER: 50
+    TRANSFORMATION_ENERGY_COST: 100

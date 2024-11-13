@@ -3,9 +3,10 @@ package org.apache.supersaiyan.MethodClasses;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+import java.util.Random;
 
 public class SSJParticles {
 
@@ -19,6 +20,8 @@ public class SSJParticles {
 
     private final SSJ ssj;
 
+    private final Random random;
+
     public SSJParticles(SSJ ssj, Player player, Particle particleType, int particleCount, double particleRange) {
 
         this.ssj = ssj;
@@ -27,9 +30,11 @@ public class SSJParticles {
 
         this.particleType = particleType;
 
-        this.particleCount = particleCount;
+        this.particleCount = Math.min(particleCount, 20);
 
         this.particleRange = particleRange;
+
+        this.random = new Random();
 
     }
 
@@ -37,62 +42,79 @@ public class SSJParticles {
 
         new BukkitRunnable() {
 
-            double t = 0;
+            double angle = 0;
 
-            final int particleCounts = SSJParticles.this.particleCount / 2;
-
-            final int particleCounto = SSJParticles.this.particleCount;
+            int tickCount = 0;
 
             @Override
             public void run() {
 
-                t += Math.PI / 8;
+                tickCount++;
 
-                for (Entity entity : player.getWorld().getNearbyEntities(player.getLocation(), particleRange, particleRange, particleRange)) {
+                if (tickCount % 2 != 0) return;
 
-                    if (entity instanceof Player && !entity.equals(player)) {
+                Location playerLoc = player.getLocation();
 
-                        Player p = (Player) entity;
+                // Create base aura with reduced particle count
+                for (int i = 0; i < particleCount; i++) {
 
-                        for (int i = 0; i < particleCounto; i++) {
+                    double height = random.nextDouble() * 2.0;
+                    double radius = particleRange * (1 + 0.2 * Math.sin(angle + i));
 
-                            double x = particleRange * Math.cos(t + 2 * Math.PI * i / particleCounto);
+                    double x = radius * Math.cos(angle + (2 * Math.PI * i / particleCount));
+                    double z = radius * Math.sin(angle + (2 * Math.PI * i / particleCount));
 
-                            double y = 2 * Math.exp(-0.1 * t) * Math.sin(t) + 1.5;
+                    Location particleLoc = playerLoc.clone().add(x, height, z);
 
-                            double z = particleRange * Math.sin(t + 2 * Math.PI * i / particleCounto);
+                    Vector offset = new Vector(
+                        (random.nextDouble() - 0.5) * 0.2,
+                        (random.nextDouble() - 0.5) * 0.2,
+                        (random.nextDouble() - 0.5) * 0.2
+                    );
 
-                            Location loc = player.getLocation().add(x, y, z);
+                    player.getWorld().spawnParticle(
+                        particleType,
+                        particleLoc,
+                        0,
+                        offset.getX(),
+                        0.1 + random.nextDouble() * 0.2,
+                        offset.getZ()
+                    );
 
-                            p.spawnParticle(particleType, loc, 0);
+                    // Reduce ground particle frequency (1 in 6 chance instead of 1 in 3)
+                    if (random.nextInt(6) == 0) {
 
-                        }
+                        Location groundLoc = playerLoc.clone().add(
+                            (random.nextDouble() - 0.5) * particleRange * 2,
+                            0.1,
+                            (random.nextDouble() - 0.5) * particleRange * 2
+                        );
 
-                    } else {
-
-                        for (int i = 0; i < particleCounts; i++) {
-
-                            double x = particleRange * Math.cos(t + 2 * Math.PI * i / particleCounts);
-
-                            double y = 2 * Math.exp(-0.1 * t) * Math.sin(t) + 1.5;
-
-                            double z = particleRange * Math.sin(t + 2 * Math.PI * i / particleCounts);
-
-                            Location loc = player.getLocation().add(x, y, z);
-
-                            player.spawnParticle(particleType, loc, 0);
-
-                        }
+                        player.getWorld().spawnParticle(
+                            particleType,
+                            groundLoc,
+                            0,
+                            0,
+                            0.05 + random.nextDouble() * 0.1,
+                            0
+                        );
 
                     }
 
                 }
 
-                if (t > Math.PI * 2) {
+                angle += Math.PI / 16;
+
+                if (angle >= Math.PI * 4) {
 
                     this.cancel();
+
                 }
+
             }
+
         }.runTaskTimer(ssj, 0L, 1L);
+
     }
+
 }

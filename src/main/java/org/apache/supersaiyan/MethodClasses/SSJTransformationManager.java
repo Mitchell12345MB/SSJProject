@@ -94,6 +94,11 @@ public class SSJTransformationManager {
             bossBar.getPlayerStats().put(player.getUniqueId(), 0);
             bossBar.update(player);
         }
+        
+        // Update charging particles if player is charging
+        if (ssj.getSSJChargeSystem().isCharging(player)) {
+            ssj.getSSJChargeSystem().updateParticles(player);
+        }
     }
     
     @SuppressWarnings("deprecation")

@@ -14,11 +14,15 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.Location;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class SSJActionListeners implements Listener {
@@ -30,9 +34,10 @@ public class SSJActionListeners implements Listener {
     private final Map<UUID, BukkitRunnable> transformBarTimeouts = new HashMap<>();
 
     private final Map<UUID, Long> chargeToggleCooldowns = new HashMap<>();
+    
     private static final long CHARGE_TOGGLE_COOLDOWN = 500; // 500ms cooldown
 
-    private final Map<UUID, Boolean> isHoldingRightClick = new HashMap<>();
+    public final Set<UUID> holdingCharge = new HashSet<>();
 
     public SSJActionListeners(SSJ ssj) {
 
@@ -139,14 +144,11 @@ public class SSJActionListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerInteractCharge(PlayerInteractEvent e) {
+    public void onPlayerInteractCharge(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         ItemStack heldItem = p.getInventory().getItemInMainHand();
         
         if (heldItem.getType() != Material.MAGMA_CREAM) {
-            if (ssj.getSSJChargeSystem().isCharging(p)) {
-                ssj.getSSJChargeSystem().stopCharging(p);
-            }
             return;
         }
 
@@ -160,38 +162,60 @@ public class SSJActionListeners implements Listener {
             return;
         }
 
+        // Handle hold-to-charge mode
+        if (ssj.getSSJConfigs().getHoldChargeItem()) {
+            if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                e.setCancelled(true); // Prevent item use
+                if (!holdingCharge.contains(p.getUniqueId())) {
+                    holdingCharge.add(p.getUniqueId());
+                    ssj.getSSJChargeSystem().startCharging(p);
+                }
+            }
+            return;
+        }
+
+        // Handle toggle mode
         if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (ssj.getSSJConfigs().getHoldChargeItem()) {
-                if (!ssj.getSSJChargeSystem().isCharging(p)) {
-                    ssj.getSSJChargeSystem().startCharging(p);
-                }
+            long currentTime = System.currentTimeMillis();
+            long lastToggleTime = chargeToggleCooldowns.getOrDefault(p.getUniqueId(), 0L);
+            if (currentTime - lastToggleTime < CHARGE_TOGGLE_COOLDOWN) {
+                return;
+            }
+            chargeToggleCooldowns.put(p.getUniqueId(), currentTime);
+            
+            if (!ssj.getSSJChargeSystem().isCharging(p)) {
+                ssj.getSSJChargeSystem().startCharging(p);
             } else {
-                // Toggle charging
-                long currentTime = System.currentTimeMillis();
-                long lastToggleTime = chargeToggleCooldowns.getOrDefault(p.getUniqueId(), 0L);
-                if (currentTime - lastToggleTime < CHARGE_TOGGLE_COOLDOWN) {
-                    return;
-                }
-                chargeToggleCooldowns.put(p.getUniqueId(), currentTime);
-                
-                if (!ssj.getSSJChargeSystem().isCharging(p)) {
-                    ssj.getSSJChargeSystem().startCharging(p);
-                } else {
+                ssj.getSSJChargeSystem().stopCharging(p);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+        if (holdingCharge.contains(p.getUniqueId())) {
+            Location from = e.getFrom();
+            Location to = e.getTo();
+            if (to != null && (from.getX() != to.getX() || from.getZ() != to.getZ())) {
+                holdingCharge.remove(p.getUniqueId());
+                if (ssj.getSSJChargeSystem().isCharging(p)) {
                     ssj.getSSJChargeSystem().stopCharging(p);
+                    p.sendMessage(ChatColor.RED + "Stopped charging due to movement.");
                 }
             }
         }
     }
 
     @EventHandler
-    private void onPlayerStopHoldingCharge(PlayerItemHeldEvent e) {
+    public void onPlayerItemHeld(PlayerItemHeldEvent e) {
         Player p = e.getPlayer();
-        if (ssj.getSSJConfigs().getHoldChargeItem() && 
-            ssj.getSSJChargeSystem().isCharging(p) && 
-            isHoldingRightClick.getOrDefault(p.getUniqueId(), false)) {
-            isHoldingRightClick.put(p.getUniqueId(), false);
-            p.sendMessage(ChatColor.RED + "Stopped charging.");
-            ssj.getSSJChargeSystem().stopCharging(p);
+        if (holdingCharge.contains(p.getUniqueId())) {
+            holdingCharge.remove(p.getUniqueId());
+            if (ssj.getSSJChargeSystem().isCharging(p)) {
+                ssj.getSSJChargeSystem().stopCharging(p);
+                p.sendMessage(ChatColor.RED + "Stopped charging.");
+            }
         }
     }
 

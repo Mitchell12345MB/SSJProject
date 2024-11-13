@@ -1,7 +1,14 @@
 Fly:
   SkillId: 1
   Desc: "Allows the ability to fly."
-  APReq: 20
-  Stat_Req:
+  Acion_Points_Cost: 20
+  Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
+  Energy_Cost: 10 
+  Stat_Requirements:
     Power: 10
     Strength: 10
+  Stat_Boosts:
+    Speed: 10
+    Jump: 10
+    Battle_Power_Multiplier: 10 #Increases by 1 each time you upgrade the skill.
+
