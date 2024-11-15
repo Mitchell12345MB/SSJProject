@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 
@@ -50,8 +51,18 @@ public class SSJGui {
     }
 
     private void initializeGenStatInvItems(Player p) {
-        genstatinv.addItem(createGuiItem(Material.EGG, "§aLevel", String.valueOf(ssj.getSSJPCM().getLevel(p)), "§aYour current level."));
-        genstatinv.addItem(createGuiItem(Material.IRON_INGOT, "§aBattle Power", String.valueOf(ssj.getSSJRpgSys().getBaseBP(p)), "§aYour current battle power."));
+        genstatinv.addItem(createGuiItem(
+            Material.EGG, 
+            "§6§lLevel", 
+            "§7Your current level is: §e" + ssj.getSSJPCM().getLevel(p), 
+            "§7Level up to unlock new abilities!"
+        ));
+        genstatinv.addItem(createGuiItem(
+            Material.IRON_INGOT, 
+            "§b§lBattle Power", 
+            "§7Your current battle power is: §e" + ssj.getSSJRpgSys().getBaseBP(p), 
+            "§7Increase your battle power to become stronger."
+        ));
         genstatinv.addItem(createGuiItem(Material.EMERALD, "§aAction Points", String.valueOf(ssj.getSSJPCM().getActionPoints(p)), "§aYour current (spendable) action points."));
         genstatinv.addItem(createGuiItem(Material.POTION, "§aHealth", String.valueOf(ssj.getSSJPCM().getHealth(p)), "§aImproves your health."));
         genstatinv.addItem(createGuiItem(Material.FIREWORK_STAR, "§bPower", String.valueOf(ssj.getSSJPCM().getPower(p)), "§aImproves how much power you have."));
@@ -116,6 +127,7 @@ public class SSJGui {
         skillstatinv.addItem(createGuiItem(Material.GOLD_INGOT, "§bTransformations", ssj.getSSJPCM().getTransformations(p), "§aYour current unlocked transformations."));
         skillstatinv.addItem(createGuiItem(Material.GREEN_DYE, "§bStat Page", "§aGoes to your stat page."));
         skillstatinv.addItem(createGuiItem(Material.RED_DYE, "§bSettings Page", "§aGoes to your settings page."));
+        skillstatinv.setItem(9, createGuiItem(Material.BARRIER, "§cBack", "§aReturn to previous menu."));
     }
 
     private void initializeSettingsInvItems(Player p) {
@@ -124,13 +136,14 @@ public class SSJGui {
         settingsinv.addItem(createGuiItem(Material.DIAMOND, "§bSound Effects", String.valueOf(ssj.getSSJPCM().getSoundEffects(p)), "§aYour current sound settings."));
         settingsinv.addItem(createGuiItem(Material.GREEN_DYE, "§bStat Page", "§aGoes to your stat page."));
         settingsinv.addItem(createGuiItem(Material.RED_DYE, "§bSkill Page", "§aGoes to your skill stat page."));
+        settingsinv.setItem(8, createGuiItem(Material.BARRIER, "§cBack", "§aReturn to previous menu."));
     }
 
     protected ItemStack createGuiItem(final Material material, final String name, final String... lore) {
         final ItemStack item = new ItemStack(material, 1);
         final ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(name);
+        meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.GOLD + name);
         meta.setLore(Arrays.asList(lore));
         item.setItemMeta(meta);
         return item;

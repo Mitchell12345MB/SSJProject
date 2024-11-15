@@ -10,8 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -248,31 +251,38 @@ public class SSJActionListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerInteractReleaseAura(PlayerInteractEvent e) { //Releases your "aura" and boost plays stats: Speed, Strength, Damage resistance, Damage out-put, and multiplies player's "Battle Power."
-
+    private void onPlayerInteractReleaseAura(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-
         ItemStack heldItem = p.getInventory().getItemInMainHand();
 
         if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.GHAST_TEAR) {
-
             if (ssj.getSSJPCM().getStart(p)) {
-
                 p.sendMessage("woosh woosh woosh");
 
+                // Create base particle effect
                 SSJParticles ssjparticles = new SSJParticles(ssj, p, Particle.FLAME, 50, 3);
                 ssjparticles.createParticles();
 
+                // Only add lightning effect for specific forms
+                String currentForm = ssj.getSSJPCM().getForm(p);
+                if (currentForm.equals("Super Saiyan 2") || 
+                    currentForm.equals("Super Saiyan 3") || 
+                    currentForm.equals("Super Saiyan 4") || 
+                    currentForm.equals("Super Saiyan 5") || 
+                    currentForm.equals("Super Saiyan God") || 
+                    currentForm.equals("Super Saiyan Blue") || 
+                    currentForm.equals("Super Saiyan Rose") || 
+                    currentForm.equals("Super Saiyan Rage") || 
+                    currentForm.equals("Super Saiyan Blue Evolution") || 
+                    (currentForm.equals("Kaioken Transformation") && 
+                     (currentForm.contains("x50") || currentForm.contains("x100")))) {
+                    new SSJParticles(ssj, p, Particle.WAX_OFF, 10, 3).createLightningEffect();
+                }
             } else {
-
                 p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
-
                 p.sendMessage(ChatColor.RED + "So this action won't work!");
-
             }
-
         }
-
     }
 
     //Below are the menu and score board actions.
@@ -380,5 +390,67 @@ public class SSJActionListeners implements Listener {
 
     public Map<UUID, SSJBossBar> getBossBars() {
         return bossBars;
+    }
+
+    @EventHandler
+    private void onPlayerPlacePluginItem(BlockPlaceEvent e) {
+        ItemStack item = e.getItemInHand();
+        Material type = item.getType();
+        
+        // Check if the item is one of our plugin items
+        if (type == Material.BLAZE_POWDER || 
+            type == Material.PHANTOM_MEMBRANE || 
+            type == Material.MAGMA_CREAM || 
+            type == Material.GHAST_TEAR || 
+            type == Material.PAPER || 
+            type == Material.TNT) {
+                
+            if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage(ChatColor.RED + "You cannot place plugin items!");
+            }
+        }
+    }
+
+    @EventHandler
+    private void onPlayerDropPluginItem(PlayerDropItemEvent e) {
+        ItemStack item = e.getItemDrop().getItemStack();
+        Material type = item.getType();
+        
+        if (type == Material.BLAZE_POWDER || 
+            type == Material.PHANTOM_MEMBRANE || 
+            type == Material.MAGMA_CREAM || 
+            type == Material.GHAST_TEAR || 
+            type == Material.PAPER || 
+            type == Material.TNT) {
+                
+            if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage(ChatColor.RED + "You cannot drop plugin items!");
+            }
+        }
+    }
+
+    @EventHandler
+    private void onInventoryMovePluginItem(InventoryClickEvent e) {
+        ItemStack item = e.getCurrentItem();
+        if (item == null) return;
+        
+        Material type = item.getType();
+        if (type == Material.BLAZE_POWDER || 
+            type == Material.PHANTOM_MEMBRANE || 
+            type == Material.MAGMA_CREAM || 
+            type == Material.GHAST_TEAR || 
+            type == Material.PAPER || 
+            type == Material.TNT) {
+                
+            if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+                // Only prevent moving to other inventories, allow hotbar movement
+                if (e.getClickedInventory() != e.getWhoClicked().getInventory()) {
+                    e.setCancelled(true);
+                    ((Player)e.getWhoClicked()).sendMessage(ChatColor.RED + "You cannot move plugin items to other inventories!");
+                }
+            }
+        }
     }
 }

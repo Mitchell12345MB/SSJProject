@@ -51,3 +51,9 @@ Passive_Energy_Gain: false
 
 # Make the energy bar visible at all times?
 Energy_Bar_Visible: false
+
+# Enables the max stats limit.
+Max_Stats_Limit: false
+
+# Limits the stats to a max of what you set here if you have "Max_Stats" set to "true".
+Max_Stats: 1000

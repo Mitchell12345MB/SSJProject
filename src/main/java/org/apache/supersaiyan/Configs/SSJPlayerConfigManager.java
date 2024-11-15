@@ -10,12 +10,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class SSJPlayerConfigManager {
 
     private final File folder;
     private final SSJ ssj;
     private final Map<String, Object> defaultValues = new HashMap<>();
+    public Map<UUID, Double> bpMultipliers = new HashMap<>();
+    public Map<UUID, Double> energyGainMultipliers = new HashMap<>();
+    public Map<UUID, Double> energyLimitMultipliers = new HashMap<>();
+    public Map<UUID, Double> energyDrainMultipliers = new HashMap<>();
+    public Map<UUID, Integer> transformationEnergyCosts = new HashMap<>();
 
     public SSJPlayerConfigManager(SSJ ssj, File folder) {
         this.folder = folder;
@@ -160,5 +166,25 @@ public class SSJPlayerConfigManager {
 
     public String getTransformations(Player p) {
         return (String) getPlayerConfigValue(p, "Transformations_Unlocked").orElse("");
+    }
+
+    public double getBPMultiplier(Player player) {
+        return bpMultipliers.getOrDefault(player.getUniqueId(), 1.0);
+    }
+    
+    public double getEnergyGainMultiplier(Player player) {
+        return energyGainMultipliers.getOrDefault(player.getUniqueId(), 1.0);
+    }
+    
+    public double getEnergyLimitMultiplier(Player player) {
+        return energyLimitMultipliers.getOrDefault(player.getUniqueId(), 1.0);
+    }
+    
+    public double getEnergyDrainMultiplier(Player player) {
+        return energyDrainMultipliers.getOrDefault(player.getUniqueId(), 1.0);
+    }
+    
+    public int getTransformationEnergyCost(Player player) {
+        return transformationEnergyCosts.getOrDefault(player.getUniqueId(), 100);
     }
 }

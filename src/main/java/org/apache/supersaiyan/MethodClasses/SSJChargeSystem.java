@@ -6,6 +6,7 @@ import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,8 @@ import java.util.UUID;
 
 public class SSJChargeSystem {
     private final SSJ ssj;
-    private BukkitRunnable chargeTask;
+    private BukkitTask chargeTask;
+    private BukkitRunnable chargeRunnable;
     private SSJParticles particleEffect;
     private SSJBossBar energyBar;
     private Map<UUID, Boolean> chargingPlayers = new HashMap<>();
@@ -53,33 +55,38 @@ public class SSJChargeSystem {
         }
         
         particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 10, 3);
-        energyBar = new SSJBossBar(ssj, ChatColor.GOLD + "Energy: ", new HashMap<>(), ssj.getSSJConfigs().getEnergyBarVisible());
+        energyBar = new SSJBossBar(ssj, ChatColor.GOLD + "Energy: ", new HashMap<>(), true);
         energyBar.show(player);
-        
-        int currentEnergy = ssj.getSSJPCM().getEnergy(player);
-        int maxEnergy = ssj.getSSJPCM().getLimit(player);
-        float energyPercent = (float) currentEnergy / maxEnergy;
-        
-        energyBar.getPlayerStats().put(player.getUniqueId(), (int)(energyPercent * 100));
-        energyBar.update(player);
         chargingPlayers.put(player.getUniqueId(), true);
         
-        chargeTask = new BukkitRunnable() {
-            private int tickCounter = 0;
-            
+        chargeRunnable = new BukkitRunnable() {
+            int tickCounter = 0;
             @Override
             public void run() {
-                if (!player.isOnline()) {
-                    stopCharging(player);
+                if (!player.isOnline() || !isCharging(player)) {
+                    cancel();
                     return;
                 }
                 
-                // Create particles every tick
                 particleEffect.createParticles();
                 
-                // Process energy gain every second (20 ticks)
                 if (tickCounter % 20 == 0) {
-                    int maxEnergy = ssj.getSSJPCM().getLimit(player);
+                    String form = ssj.getSSJPCM().getForm(player);
+                    if (form.equals("Super Saiyan 2") || 
+                        form.equals("Super Saiyan 3") || 
+                        form.equals("Super Saiyan 4") || 
+                        form.equals("Super Saiyan 5") || 
+                        form.equals("Super Saiyan God") || 
+                        form.equals("Super Saiyan Blue") || 
+                        form.equals("Super Saiyan Rose") || 
+                        form.equals("Super Saiyan Rage") || 
+                        form.equals("Super Saiyan Blue Evolution") || 
+                        (form.equals("Kaioken Transformation") && 
+                         (form.contains("x50") || form.contains("x100")))) {
+                        new SSJParticles(ssj, player, Particle.WAX_OFF, 10, 3).createLightningEffect();
+                    }
+                    
+                    int maxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
                     int currentEnergy = ssj.getSSJPCM().getEnergy(player);
                     
                     if (currentEnergy >= maxEnergy) {
@@ -89,23 +96,14 @@ public class SSJChargeSystem {
                     }
                     
                     int energyGain = ssj.getSSJConfigs().getNPEMG();
-                    int newEnergy = Math.min(maxEnergy, currentEnergy + energyGain);
-                    ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", newEnergy);
-                    
-                    float newPercent = (float) newEnergy / maxEnergy;
-                    energyBar.getPlayerStats().put(player.getUniqueId(), (int)(newPercent * 100));
+                    ssj.getSSJEnergyManager().modifyEnergy(player, energyGain);
                     energyBar.update(player);
-                    
-                    ssj.getSSJRpgSys().multBP(player);
-                    ssj.getSSJMethodChecks().scoreBoardCheck();
-                    ssj.getSSJMethods().callScoreboard(player);
                 }
                 
                 tickCounter++;
             }
         };
-        
-        chargeTask.runTaskTimer(ssj, 0L, 1L);
+        chargeTask = chargeRunnable.runTaskTimer(ssj, 0L, 1L);
     }
     
     public void stopCharging(Player player) {
@@ -116,6 +114,10 @@ public class SSJChargeSystem {
         if (chargeTask != null) {
             chargeTask.cancel();
             chargeTask = null;
+        }
+        if (chargeRunnable != null) {
+            chargeRunnable.cancel();
+            chargeRunnable = null;
         }
         chargingPlayers.remove(player.getUniqueId());
     }

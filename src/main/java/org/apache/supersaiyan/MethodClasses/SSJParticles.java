@@ -117,4 +117,40 @@ public class SSJParticles {
 
     }
 
+    public void createLightningEffect() {
+        new BukkitRunnable() {
+            int ticks = 0;
+            
+            @Override
+            public void run() {
+                if (ticks >= 20) { // Run for 1 second
+                    this.cancel();
+                    return;
+                }
+                
+                Location playerLoc = player.getLocation();
+                
+                // Create lightning-like particles around the player
+                for (int i = 0; i < 3; i++) {
+                    double radius = 1.0;
+                    double x = radius * Math.cos(ticks + (2 * Math.PI * i / 3));
+                    double z = radius * Math.sin(ticks + (2 * Math.PI * i / 3));
+                    
+                    Location particleLoc = playerLoc.clone().add(x, random.nextDouble() * 2, z);
+                    
+                    player.getWorld().spawnParticle(
+                        Particle.WAX_OFF, // This particle looks like small lightning
+                        particleLoc,
+                        0,
+                        0,
+                        0.1 + random.nextDouble() * 0.2,
+                        0
+                    );
+                }
+                
+                ticks++;
+            }
+        }.runTaskTimer(ssj, 0L, 1L);
+    }
+
 }

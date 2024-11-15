@@ -81,6 +81,9 @@ public class SSJMethodChecks {
             case 12:
                 ssj.getSSJGui().openSettingsInventory(p);
                 break;
+            case 17: // Back button
+                ssj.getSSJGui().openGenStatInventory(p);
+                break;
             default:
                 break;
         }
@@ -99,6 +102,7 @@ public class SSJMethodChecks {
             ssj.getSSJGui().openGenStatInventory(p);
             scoreBoardCheck();
             ssj.getSSJMethods().callScoreboard(p);
+            ssj.getSSJTransformationManager().reapplyCurrentForm(p);
         } else {
             p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
         }
@@ -113,6 +117,9 @@ public class SSJMethodChecks {
                 break;
             case 2:
                 ssj.getSSJGui().openSettingsInventory(p);
+                break;
+            case 17: // Back button
+                ssj.getSSJGui().openSkillsInventory(p);
                 break;
             default:
                 break;
@@ -136,7 +143,10 @@ public class SSJMethodChecks {
                 ssj.getSSJGui().openGenStatInventory(p);
                 break;
             case 4:
-                ssj.getSSJGui().openSkillStatInventory(p);
+                ssj.getSSJGui().openSkillsInventory(p);
+                break;
+            case 8: // Back button
+                ssj.getSSJGui().openGenStatInventory(p);
                 break;
             default:
                 break;

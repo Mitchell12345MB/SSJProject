@@ -61,59 +61,32 @@ public class SSJRpgSys {
     }
 
     public void addEnergy(Player p) {
-
-        int adde = ssj.getSSJPCM().getEnergy(p) * ssj.getSSJPCM().getPower(p);
-
-        if (ssj.getSSJPCM().getEnergy(p) == 0) {
-
+        int currentEnergy = ssj.getSSJPCM().getEnergy(p);
+        int powerLevel = ssj.getSSJPCM().getPower(p);
+        
+        if (currentEnergy == 0) {
             ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", 5);
-
-            ssj.getSSJMethodChecks().scoreBoardCheck();
-
-            ssj.getSSJMethods().callScoreboard(p);
-
-        } else if (ssj.getSSJPCM().getEnergy(p) < ssj.getSSJPCM().getLimit(p)) {
-
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", adde);
-
-            ssj.getSSJMethodChecks().scoreBoardCheck();
-
-            ssj.getSSJMethods().callScoreboard(p);
-
+        } else {
+            int newEnergy = currentEnergy * powerLevel;
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", newEnergy);
         }
-
     }
 
     public void multBP(Player p) {
-
-        int multbp = ((ssj.getSSJPCM().getEnergy(p) + getBaseBP(p)) * ssj.getSSJConfigs().getBPM());
-
-        if (ssj.getSSJPCM().getBattlePower(p) == 0) {
-
-            ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", addBaseBP(p));
-
-            ssj.getSSJMethodChecks().scoreBoardCheck();
-
-            ssj.getSSJMethods().callScoreboard(p);
-
-        } else if (ssj.getSSJPCM().getEnergy(p) == 0) {
-
-            ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", addBaseBP(p));
-
-            ssj.getSSJMethodChecks().scoreBoardCheck();
-
-            ssj.getSSJMethods().callScoreboard(p);
-
-        } else if (ssj.getSSJPCM().getEnergy(p) < ssj.getSSJPCM().getLimit(p)) {
-
-            ssj.getSSJPCM().setPlayerConfigValue(p,"Battle_Power", multbp);
-
-            ssj.getSSJMethodChecks().scoreBoardCheck();
-
-            ssj.getSSJMethods().callScoreboard(p);
-
+        double bpMultiplier = ssj.getSSJEnergyManager().getBPMultiplier(p);
+        int baseBP = getBaseBP(p);
+        int energy = ssj.getSSJPCM().getEnergy(p);
+        
+        int multbp = (int)((energy + baseBP) * ssj.getSSJConfigs().getBPM() * bpMultiplier);
+        
+        if (ssj.getSSJPCM().getBattlePower(p) == 0 || energy == 0) {
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", addBaseBP(p));
+        } else if (energy < ssj.getSSJPCM().getLimit(p)) {
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", multbp);
         }
-
+        
+        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethods().callScoreboard(p);
     }
 
     public int addBaseBP(Player p) {

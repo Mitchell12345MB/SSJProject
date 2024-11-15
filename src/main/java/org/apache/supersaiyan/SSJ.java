@@ -57,6 +57,8 @@ public class SSJ extends JavaPlugin {
 
     private SSJSkillManager ssjskillmanager;
 
+    private SSJEnergyManager ssjenergyManager;
+
     @Override
     public void onEnable() {
         // Save default config files first
@@ -82,12 +84,9 @@ public class SSJ extends JavaPlugin {
     @Override
     public void onDisable() {
         // Clean up boss bars
-        for (SSJBossBar bossBar : getSSJActionListeners().getBossBars().values()) {
-            for (Player player : getServer().getOnlinePlayers()) {
-                bossBar.hide(player);
-            }
+        if (ssjbossbar != null) {
+            ssjbossbar.cleanup();
         }
-        getSSJActionListeners().getBossBars().clear();
 
         if (ssjmethodchecks != null) {
             ssjmethodchecks.onDisableChecks();
@@ -151,6 +150,8 @@ public class SSJ extends JavaPlugin {
         ssjchargesystem = new SSJChargeSystem(this);
 
         ssjskillmanager = new SSJSkillManager(this);
+
+        ssjenergyManager = new SSJEnergyManager(this);
 
         // Initialize listeners after systems
         regListeners();
@@ -267,6 +268,12 @@ public class SSJ extends JavaPlugin {
     public SSJSkillManager getSSJSkillManager() {
 
         return ssjskillmanager;
+        
+    }
+
+    public SSJEnergyManager getSSJEnergyManager() {
+
+        return ssjenergyManager;
         
     }
 }

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.Particle;
 
 public class SSJTransformationManager {
     private final SSJ ssj;
@@ -28,10 +29,34 @@ public class SSJTransformationManager {
             return true;
         }
         
-        // Get boss bar progress
+        // Get transformation config section
+        String path = getTransformationPath(transformationId);
+        if (!ssj.getSSJConfigs().getTCFile().contains(path)) {
+            return false;
+        }
+        
+        ConfigurationSection transform = ssj.getSSJConfigs().getTCFile().getConfigurationSection(path);
+        
+        // Check Level Lock
+        int playerLevel = ssj.getSSJPCM().getLevel(player);
+        int levelLock = transform.getInt("Level_Lock", 0);
+        if (playerLevel < levelLock) {
+            player.sendMessage("§cYou need to be level " + levelLock + " to use this transformation!");
+            return false;
+        }
+        
+        // Check Saiyan Ability Lock
+        int playerSaiyanAbility = ssj.getSSJPCM().getSaiyanAbility(player);
+        int saiyanAbilityLock = transform.getInt("Saiyan_Ability_Lock", 0);
+        if (playerSaiyanAbility < saiyanAbilityLock) {
+            player.sendMessage("§cYou need a Saiyan Ability level of " + saiyanAbilityLock + " to use this transformation!");
+            return false;
+        }
+        
+        // Get boss bar progress using the correct method
         SSJBossBar bossBar = ssj.getSSJActionListeners().getBossBars().get(player.getUniqueId());
         if (bossBar != null) {
-            int currentProgress = bossBar.getPlayerStats().getOrDefault(player.getUniqueId(), 0);
+            int currentProgress = bossBar.getProgress(player);
             return currentProgress >= 100;
         }
         
@@ -40,23 +65,82 @@ public class SSJTransformationManager {
     
     @SuppressWarnings("deprecation")
     public void transform(Player player, String transformationId) {
-        // Get transformation config section
         String path = getTransformationPath(transformationId);
         if (!ssj.getSSJConfigs().getTCFile().contains(path)) {
             return;
         }
         
-        // Apply transformation
         ConfigurationSection transform = ssj.getSSJConfigs().getTCFile().getConfigurationSection(path);
+        if (transform == null) {
+            return;
+        }
         
-        // Update player form
-        ssj.getSSJPCM().setPlayerConfigValue(player, "Form", transform.getString("Desc"));
-        
-        // Apply traits using attribute modifiers
+        // Add after path check, before applying effects
         ConfigurationSection traits = transform.getConfigurationSection("Traits");
-        for (String trait : traits.getKeys(false)) {
-            int level = traits.getInt(trait);
-            applyAttributeModifier(player, trait, level);
+        if (traits != null) {
+            int transformationCost = traits.getInt("TRANSFORMATION_ENERGY_COST", 100);
+            int currentEnergy = ssj.getSSJPCM().getEnergy(player);
+            
+            if (currentEnergy < transformationCost) {
+                player.sendMessage("§cYou need " + transformationCost + " energy to transform!");
+                return;
+            }
+            
+            // Deduct energy cost
+            ssj.getSSJEnergyManager().modifyEnergy(player, -transformationCost);
+        }
+        
+        // Apply base transformation effects
+        String formName = transform.getString("Desc", "Base");
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Form", formName);
+        
+        // Apply multipliers from traits
+        if (traits != null) {
+            double bpMultiplier = traits.getDouble("BP_MULTIPLIER", 1.0);
+            double energyGainMultiplier = traits.getDouble("ENERGY_GAIN_MULTIPLIER", 1.0);
+            double energyLimitMultiplier = traits.getDouble("ENERGY_LIMIT_MULTIPLIER", 1.0);
+            double energyDrainMultiplier = traits.getDouble("ENERGY_DRAIN_MULTIPLIER", 1.0);
+            int transformationEnergyCost = traits.getInt("TRANSFORMATION_ENERGY_COST", 100);
+            
+            ssj.getSSJEnergyManager().setMultipliers(
+                player,
+                bpMultiplier,
+                energyGainMultiplier,
+                energyLimitMultiplier,
+                energyDrainMultiplier,
+                transformationEnergyCost
+            );
+            
+            // Update BP immediately after setting multipliers
+            ssj.getSSJRpgSys().multBP(player);
+            
+            // Apply traits using attribute modifiers
+            for (String trait : traits.getKeys(false)) {
+                if (!trait.equals("BP_MULTIPLIER") && 
+                    !trait.equals("ENERGY_GAIN_MULTIPLIER") && 
+                    !trait.equals("ENERGY_LIMIT_MULTIPLIER") && 
+                    !trait.equals("ENERGY_DRAIN_MULTIPLIER") && 
+                    !trait.equals("TRANSFORMATION_ENERGY_COST")) {
+                        
+                    int level = traits.getInt(trait);
+                    applyAttributeModifier(player, trait, level);
+                }
+            }
+        }
+        
+        // Add lightning effects for specific forms
+        if (formName.equals("Super Saiyan 2") || 
+            formName.equals("Super Saiyan 3") || 
+            formName.equals("Super Saiyan 4") || 
+            formName.equals("Super Saiyan 5") || 
+            formName.equals("Super Saiyan God") || 
+            formName.equals("Super Saiyan Blue") || 
+            formName.equals("Super Saiyan Rose") || 
+            formName.equals("Super Saiyan Rage") || 
+            formName.equals("Super Saiyan Blue Evolution") || 
+            (formName.equals("Kaioken Transformation") && 
+             (transformationId.equals("x50") || transformationId.equals("x100")))) {
+            new SSJParticles(ssj, player, Particle.WAX_OFF, 10, 3).createLightningEffect();
         }
         
         // Apply particles
@@ -99,19 +183,39 @@ public class SSJTransformationManager {
         if (ssj.getSSJChargeSystem().isCharging(player)) {
             ssj.getSSJChargeSystem().updateParticles(player);
         }
+        
+        // After setting multipliers
+        ssj.getSSJEnergyManager().startEnergyDrain(player);
     }
     
     @SuppressWarnings("deprecation")
     public void detransform(Player player) {
-        // Reset all attributes to default
-        ssj.getSSJRpgSys().resetAllStatBoosts(player);
+        String currentForm = ssj.getSSJPCM().getForm(player);
+        if (currentForm.equals("Base")) {
+            return;
+        }
+
+        // Get current energy percentage before resetting multipliers
+        float currentPercentage = ssj.getSSJEnergyManager().getCurrentEnergyPercentage(player);
         
-        // Reset form to base
+        // Reset all multipliers
+        ssj.getSSJEnergyManager().resetMultipliers(player);
+        
+        // Set form back to base
         ssj.getSSJPCM().setPlayerConfigValue(player, "Form", "Base");
         
-        // Reapply base stat boosts based on player's actual stats
-        ssj.getSSJRpgSys().updateAllStatBoosts(player);
+        // Scale energy to maintain the same percentage in base form
+        int newLimit = ssj.getSSJEnergyManager().getEnergyLimit(player);
+        int newEnergy = (int) (newLimit * currentPercentage);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", newEnergy);
         
+        // Reset stats and stop energy drain
+        ssj.getSSJRpgSys().resetAllStatBoosts(player);
+        ssj.getSSJEnergyManager().stopEnergyDrain(player);
+
+        // Reapply base stats
+        ssj.getSSJRpgSys().updateAllStatBoosts(player);
+
         // Apply effects based on config
         if (ssj.getSSJConfigs().getLF()) {
             Location loc = player.getLocation();
@@ -137,6 +241,9 @@ public class SSJTransformationManager {
         if (ssj.getSSJChargeSystem().isCharging()) {
             ssj.getSSJChargeSystem().updateParticles(player);
         }
+
+        // Update BP
+        ssj.getSSJRpgSys().multBP(player);
     }
     
     private void applyAttributeModifier(Player player, String trait, int level) {
@@ -282,5 +389,60 @@ public class SSJTransformationManager {
             }
         }
         return null;
+    }
+
+    public void reapplyCurrentForm(Player player) {
+        String currentForm = ssj.getSSJPCM().getForm(player);
+        if (currentForm.equals("Base")) {
+            return;
+        }
+
+        // Find the current transformation's config section
+        String path = null;
+        String[] categories = {"Base_Forms", "Kaioken_Forms", "Saiyan_Forms", 
+                              "Legendary_Saiyan_Forms", "Saiyan_God_Forms"};
+        
+        for (String category : categories) {
+            ConfigurationSection section = ssj.getSSJConfigs().getTCFile().getConfigurationSection(category);
+            if (section != null) {
+                for (String key : section.getKeys(false)) {
+                    String desc = section.getString(key + ".Desc");
+                    if (currentForm.equals(desc)) {
+                        path = category + "." + key;
+                        break;
+                    }
+                }
+            }
+            if (path != null) break;
+        }
+
+        if (path != null) {
+            ConfigurationSection transform = ssj.getSSJConfigs().getTCFile().getConfigurationSection(path);
+            ConfigurationSection traits = transform.getConfigurationSection("Traits");
+            
+            if (traits != null) {
+                double bpMultiplier = traits.getDouble("BP_MULTIPLIER", 1.0);
+                double energyGainMultiplier = traits.getDouble("ENERGY_GAIN_MULTIPLIER", 1.0);
+                double energyLimitMultiplier = traits.getDouble("ENERGY_LIMIT_MULTIPLIER", 1.0);
+                double energyDrainMultiplier = traits.getDouble("ENERGY_DRAIN_MULTIPLIER", 1.0);
+                int transformationEnergyCost = traits.getInt("TRANSFORMATION_ENERGY_COST", 100);
+                
+                ssj.getSSJEnergyManager().setMultipliers(
+                    player,
+                    bpMultiplier,
+                    energyGainMultiplier,
+                    energyLimitMultiplier,
+                    energyDrainMultiplier,
+                    transformationEnergyCost
+                );
+                
+                // Reapply attribute modifiers
+                ssj.getSSJRpgSys().resetAllStatBoosts(player);
+                ssj.getSSJRpgSys().updateAllStatBoosts(player);
+                
+                // Update BP
+                ssj.getSSJRpgSys().multBP(player);
+            }
+        }
     }
 }
