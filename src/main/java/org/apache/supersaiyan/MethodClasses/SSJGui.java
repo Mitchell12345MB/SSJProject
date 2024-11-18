@@ -8,8 +8,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.ChatColor;
-
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SSJGui {
 
@@ -46,8 +49,45 @@ public class SSJGui {
     }
 
     private void SSJSkillsInvCall(Player p) {
-        skillsinv = Bukkit.createInventory(null, 18, p.getName() + "'s Available Skills");
-        initializeSkillsInvItems(p);
+        skillsinv = Bukkit.createInventory(null, 54, p.getName() + "'s Skills");
+        FileConfiguration skillConfig = ssj.getSSJConfigs().getSCFile();
+
+        for (String skillName : skillConfig.getKeys(false)) {
+            ConfigurationSection skillSection = skillConfig.getConfigurationSection(skillName);
+            if (skillSection == null) continue;
+
+            boolean hasSkill = ssj.getSSJPCM().hasSkill(p, skillName);
+            int skillLevel = hasSkill ? ssj.getSSJPCM().getSkillLevel(p, skillName) : 0;
+            int apCost = skillSection.getInt("Acion_Points_Cost");
+            int upgradeCost = skillSection.getInt("Upgrade_Acion_Points_Cost") + skillLevel;
+
+            List<String> lore = new ArrayList<>();
+            lore.add("§7" + skillSection.getString("Desc", "No description"));
+            lore.add("");
+            
+            // Add stat requirements to lore
+            ConfigurationSection statReq = skillSection.getConfigurationSection("Stat_Requirements");
+            if (statReq != null) {
+                lore.add("§eRequirements:");
+                for (String stat : statReq.getKeys(false)) {
+                    int required = statReq.getInt(stat);
+                    int playerStat = ssj.getSSJSkillManager().getPlayerStat(p, stat);
+                    String color = playerStat >= required ? "§a" : "§c";
+                    lore.add(color + "- " + stat + ": " + required);
+                }
+            }
+
+            if (hasSkill) {
+                addUpgradeInfo(lore, p, skillName, skillLevel, upgradeCost);
+            } else {
+                addUnlockInfo(lore, p, apCost);
+            }
+
+            skillsinv.addItem(createGuiItem(Material.BOOK, "§b" + skillName, lore.toArray(new String[0])));
+        }
+
+        // Add back button
+        skillsinv.setItem(53, createGuiItem(Material.BARRIER, "§cBack", "§7Return to previous menu"));
     }
 
     private void initializeGenStatInvItems(Player p) {
@@ -70,7 +110,13 @@ public class SSJGui {
         genstatinv.addItem(createGuiItem(Material.FEATHER, "§bSpeed", String.valueOf(ssj.getSSJPCM().getSpeed(p)), "§aImproves your speed."));
         genstatinv.addItem(createGuiItem(Material.LEATHER_BOOTS, "§bStamina", String.valueOf(ssj.getSSJPCM().getStamina(p)), "§aImproves your stamina."));
         genstatinv.addItem(createGuiItem(Material.IRON_HELMET, "§bDefence", String.valueOf(ssj.getSSJPCM().getDefence(p)), "§aImproves your defence."));
-        genstatinv.addItem(createGuiItem(Material.FIRE_CHARGE, "§bSaiyan Ability", String.valueOf(ssj.getSSJPCM().getSaiyanAbility(p)), "§aImproves transformation speed, and unlocks more saiyan transformations."));
+        genstatinv.addItem(createGuiItem(
+            Material.FIRE_CHARGE, 
+            "§bSaiyan Ability", 
+            String.valueOf(ssj.getSSJPCM().getSaiyanAbility(p)),
+            "§aImproves transformation speed and unlocks more saiyan transformations.",
+            "§eCost to upgrade: " + ssj.getSSJSaiyanAbilityManager().calculateSaiyanAbilityCost(p) + " AP"
+        ));
         
         genstatinv.addItem(createGuiItem(Material.NETHER_STAR, "§bTransformations", "§aView your transformations."));
         genstatinv.addItem(createGuiItem(Material.BOOK, "§bSkills", "§aView available skills."));
@@ -106,23 +152,6 @@ public class SSJGui {
         transformationsinv.setItem(26, createGuiItem(Material.BARRIER, "§cBack to Stats", "§aReturn to stats menu."));
     }
 
-    private void initializeSkillsInvItems(Player p) {
-        // Add available skills from skills.yml
-        if (ssj.getSSJSkillManager().canUseSkill(p, "Fly")) {
-            skillsinv.addItem(createGuiItem(Material.FEATHER, "§bFlight", 
-                "§aAllows you to fly.",
-                "§bEnergy Cost: §e10",
-                "§bRequirements:",
-                "§7- Power: 10",
-                "§7- Strength: 10"));
-        }
-
-        // Add more skills here as needed
-
-        // Add back button
-        skillsinv.setItem(17, createGuiItem(Material.BARRIER, "§cBack to Stats", "§aReturn to stats menu."));
-    }
-
     private void initializeSkillStatInvItems(Player p) {
         skillstatinv.addItem(createGuiItem(Material.GOLD_INGOT, "§bTransformations", ssj.getSSJPCM().getTransformations(p), "§aYour current unlocked transformations."));
         skillstatinv.addItem(createGuiItem(Material.GREEN_DYE, "§bStat Page", "§aGoes to your stat page."));
@@ -133,7 +162,7 @@ public class SSJGui {
     private void initializeSettingsInvItems(Player p) {
         settingsinv.addItem(createGuiItem(Material.GOLD_INGOT, "§bExplosion Effects", String.valueOf(ssj.getSSJPCM().getExplosionEffects(p)), "§aYour current explosion effects."));
         settingsinv.addItem(createGuiItem(Material.IRON_INGOT, "§bLightning Effects", String.valueOf(ssj.getSSJPCM().getLightningEffects(p)), "§aYour current lightning effects settings."));
-        settingsinv.addItem(createGuiItem(Material.DIAMOND, "§bSound Effects", String.valueOf(ssj.getSSJPCM().getSoundEffects(p)), "§aYour current sound settings."));
+        settingsinv.addItem(createGuiItem(Material.DIAMOND, "bSound Effects", String.valueOf(ssj.getSSJPCM().getSoundEffects(p)), "§aYour current sound settings."));
         settingsinv.addItem(createGuiItem(Material.GREEN_DYE, "§bStat Page", "§aGoes to your stat page."));
         settingsinv.addItem(createGuiItem(Material.RED_DYE, "§bSkill Page", "§aGoes to your skill stat page."));
         settingsinv.setItem(8, createGuiItem(Material.BARRIER, "§cBack", "§aReturn to previous menu."));
@@ -172,5 +201,31 @@ public class SSJGui {
     public void openSkillsInventory(final Player p) {
         SSJSkillsInvCall(p);
         p.openInventory(skillsinv);
+    }
+
+    private void addUpgradeInfo(List<String> lore, Player p, String skillName, int skillLevel, int upgradeCost) {
+        lore.add("");
+        lore.add("§aSkill Level: " + skillLevel + "/" + ssj.getSSJSkillManager().getMaxSkillLevel(skillName));
+        
+        if (ssj.getSSJSkillManager().isSkillMaxLevel(p, skillName)) {
+            lore.add("§6MAXIMUM LEVEL");
+        } else {
+            lore.add("§eUpgrade Cost: " + upgradeCost + " AP");
+            if (ssj.getSSJPCM().getActionPoints(p) >= upgradeCost) {
+                lore.add("§aClick to upgrade!");
+            } else {
+                lore.add("§cNot enough AP to upgrade!");
+            }
+        }
+    }
+
+    private void addUnlockInfo(List<String> lore, Player p, int apCost) {
+        lore.add("");
+        lore.add("§eUnlock Cost: " + apCost + " AP");
+        if (ssj.getSSJPCM().getActionPoints(p) >= apCost) {
+            lore.add("§aClick to unlock!");
+        } else {
+            lore.add("§cNot enough AP to unlock!");
+        }
     }
 }

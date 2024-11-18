@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,7 +56,17 @@ public class SSJPlayerConfigManager {
 
     public FileConfiguration getPlayerConfig(Player player) {
         var file = getFile(player);
-        return YamlConfiguration.loadConfiguration(file);
+        var config = YamlConfiguration.loadConfiguration(file);
+        if (!file.exists()) {
+            // Reset player stats to vanilla values first
+            ssj.getSSJRpgSys().resetAllStatBoosts(player);
+            
+            // Initialize default values
+            initializeDefaultValues();
+            defaultValues.forEach(config::set);
+            savePlayerConfig(player, config);
+        }
+        return config;
     }
 
     public void savePlayerConfig(Player player, FileConfiguration config) {
@@ -97,7 +108,11 @@ public class SSJPlayerConfigManager {
     }
 
     public boolean getStart(Player p) {
-        return (boolean) getPlayerConfigValue(p, "Start").orElse(false);
+        boolean started = (boolean) getPlayerConfigValue(p, "Start").orElse(false);
+        if (!started) {
+            ssj.getSSJRpgSys().resetAllStatBoosts(p);
+        }
+        return started;
     }
 
     public boolean getLightningEffects(Player p) {
@@ -186,5 +201,60 @@ public class SSJPlayerConfigManager {
     
     public int getTransformationEnergyCost(Player player) {
         return transformationEnergyCosts.getOrDefault(player.getUniqueId(), 100);
+    }
+
+    public void setActionPoints(Player p, int points) {
+        setPlayerConfigValue(p, "Action_Points", points);
+    }
+
+    public void setSaiyanAbility(Player p, int level) {
+        setPlayerConfigValue(p, "Saiyan_Ability", level);
+    }
+
+    public void setTransformations(Player p, String transforms) {
+        setPlayerConfigValue(p, "Transformations", transforms);
+    }
+
+    public boolean hasSkill(Player player, String skillName) {
+        return getPlayerConfig(player).getStringList("Unlocked_Skills").contains(skillName);
+    }
+
+    public void unlockSkill(Player player, String skillName) {
+        FileConfiguration config = getPlayerConfig(player);
+        List<String> unlockedSkills = config.getStringList("Unlocked_Skills");
+        
+        if (!unlockedSkills.contains(skillName)) {
+            unlockedSkills.add(skillName);
+            config.set("Unlocked_Skills", unlockedSkills);
+            config.set("Skills." + skillName + ".Level", 1);
+            
+            try {
+                savePlayerConfig(player, config);
+
+                // Apply initial skill boosts if any
+                ssj.getSSJSkillManager().applySkillBoosts(player, skillName);
+            } catch (Exception e) {
+                e.printStackTrace();
+                player.sendMessage("§cError saving skill data!");
+            }
+        }
+    }
+
+    public int getSkillLevel(Player player, String skillName) {
+        return getPlayerConfig(player).getInt("Skills." + skillName + ".Level", 0);
+    }
+
+    public void setSkillLevel(Player player, String skillName, int level) {
+        FileConfiguration config = getPlayerConfig(player);
+        config.set("Skills." + skillName + ".Level", level);
+        savePlayerConfig(player, config);
+    }
+
+    public int getAbilityLevel(Player player, String abilityName) {
+        return getPlayerConfig(player).getInt("Abilities." + abilityName + ".Level", 0);
+    }
+    
+    public void setAbilityLevel(Player player, String abilityName, int level) {
+        setPlayerConfigValue(player, "Abilities." + abilityName + ".Level", level);
     }
 }

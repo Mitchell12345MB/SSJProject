@@ -1,6 +1,30 @@
 Fly:
   SkillId: 1
   Desc: "Allows the ability to fly."
+  Acion_Points_Cost: 20 #How many action points it costs to unlock the skill.
+  Upgrade_Acion_Points_Cost: 20 #How many action points it costs to upgrade the skill. Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
+  Energy_Cost: 10 #How much energy it costs to use the skill.
+  Stat_Requirements:
+    Power: 10 #The stat requirement for the skill.
+    Strength: 10 #The stat requirement for the skill.
+  Stat_Boosts:
+    Speed: 10 #The stat boost for the skill.
+    Jump: 10 #The stat boost for the skill.
+    Battle_Power_Multiplier: 10 #Increases by 1 each time you upgrade the skill.
+
+Kaioken:
+  SkillId: 2
+  Desc: "Unlocks the Kaioken form."
+  Acion_Points_Cost: 20
+  Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
+  Energy_Cost: 10 
+  Stat_Requirements:
+    Power: 10
+    Strength: 10
+
+Potential:
+  SkillId: 3
+  Desc: "Unlocks the Potential form, and increases your potential multiplier."
   Acion_Points_Cost: 20
   Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
   Energy_Cost: 10 
@@ -11,4 +35,31 @@ Fly:
     Speed: 10
     Jump: 10
     Battle_Power_Multiplier: 10 #Increases by 1 each time you upgrade the skill.
+
+God:
+  SkillId: 4
+  Desc: "Unlocks the God form."
+  Acion_Points_Cost: 20
+  Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
+  Energy_Cost: 10 
+  Stat_Requirements:
+    Power: 10
+    Strength: 10
+  Stat_Boosts:
+    Speed: 10
+    Jump: 10
+    Battle_Power_Multiplier: 10 #Increases by 1 each time you upgrade the skill.
+
+Jump:
+  SkillId: 5
+  Desc: "Allows the ability to jump higher."
+  Acion_Points_Cost: 20
+  Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
+  Energy_Cost: 10 
+  Stat_Requirements:
+    Power: 10
+    Strength: 10
+  Stat_Boosts:
+    Speed: 10
+    Jump: 10
 

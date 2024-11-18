@@ -6,11 +6,14 @@ import org.apache.supersaiyan.Listeners.SSJActionListeners;
 import org.apache.supersaiyan.Listeners.SSJListeners;
 import org.apache.supersaiyan.MethodClasses.*;
 import org.apache.supersaiyan.SSJCommands.SSJCommands;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -59,6 +62,10 @@ public class SSJ extends JavaPlugin {
 
     private SSJEnergyManager ssjenergyManager;
 
+    private SSJSaiyanAbilityManager ssjsaiyanabilitymanager;
+
+    private SSJBossBar persistentEnergyBar;
+
     @Override
     public void onEnable() {
         // Save default config files first
@@ -79,6 +86,16 @@ public class SSJ extends JavaPlugin {
         if (ssjmethodchecks != null) {
             ssjmethodchecks.onEnableChecks();
         }
+        
+        // Initialize persistent energy bar if enabled
+        if (getSSJConfigs().getEnergyBarVisible()) {
+            persistentEnergyBar = new SSJBossBar(this, ChatColor.GOLD + "Energy: ", new HashMap<>(), true);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (getSSJPCM().getStart(player)) {
+                    persistentEnergyBar.show(player);
+                }
+            }
+        }
     }
 
     @Override
@@ -86,6 +103,18 @@ public class SSJ extends JavaPlugin {
         // Clean up boss bars
         if (ssjbossbar != null) {
             ssjbossbar.cleanup();
+        }
+
+        if (persistentEnergyBar != null) {
+            persistentEnergyBar.cleanup();
+            persistentEnergyBar = null;
+        }
+        
+        // Clean up charge system bars
+        if (getSSJChargeSystem() != null) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                getSSJChargeSystem().stopCharging(player);
+            }
         }
 
         if (ssjmethodchecks != null) {
@@ -152,6 +181,8 @@ public class SSJ extends JavaPlugin {
         ssjskillmanager = new SSJSkillManager(this);
 
         ssjenergyManager = new SSJEnergyManager(this);
+
+        ssjsaiyanabilitymanager = new SSJSaiyanAbilityManager(this);
 
         // Initialize listeners after systems
         regListeners();
@@ -275,5 +306,15 @@ public class SSJ extends JavaPlugin {
 
         return ssjenergyManager;
         
+    }
+
+    public SSJSaiyanAbilityManager getSSJSaiyanAbilityManager() {
+
+        return ssjsaiyanabilitymanager;
+        
+    }
+
+    public SSJBossBar getPersistentEnergyBar() {
+        return persistentEnergyBar;
     }
 }

@@ -72,16 +72,30 @@ public class SSJParticles {
                         (random.nextDouble() - 0.5) * 0.2
                     );
 
-                    player.getWorld().spawnParticle(
-                        particleType,
-                        particleLoc,
-                        0,
-                        offset.getX(),
-                        0.1 + random.nextDouble() * 0.2,
-                        offset.getZ()
-                    );
+                    if (particleType == Particle.DUST) {
+                        org.bukkit.Particle.DustOptions dustOptions = new org.bukkit.Particle.DustOptions(
+                            org.bukkit.Color.fromRGB(255, 140, 0), 1.0f);
+                        player.getWorld().spawnParticle(
+                            particleType,
+                            particleLoc,
+                            0,
+                            offset.getX(),
+                            0.1 + random.nextDouble() * 0.2,
+                            offset.getZ(),
+                            dustOptions
+                        );
+                    } else {
+                        player.getWorld().spawnParticle(
+                            particleType,
+                            particleLoc,
+                            0,
+                            offset.getX(),
+                            0.1 + random.nextDouble() * 0.2,
+                            offset.getZ()
+                        );
+                    }
 
-                    // Reduce ground particle frequency (1 in 6 chance instead of 1 in 3)
+                    // Reduce ground particle frequency
                     if (random.nextInt(6) == 0) {
 
                         Location groundLoc = playerLoc.clone().add(
@@ -90,14 +104,28 @@ public class SSJParticles {
                             (random.nextDouble() - 0.5) * particleRange * 2
                         );
 
-                        player.getWorld().spawnParticle(
-                            particleType,
-                            groundLoc,
-                            0,
-                            0,
-                            0.05 + random.nextDouble() * 0.1,
-                            0
-                        );
+                        if (particleType == Particle.DUST) {
+                            org.bukkit.Particle.DustOptions dustOptions = new org.bukkit.Particle.DustOptions(
+                                org.bukkit.Color.fromRGB(255, 140, 0), 1.0f);
+                            player.getWorld().spawnParticle(
+                                particleType,
+                                groundLoc,
+                                0,
+                                0,
+                                0.05 + random.nextDouble() * 0.1,
+                                0,
+                                dustOptions
+                            );
+                        } else {
+                            player.getWorld().spawnParticle(
+                                particleType,
+                                groundLoc,
+                                0,
+                                0,
+                                0.05 + random.nextDouble() * 0.1,
+                                0
+                            );
+                        }
 
                     }
 

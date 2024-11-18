@@ -57,3 +57,6 @@ Max_Stats_Limit: false
 
 # Limits the stats to a max of what you set here if you have "Max_Stats" set to "true".
 Max_Stats: 1000
+
+# Maximum level for Saiyan abilities
+Max_Ability_Level: 10

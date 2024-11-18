@@ -435,4 +435,20 @@ public class SSJConfigs {
                    
     }
 
+    public int getBaseEnergyDrain() {
+        return ssj.getSSJConfigs().getCFile().getInt("Base_Energy_Drain", 5); // Default drain of 5 energy per second
+    }
+
+    public boolean getMaxStatsLimit() {
+        return ssj.getSSJConfigs().getCFile().getBoolean("Max_Stats_Limit", false);
+    }
+    
+    public int getMaxStats() {
+        return ssj.getSSJConfigs().getCFile().getInt("Max_Stats", 1000);
+    }
+
+    public int getMaxAbilityLevel() {
+        return ssj.getSSJConfigs().getCFile().getInt("Max_Ability_Level", 10); // Default max level is 10
+    }
+
 }

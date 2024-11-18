@@ -100,6 +100,17 @@ public class SSJListeners implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         
+        // Always reset stats first
+        ssj.getSSJRpgSys().resetAllStatBoosts(player);
+        
+        // Check if player's config exists
+        if (!ssj.getSSJPCM().getFile(player).exists()) {
+            // Create new config with default values
+            ssj.getSSJPCM().createUserCheck(player);
+            // Reset all stats to default
+            resetPlayerStats(player);
+        }
+
         // Only apply stats if they've started their journey
         if (ssj.getSSJPCM().getStart(player)) {
             // Apply all base stat boosts
@@ -109,6 +120,23 @@ public class SSJListeners implements Listener {
             ssj.getSSJMethodChecks().scoreBoardCheck();
             ssj.getSSJMethods().callScoreboard(player);
         }
+    }
+
+    private void resetPlayerStats(Player player) {
+        // Reset all player stats to default or zero
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Level", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Battle_Power", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Saiyan_Ability", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Form", "Base");
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Action_Points", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Health", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Power", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Strength", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Speed", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Stamina", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Defence", 0);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Transformations_Unlocked", "");
     }
 
     @EventHandler
@@ -151,5 +179,5 @@ public class SSJListeners implements Listener {
         
         final Player p = (Player) e.getWhoClicked();
         ssj.getSSJMethodChecks().callSkillsMenuChecks(p, e);
-    }
+        }
 }

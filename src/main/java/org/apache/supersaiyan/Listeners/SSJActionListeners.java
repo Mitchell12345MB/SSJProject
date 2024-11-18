@@ -4,6 +4,7 @@ import org.apache.supersaiyan.MethodClasses.SSJBossBar;
 import org.apache.supersaiyan.MethodClasses.SSJParticles;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -18,10 +19,10 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.Location;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class SSJActionListeners implements Listener {
 
             if (nextForm != null) {
                 SSJBossBar bossBar = bossBars.computeIfAbsent(p.getUniqueId(), 
-                    k -> new SSJBossBar(ssj, "Transformation Progress", new HashMap<>(), true));
+                    k -> new SSJBossBar(ssj, "§5Transformation Progress", new HashMap<>(), false));
                 bossBar.show(p);
 
                 if (ssj.getSSJTransformationManager().canTransform(p, nextForm)) {
@@ -365,14 +366,11 @@ public class SSJActionListeners implements Listener {
 
     private void scheduleBarRemoval(Player player) {
         UUID playerId = player.getUniqueId();
-        
-        // Cancel existing timeout if any
         if (transformBarTimeouts.containsKey(playerId)) {
             transformBarTimeouts.get(playerId).cancel();
         }
-        
-        // Schedule new timeout
-        BukkitRunnable task = new BukkitRunnable() {
+
+        BukkitRunnable timeout = new BukkitRunnable() {
             @Override
             public void run() {
                 if (bossBars.containsKey(playerId)) {
@@ -384,8 +382,8 @@ public class SSJActionListeners implements Listener {
             }
         };
         
-        transformBarTimeouts.put(playerId, task);
-        task.runTaskLater(ssj, 100L); // 5 seconds (20 ticks per second)
+        transformBarTimeouts.put(playerId, timeout);
+        timeout.runTaskLater(ssj, 60L); // 3 second timeout
     }
 
     public Map<UUID, SSJBossBar> getBossBars() {
@@ -453,4 +451,93 @@ public class SSJActionListeners implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (!(e.getWhoClicked() instanceof Player)) {
+            return;
+        }
+        
+        Player p = (Player) e.getWhoClicked();
+        
+        // Cancel the event for all custom inventories
+        if (e.getInventory().equals(ssj.getSSJGui().genstatinv) ||
+            e.getInventory().equals(ssj.getSSJGui().transformationsinv) ||
+            e.getInventory().equals(ssj.getSSJGui().skillsinv) ||
+            e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
+            
+            e.setCancelled(true);
+            
+            // Only process clicks if there's an actual item
+            ItemStack clickedItem = e.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+                return;
+            }
+            
+            // Process the click based on inventory type
+            if (e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
+                ssj.getSSJMethodChecks().callGenStatMenuChecks(p, e);
+            } else if (e.getInventory().equals(ssj.getSSJGui().transformationsinv)) {
+                ssj.getSSJMethodChecks().callTransformationsMenuChecks(p, e);
+            } else if (e.getInventory().equals(ssj.getSSJGui().skillsinv)) {
+                ssj.getSSJMethodChecks().callSkillsMenuChecks(p, e);
+            } else if (e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
+                ssj.getSSJMethodChecks().callSettingsMenuChecks(p, e);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+        Player player = event.getPlayer();
+        if (ssj.getSSJPCM().hasSkill(player, "Fly")) {
+            event.setCancelled(true);
+            
+            // If player is in creative mode, don't interfere
+            if (player.getGameMode() == GameMode.CREATIVE) {
+                return;
+            }
+            
+            // Handle double jump to fly
+            if (!player.isFlying()) {
+                ssj.getSSJSkillManager().handleSkillActivation(player, "Fly");
+                // Start energy drain
+                ssj.getSSJEnergyManager().startEnergyDrain(player);
+            } else {
+                ssj.getSSJSkillManager().disableFlight(player);
+                // Stop energy drain
+                ssj.getSSJEnergyManager().stopEnergyDrain(player);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMoveFlightCheck(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (player.isFlying() && ssj.getSSJPCM().hasSkill(player, "Fly")) {
+            int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
+            if (ssj.getSSJPCM().getEnergy(player) < energyCost) {
+                ssj.getSSJSkillManager().disableFlight(player);
+                ssj.getSSJEnergyManager().stopEnergyDrain(player);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJump(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (!ssj.getSSJPCM().hasSkill(player, "Fly")) return;
+        if (player.getGameMode() == GameMode.CREATIVE) return;
+        
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if (to == null) return;
+        
+        // Check if player is jumping
+        if (to.getY() > from.getY() && player.getVelocity().getY() > 0) {
+            // Allow flight on jump
+            player.setAllowFlight(true);
+        }
+    }
+
 }

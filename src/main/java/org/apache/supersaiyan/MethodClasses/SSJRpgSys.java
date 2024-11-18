@@ -64,11 +64,13 @@ public class SSJRpgSys {
         int currentEnergy = ssj.getSSJPCM().getEnergy(p);
         int powerLevel = ssj.getSSJPCM().getPower(p);
         
+        // Apply max stats limit if enabled
+        if (ssj.getSSJConfigs().getMaxStatsLimit()) {
+            powerLevel = Math.min(powerLevel, ssj.getSSJConfigs().getMaxStats());
+        }
+        
         if (currentEnergy == 0) {
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", 5);
-        } else {
-            int newEnergy = currentEnergy * powerLevel;
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", newEnergy);
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Energy", Math.min(5, powerLevel));
         }
     }
 
@@ -77,12 +79,22 @@ public class SSJRpgSys {
         int baseBP = getBaseBP(p);
         int energy = ssj.getSSJPCM().getEnergy(p);
         
-        int multbp = (int)((energy + baseBP) * ssj.getSSJConfigs().getBPM() * bpMultiplier);
+        // Calculate BP with multipliers
+        long multbp = (long)((energy + baseBP) * ssj.getSSJConfigs().getBPM() * bpMultiplier);
+        
+        // Apply max stats limit if enabled
+        if (ssj.getSSJConfigs().getMaxStatsLimit()) {
+            int maxStats = ssj.getSSJConfigs().getMaxStats();
+            multbp = Math.min(multbp, maxStats);
+        }
+        
+        // Cap BP at Integer.MAX_VALUE to prevent display issues
+        int finalBP = (int)Math.min(multbp, Integer.MAX_VALUE);
         
         if (ssj.getSSJPCM().getBattlePower(p) == 0 || energy == 0) {
             ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", addBaseBP(p));
         } else if (energy < ssj.getSSJPCM().getLimit(p)) {
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", multbp);
+            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", finalBP);
         }
         
         ssj.getSSJMethodChecks().scoreBoardCheck();
@@ -155,17 +167,35 @@ public class SSJRpgSys {
     }
 
     public void resetAllStatBoosts(Player player) {
+        // Reset health to default (20)
         AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        AttributeInstance attackDamage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
-        AttributeInstance moveSpeed = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-        AttributeInstance armor = player.getAttribute(Attribute.GENERIC_ARMOR);
-        AttributeInstance toughness = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+        if (maxHealth != null) {
+            maxHealth.setBaseValue(20);
+        }
         
-        if (maxHealth != null) maxHealth.setBaseValue(20); // Default health
-        if (attackDamage != null) attackDamage.setBaseValue(2); // Default damage
-        if (moveSpeed != null) moveSpeed.setBaseValue(0.1); // Default speed
-        if (armor != null) armor.setBaseValue(0); // Default armor
-        if (toughness != null) toughness.setBaseValue(0); // Default toughness
+        // Reset attack damage to default (1)
+        AttributeInstance attackDamage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+        if (attackDamage != null) {
+            attackDamage.setBaseValue(1);
+        }
+        
+        // Reset movement speed to default (0.1)
+        AttributeInstance moveSpeed = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        if (moveSpeed != null) {
+            moveSpeed.setBaseValue(0.1);
+        }
+        
+        // Reset armor to default (0)
+        AttributeInstance armor = player.getAttribute(Attribute.GENERIC_ARMOR);
+        if (armor != null) {
+            armor.setBaseValue(0);
+        }
+        
+        // Reset toughness to default (0)
+        AttributeInstance toughness = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+        if (toughness != null) {
+            toughness.setBaseValue(0);
+        }
     }
 
     // Add a method to start/stop passive gain based on config changes

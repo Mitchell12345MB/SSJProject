@@ -1,9 +1,6 @@
 package org.apache.supersaiyan.MethodClasses;
 
 import org.apache.supersaiyan.SSJ;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -25,8 +22,6 @@ public class SSJBossBar {
     private BukkitTask updateTask;
     private final boolean isTransformBar;
     private BossBar bossBar;
-    private Map<UUID, Long> lastUpdateTime = new HashMap<>();
-    private static final long UPDATE_COOLDOWN = 50L; // 50ms cooldown between updates
     private final Map<UUID, Integer> transformationProgress = new HashMap<>();
     private BukkitTask energyBarTask;
 
@@ -34,11 +29,13 @@ public class SSJBossBar {
         this.ssj = ssj;
         this.title = title != null ? title : "Energy: ";
         this.playerStats = playerStats != null ? playerStats : new HashMap<>();
-        this.isPersistent = isPersistent || ssj.getSSJConfigs().getEnergyBarVisible();
         this.isTransformBar = title != null && title.contains("Transformation");
+        this.isPersistent = !isTransformBar && (isPersistent || ssj.getSSJConfigs().getEnergyBarVisible());
         
         if (isTransformBar) {
             this.bossBar = Bukkit.createBossBar(this.title, BarColor.PURPLE, BarStyle.SOLID);
+        } else {
+            this.bossBar = Bukkit.createBossBar(this.title, BarColor.YELLOW, BarStyle.SEGMENTED_10);
         }
         
         if (this.isPersistent) {
@@ -71,78 +68,46 @@ public class SSJBossBar {
     }
 
     public void show(Player player) {
+        if (bossBar == null) return;
+        
+        bossBar.addPlayer(player);
+        playerStats.putIfAbsent(player.getUniqueId(), 0);
+        
         if (isTransformBar) {
-            bossBar.addPlayer(player);
+            transformationProgress.putIfAbsent(player.getUniqueId(), 0);
         } else if (isPersistent) {
-            // Start persistent energy bar updates
-            if (energyBarTask == null) {
-                energyBarTask = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (player.isOnline()) {
-                            update(player);
-                        } else {
-                            hide(player);
-                        }
-                    }
-                }.runTaskTimer(ssj, 0L, 20L); // Update every second
-            }
+            startPersistentUpdates();
         }
         update(player);
     }
 
     public void hide(Player player) {
-        if (isTransformBar && bossBar != null) {
-            bossBar.removePlayer(player);
-        }
-        if (!isPersistent) {
-            playerStats.remove(player.getUniqueId());
-            if (energyBarTask != null) {
-                energyBarTask.cancel();
-                energyBarTask = null;
+        if (bossBar != null) {
+            if (!isPersistent) {
+                bossBar.removePlayer(player);
+                playerStats.remove(player.getUniqueId());
+                if (energyBarTask != null) {
+                    energyBarTask.cancel();
+                    energyBarTask = null;
+                }
             }
         }
     }
 
     public void update(Player player) {
-        long currentTime = System.currentTimeMillis();
-        long lastUpdate = lastUpdateTime.getOrDefault(player.getUniqueId(), 0L);
-        
-        if (currentTime - lastUpdate < UPDATE_COOLDOWN) {
-            return;
-        }
-        
-        lastUpdateTime.put(player.getUniqueId(), currentTime);
+        if (bossBar == null) return;
         
         if (isTransformBar) {
-            // Use stored transformation progress instead of energy percentage
             int progress = transformationProgress.getOrDefault(player.getUniqueId(), 0);
-            float progressPercent = progress / 100f;
-            bossBar.setProgress(Math.min(1.0, progressPercent));
-            bossBar.setTitle(ChatColor.LIGHT_PURPLE + "Transformation Progress: " + 
-                            ChatColor.YELLOW + progress + "%");
+            bossBar.setProgress(progress / 100.0);
+            bossBar.setTitle("§5Transformation Progress: §d" + progress + "%");
         } else {
-            // Energy bar logic remains the same
-            int currentEnergy = ssj.getSSJPCM().getEnergy(player);
-            int maxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
-            int realTimePercent = Math.round(((float) currentEnergy / maxEnergy) * 100);
+            double currentEnergy = ssj.getSSJPCM().getEnergy(player);
+            double maxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
+            double progress = Math.min(1.0, currentEnergy / maxEnergy);
             
-            StringBuilder energyBar = new StringBuilder();
-            int energyBarLength = 20;
-            int energyFilledBars = Math.round((realTimePercent / 100f) * energyBarLength);
-            
-            energyBar.append(ChatColor.GOLD).append("Energy: ");
-            energyBar.append(ChatColor.GREEN);
-            for (int i = 0; i < energyFilledBars; i++) {
-                energyBar.append("│");
-            }
-            energyBar.append(ChatColor.RED);
-            for (int i = energyFilledBars; i < energyBarLength; i++) {
-                energyBar.append("│");
-            }
-            energyBar.append(" ").append(ChatColor.YELLOW).append(realTimePercent).append("%");
-
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(energyBar.toString()));
+            bossBar.setProgress(progress);
+            bossBar.setTitle("§6Energy: §e" + (int)currentEnergy + "§6/§e" + (int)maxEnergy);
         }
     }
 

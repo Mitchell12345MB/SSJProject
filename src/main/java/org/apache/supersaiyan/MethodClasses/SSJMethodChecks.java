@@ -3,6 +3,7 @@ package org.apache.supersaiyan.MethodClasses;
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -17,37 +18,30 @@ public class SSJMethodChecks {
 
     }
 
-    public void checkStartCommandMethod(Player p) { // When the player runs command "/ssj start", do this;
-
+    public void checkStartCommandMethod(Player p) {
         if (ssj.getSSJPCM().getFile(p).exists() && ssj.getSSJPCM().getStart(p)) {
-
             p.sendMessage(ChatColor.RED + "You've already started your Saiyan journey!");
-
+            return;
         }
 
-
         if (!ssj.getSSJPCM().getFile(p).exists()) {
-
             p.sendMessage(ChatColor.RED + "Your player file doesn't exist!");
-
             p.sendMessage(ChatColor.RED + "Please re-log or tell a server Admin/Owner.");
-
+            return;
         }
 
         if (ssj.getSSJPCM().getFile(p).exists() && !ssj.getSSJPCM().getStart(p)) {
-
+            ssj.getSSJRpgSys().resetAllStatBoosts(p);
+            
             ssj.getSSJMethods().callStartingItems(p);
-
             ssj.getSSJPCM().setPlayerConfigValue(p, "Start", true);
-
             ssj.getSSJGui().openGenStatInventory(p);
-
+            
+            ssj.getSSJRpgSys().updateAllStatBoosts(p);
+            
             p.sendMessage(ChatColor.RED + "Your Saiyan journey has started!");
-
             ssj.getLogger().warning(p.getName() + "'s.yml Has been updated!");
-
         }
-
     }
 
     public void callGenStatMenuChecks(Player p, InventoryClickEvent e) {
@@ -71,6 +65,12 @@ public class SSJMethodChecks {
                 break;
             case 8:
                 handleStatIncrease(p, "Base.Defence", ssj.getSSJPCM().getDefence(p));
+                break;
+            case 9:
+                if (ssj.getSSJSaiyanAbilityManager().canIncreaseSaiyanAbility(p)) {
+                    ssj.getSSJSaiyanAbilityManager().increaseSaiyanAbility(p);
+                    ssj.getSSJGui().openGenStatInventory(p);
+                }
                 break;
             case 10:
                 ssj.getSSJGui().openTransformationsInventory(p);
@@ -248,29 +248,38 @@ public class SSJMethodChecks {
     }
 
     public void callSkillsMenuChecks(Player p, InventoryClickEvent e) {
-        if (!e.getInventory().equals(ssj.getSSJGui().skillsinv)) return;
-
-        switch (e.getRawSlot()) {
-            case 17: // Back button
-                ssj.getSSJGui().openGenStatInventory(p);
-                break;
-            default:
-                ItemStack clicked = e.getCurrentItem();
-                if (clicked != null && clicked.hasItemMeta()) {
-                    String name = clicked.getItemMeta().getDisplayName();
-                    handleSkillClick(p, name);
-                }
-                break;
+        if (e.getCurrentItem() == null) return;
+        
+        if (e.getCurrentItem().getType() == Material.BARRIER) {
+            ssj.getSSJGui().openGenStatInventory(p);
+            return;
         }
+        
+        String skillName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+        if (ssj.getSSJPCM().hasSkill(p, skillName)) {
+            // Handle upgrade
+            int upgradeCost = ssj.getSSJConfigs().getSCFile().getInt(skillName + ".Upgrade_Acion_Points_Cost");
+            if (ssj.getSSJPCM().getActionPoints(p) >= upgradeCost) {
+                ssj.getSSJPCM().setActionPoints(p, ssj.getSSJPCM().getActionPoints(p) - upgradeCost);
+                ssj.getSSJSkillManager().upgradeSkill(p, skillName);
+                p.sendMessage("§aUpgraded " + skillName + " to level " + ssj.getSSJSkillManager().getSkillLevel(p, skillName) + "!");
+            } else {
+                p.sendMessage("§cNot enough AP to upgrade " + skillName + "!");
+            }
+        } else if (ssj.getSSJSkillManager().canUseSkill(p, skillName)) {
+            // Handle unlock
+            int apCost = ssj.getSSJConfigs().getSCFile().getInt(skillName + ".Acion_Points_Cost");
+            ssj.getSSJPCM().setActionPoints(p, ssj.getSSJPCM().getActionPoints(p) - apCost);
+            ssj.getSSJPCM().unlockSkill(p, skillName);
+            p.sendMessage("§aUnlocked " + skillName + "!");
+        }
+        
+        // Refresh inventory
+        ssj.getSSJGui().openSkillsInventory(p);
     }
 
     private void handleTransformationClick(Player p, String transformName) {
         // Handle transformation activation based on the clicked transformation
         // This should integrate with your existing transformation system
-    }
-
-    private void handleSkillClick(Player p, String skillName) {
-        // Handle skill activation/learning based on the clicked skill
-        // This should integrate with your existing skill system
     }
 }

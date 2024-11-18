@@ -30,6 +30,18 @@ public class SSJChargeSystem {
             return;
         }
         
+        UUID playerId = player.getUniqueId();
+        
+        // Use persistent bar if available
+        if (ssj.getSSJConfigs().getEnergyBarVisible()) {
+            energyBar = ssj.getPersistentEnergyBar();
+        } else {
+            energyBar = new SSJBossBar(ssj, ChatColor.GOLD + "Energy: ", new HashMap<>(), false);
+        }
+        
+        energyBar.show(player);
+        chargingPlayers.put(playerId, true);
+        
         String currentForm = ssj.getSSJPCM().getForm(player);
         String particleType = "FLAME"; // Default particle
         
@@ -55,9 +67,6 @@ public class SSJChargeSystem {
         }
         
         particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 10, 3);
-        energyBar = new SSJBossBar(ssj, ChatColor.GOLD + "Energy: ", new HashMap<>(), true);
-        energyBar.show(player);
-        chargingPlayers.put(player.getUniqueId(), true);
         
         chargeRunnable = new BukkitRunnable() {
             int tickCounter = 0;
@@ -97,6 +106,7 @@ public class SSJChargeSystem {
                     
                     int energyGain = ssj.getSSJConfigs().getNPEMG();
                     ssj.getSSJEnergyManager().modifyEnergy(player, energyGain);
+                    ssj.getSSJRpgSys().multBP(player);
                     energyBar.update(player);
                 }
                 
@@ -107,10 +117,15 @@ public class SSJChargeSystem {
     }
     
     public void stopCharging(Player player) {
+        UUID playerId = player.getUniqueId();
+        
         if (energyBar != null) {
-            energyBar.hide(player);
-            energyBar = null;
+            if (!ssj.getSSJConfigs().getEnergyBarVisible()) {
+                energyBar.hide(player);
+                energyBar = null;
+            }
         }
+        
         if (chargeTask != null) {
             chargeTask.cancel();
             chargeTask = null;
@@ -119,7 +134,7 @@ public class SSJChargeSystem {
             chargeRunnable.cancel();
             chargeRunnable = null;
         }
-        chargingPlayers.remove(player.getUniqueId());
+        chargingPlayers.remove(playerId);
     }
     
     public boolean isCharging(Player player) {

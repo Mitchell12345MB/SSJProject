@@ -196,7 +196,7 @@ public class SSJTransformationManager {
         }
 
         // Get current energy percentage before resetting multipliers
-        float currentPercentage = ssj.getSSJEnergyManager().getCurrentEnergyPercentage(player);
+        double currentPercentage = ssj.getSSJEnergyManager().getCurrentEnergyPercentage(player);
         
         // Reset all multipliers
         ssj.getSSJEnergyManager().resetMultipliers(player);
@@ -444,5 +444,28 @@ public class SSJTransformationManager {
                 ssj.getSSJRpgSys().multBP(player);
             }
         }
+    }
+
+    public void revertToBase(Player player) {
+        // Store original energy percentage
+        double energyPercentage = ssj.getSSJEnergyManager().getCurrentEnergyPercentage(player);
+        
+        // Reset multipliers first
+        ssj.getSSJEnergyManager().resetMultipliers(player);
+        
+        // Set form to base
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Form", "Base");
+        
+        // Calculate new energy based on percentage
+        int newMaxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
+        int newEnergy = (int)(newMaxEnergy * (energyPercentage / 100));
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", newEnergy);
+        
+        // Update stats and visuals
+        ssj.getSSJRpgSys().resetAllStatBoosts(player);
+        ssj.getSSJRpgSys().updateAllStatBoosts(player);
+        ssj.getSSJRpgSys().multBP(player);
+        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethods().callScoreboard(player);
     }
 }
