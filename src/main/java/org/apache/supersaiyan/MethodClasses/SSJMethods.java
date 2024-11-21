@@ -6,6 +6,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.ChatColor;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -117,31 +122,25 @@ public class SSJMethods {
         itemActions.keySet().forEach(material -> giveItem(p, material));
     }
 
-    public void callScoreboard(Player p) {
+    public void callScoreboard(Player player) {
+        // Setup the scoreboard
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        Scoreboard board = manager.getNewScoreboard();
+        @SuppressWarnings("deprecation")
+        Objective objective = board.registerNewObjective("ssj", "dummy", ChatColor.GREEN + "Player Stats");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        if (ssj.getSSJPCM().getStart(p)) {
+        // Fetch updated stats
+        int bp = ssj.getSSJPCM().getBattlePower(player);
+        int energy = ssj.getSSJPCM().getEnergy(player);
+        String form = ssj.getSSJPCM().getForm(player);
 
-            SSJScoreBoards ssjsb = ssj.getSSJSB().createScore(p);
+        // Set scores
+        objective.getScore(ChatColor.YELLOW + "Battle Power: " + ChatColor.WHITE + bp).setScore(3);
+        objective.getScore(ChatColor.YELLOW + "Energy: " + ChatColor.WHITE + energy).setScore(2);
+        objective.getScore(ChatColor.YELLOW + "Form: " + ChatColor.WHITE + form).setScore(1);
 
-            ssjsb.setTitle("&aCurrent Stats");
-
-            ssjsb.setSlot(9, "&7&m--------------------------------");
-
-            ssjsb.setSlot(8, "&aPlayer&f: " + p.getName());
-
-            ssjsb.setSlot(7, " ");
-
-            ssjsb.setSlot(6, "Level: " + ssj.getSSJPCM().getLevel(p));
-
-            ssjsb.setSlot(5, " ");
-
-            ssjsb.setSlot(4, "BP: " + ssj.getSSJPCM().getBattlePower(p));
-
-            ssjsb.setSlot(3, " ");
-
-            ssjsb.setSlot(2, "Current Form: " + ssj.getSSJPCM().getForm(p));
-
-            ssjsb.setSlot(1, "&7&m--------------------------------");
-        }
+        // Assign the scoreboard to the player
+        player.setScoreboard(board);
     }
 }

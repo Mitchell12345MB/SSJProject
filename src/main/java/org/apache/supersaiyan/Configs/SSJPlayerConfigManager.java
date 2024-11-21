@@ -48,6 +48,7 @@ public class SSJPlayerConfigManager {
         defaultValues.put("Base.Stamina", ssj.getSSJConfigs().getSSP());
         defaultValues.put("Base.Defence", ssj.getSSJConfigs().getSSP());
         defaultValues.put("Transformations_Unlocked", "");
+        defaultValues.put("Staff_Flight", false);
     }
 
     public File getFile(Player player) {
@@ -83,9 +84,9 @@ public class SSJPlayerConfigManager {
         return Optional.ofNullable(config.get(key)); // Ensure the method exists
     }
 
-    public void setPlayerConfigValue(Player player, String key, Object value) {
-        var config = getPlayerConfig(player);
-        config.set(key, value); // Ensure the method exists
+    public void setPlayerConfigValue(Player player, String path, Object value) {
+        FileConfiguration config = getPlayerConfig(player);
+        config.set(path, value);
         savePlayerConfig(player, config);
     }
 
@@ -131,8 +132,8 @@ public class SSJPlayerConfigManager {
         return (int) getPlayerConfigValue(p, "Level").orElse(0);
     }
 
-    public int getBattlePower(Player p) {
-        return (int) getPlayerConfigValue(p, "Battle_Power").orElse(0);
+    public int getBattlePower(Player player) {
+        return getPlayerConfig(player).getInt("Battle_Power", 0);
     }
 
     public int getEnergy(Player p) {
@@ -256,5 +257,13 @@ public class SSJPlayerConfigManager {
     
     public void setAbilityLevel(Player player, String abilityName, int level) {
         setPlayerConfigValue(player, "Abilities." + abilityName + ".Level", level);
+    }
+
+    public boolean isStaffFlightEnabled(Player p) {
+        return (boolean) getPlayerConfigValue(p, "Staff_Flight").orElse(false);
+    }
+
+    public void setStaffFlightEnabled(Player p, boolean enabled) {
+        setPlayerConfigValue(p, "Staff_Flight", enabled);
     }
 }

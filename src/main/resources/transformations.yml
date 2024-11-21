@@ -38,6 +38,7 @@ Base_Forms:
   Saiyan_Ability_Lock: 100
   Acion_Points_Cost: 50
   Upgrade_Acion_Points_Cost: 100
+  Potential_Skill_Lock: 10
   Particle:
     Type: "fireworks_spark"
     Count: 10

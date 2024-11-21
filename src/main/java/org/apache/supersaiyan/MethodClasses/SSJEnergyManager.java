@@ -15,6 +15,7 @@ public class SSJEnergyManager {
     private final Map<UUID, Double> energyDrainMultipliers = new HashMap<>();
     private final Map<UUID, Integer> transformationEnergyCosts = new HashMap<>();
     private final Map<UUID, BukkitRunnable> energyDrainTasks = new HashMap<>();
+    private final Map<UUID, Integer> energyDrainSources = new HashMap<>();
     
     public SSJEnergyManager(SSJ ssj) {
         this.ssj = ssj;
@@ -57,7 +58,7 @@ public class SSJEnergyManager {
     }
     
     public void setMultipliers(Player player, double bpMultiplier, double gainMultiplier, 
-                              double limitMultiplier, double drainMultiplier, int energyCost) {
+        double limitMultiplier, double drainMultiplier, int energyCost) {
         UUID playerId = player.getUniqueId();
         bpMultipliers.put(playerId, bpMultiplier);
         energyGainMultipliers.put(playerId, gainMultiplier);
@@ -94,6 +95,10 @@ public class SSJEnergyManager {
                 // Force detransform
                 ssj.getSSJTransformationManager().revertToBase(player);
                 player.sendMessage("§cNot enough energy to maintain transformation!");
+                
+                // **Add these lines to update the scoreboard**
+                ssj.getSSJMethodChecks().scoreBoardCheck();
+                ssj.getSSJMethods().callScoreboard(player);
             }
         }
     }
@@ -104,9 +109,12 @@ public class SSJEnergyManager {
         return (double) currentEnergy / maxEnergy * 100;
     }
     
-    public void startEnergyDrain(Player player) {
+    public void startEnergyDrain(Player player, String source) {
         UUID playerId = player.getUniqueId();
+        energyDrainSources.put(playerId, energyDrainSources.getOrDefault(playerId, 0) + 1);
+
         if (energyDrainTasks.containsKey(playerId)) {
+            // Task already running
             return;
         }
 
@@ -116,33 +124,68 @@ public class SSJEnergyManager {
                 if (!player.isOnline()) {
                     cancel();
                     energyDrainTasks.remove(playerId);
+                    energyDrainSources.remove(playerId);
                     return;
                 }
 
                 int baseEnergyDrain = ssj.getSSJConfigs().getBaseEnergyDrain();
-                int drainAmount = (int) Math.round(baseEnergyDrain * getEnergyDrainMultiplier(player));
+                double drainMultiplier = getEnergyDrainMultiplier(player);
+                int drainAmount = (int) Math.round(baseEnergyDrain * drainMultiplier);
+
                 modifyEnergy(player, -drainAmount);
 
                 if (ssj.getSSJPCM().getEnergy(player) <= 0) {
                     cancel();
                     energyDrainTasks.remove(playerId);
+                    energyDrainSources.remove(playerId);
+                    // Handle what happens when energy depletes
+                    if (ssj.getSSJPCM().getForm(player).equals("Base")) {
+                        // Stop flying if in flight
+                        player.setFlying(false);
+                        player.setAllowFlight(false);
+                    } else {
+                        // Revert to base form
+                        ssj.getSSJTransformationManager().revertToBase(player);
+                    }
                 }
             }
         };
 
-        drainTask.runTaskTimer(ssj, 20L, 20L);
+        drainTask.runTaskTimer(ssj, 20L, 20L); // Runs every second
         energyDrainTasks.put(playerId, drainTask);
     }
     
-    public void stopEnergyDrain(Player player) {
+    public void stopEnergyDrain(Player player, String source) {
         UUID playerId = player.getUniqueId();
-        BukkitRunnable task = energyDrainTasks.remove(playerId);
-        if (task != null) {
-            task.cancel();
+        int sources = energyDrainSources.getOrDefault(playerId, 0) - 1;
+
+        if (sources <= 0) {
+            // No more sources requiring energy drain
+            energyDrainSources.remove(playerId);
+            BukkitRunnable task = energyDrainTasks.remove(playerId);
+            if (task != null) {
+                task.cancel();
+            }
+        } else {
+            // Update the number of sources
+            energyDrainSources.put(playerId, sources);
         }
     }
     
     public int getTransformationEnergyCost(Player player) {
         return transformationEnergyCosts.getOrDefault(player.getUniqueId(), 100);
+    }
+    
+    public void stopAllEnergyDrains(Player player) {
+        UUID playerId = player.getUniqueId();
+
+        // Remove all energy drain sources for the player
+        energyDrainSources.remove(playerId);
+
+        // Cancel and remove the energy drain task if it exists
+        BukkitRunnable task = energyDrainTasks.remove(playerId);
+        if (task != null) {
+            task.cancel();
+        }
     }
 }

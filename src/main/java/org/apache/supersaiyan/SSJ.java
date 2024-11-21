@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.HashMap;
@@ -95,6 +96,10 @@ public class SSJ extends JavaPlugin {
                     persistentEnergyBar.show(player);
                 }
             }
+        }
+
+        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            plugin.getLogger().info("Loaded plugin: " + plugin.getName());
         }
     }
 
@@ -186,6 +191,7 @@ public class SSJ extends JavaPlugin {
 
         // Initialize listeners after systems
         regListeners();
+        
     }
 
     private void regCommands(){

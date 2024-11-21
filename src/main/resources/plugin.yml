@@ -3,9 +3,9 @@ version: 1
 main: org.apache.supersaiyan.SSJ
 api-version: 1.17
 prefix: SSJPL
-load: STARTUP
 authors: [ SauSAliens ]
-depend: [ProtocolLib]
+depend:
+  - ProtocolLib
 description: Simple super saiyan plugin
 website: https://www.spigotmc.org/resources/super-saiyan-transformations.18212/
 commands:

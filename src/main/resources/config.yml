@@ -59,4 +59,4 @@ Max_Stats_Limit: false
 Max_Stats: 1000
 
 # Maximum level for Saiyan abilities
-Max_Ability_Level: 10
+Max_Ability_Level: 400

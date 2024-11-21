@@ -58,10 +58,17 @@ public class SSJSkillManager {
             double baseBoost = boosts.getDouble(stat);
             double totalBoost = baseBoost + (skillLevel * 5.0); // 5 points per level
             
-            if (stat.equals("Battle_Power_Multiplier")) {
-                ssj.getSSJEnergyManager().setBPMultiplier(player, totalBoost);
+            switch (stat) {
+                case "Battle_Power_Multiplier":
+                    ssj.getSSJEnergyManager().setBPMultiplier(player, totalBoost);
+                    break;
+                case "Speed":
+                    // Convert the speed boost to a value suitable for fly speed (float between 0 and 1)
+                    float flySpeed = (float) Math.min(0.1 + (totalBoost * 0.01), 1.0); // Adjust as needed
+                    player.setFlySpeed(flySpeed);
+                    break;
+                // Handle other stats like "Jump" if necessary
             }
-            // Add other stat boost applications as needed
         }
     }
     
@@ -85,31 +92,8 @@ public class SSJSkillManager {
             currentLevel + 1
         );
         
-        // Apply any level-up bonuses
-        ConfigurationSection skillSection = ssj.getSSJConfigs().getSCFile().getConfigurationSection(skillName);
-        if (skillSection != null) {
-            ConfigurationSection boosts = skillSection.getConfigurationSection("Stat_Boosts");
-            if (boosts != null) {
-                for (String stat : boosts.getKeys(false)) {
-                    double baseBoost = boosts.getDouble(stat);
-                    double totalBoost = baseBoost * (currentLevel + 1);
-                    
-                    // Apply the stat boost based on the stat type
-                    switch (stat.toLowerCase()) {
-                        case "battle_power_multiplier":
-                            ssj.getSSJEnergyManager().setBPMultiplier(player, totalBoost);
-                            break;
-                        case "energy_gain_multiplier":
-                            ssj.getSSJEnergyManager().setEnergyGainMultiplier(player, totalBoost);
-                            break;
-                        case "energy_limit_multiplier":
-                            ssj.getSSJEnergyManager().setEnergyLimitMultiplier(player, totalBoost);
-                            break;
-                        // Add other stat boost types as needed
-                    }
-                }
-            }
-        }
+        // Apply updated boosts
+        applySkillBoosts(player, skillName);
         
         // Update player stats after skill upgrade
         ssj.getSSJRpgSys().updateAllStatBoosts(player);
@@ -126,27 +110,56 @@ public class SSJSkillManager {
     public void handleSkillActivation(Player player, String skillName) {
         if (!ssj.getSSJPCM().hasSkill(player, skillName)) return;
         
-        // Special handling for Fly skill
-        if (skillName.equals("Fly")) {
+        if (skillName.equals("Fly")) {            
+            // Proceed with SSJ flight activation with energy cost
             int energyCost = ssj.getSSJConfigs().getSCFile().getInt(skillName + ".Energy_Cost");
             if (ssj.getSSJPCM().getEnergy(player) >= energyCost) {
                 player.setAllowFlight(true);
                 player.setFlying(true);
                 player.sendMessage("§aFlight enabled!");
                 ssj.getSSJEnergyManager().modifyEnergy(player, -energyCost);
-            } else {
-                player.sendMessage("§cNot enough energy to fly!");
+                // Start energy drain
+                ssj.getSSJEnergyManager().startEnergyDrain(player, "flight");
             }
         }
-        
-        // Handle other skills...
     }
     
     public void disableFlight(Player player) {
-        if (player.isFlying()) {
+        // Check if 'Staff Flight' is enabled
+        if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
+            // Do not disable flight for staff
+            return;
+        }
+
+        if (player.isFlying() || player.getAllowFlight()) {
             player.setFlying(false);
             player.setAllowFlight(false);
             player.sendMessage("§cFlight disabled!");
+            ssj.getSSJEnergyManager().stopEnergyDrain(player, "flight");
+        }
+    }
+    
+    public void enableFlight(Player player) {
+        // Check if 'Staff Flight' is enabled
+        if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
+            // Allow flight without energy
+            player.setAllowFlight(true);
+            player.setFlying(true);
+            player.sendMessage("§aStaff Flight enabled!");
+            return;
+        }
+
+        if (!ssj.getSSJPCM().hasSkill(player, "Fly")) return;
+
+        int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
+        if (ssj.getSSJPCM().getEnergy(player) >= energyCost) {
+            player.setAllowFlight(true);
+            player.setFlying(true);
+            player.sendMessage("§aFlight enabled!");
+            ssj.getSSJEnergyManager().modifyEnergy(player, -energyCost);
+            ssj.getSSJEnergyManager().startEnergyDrain(player, "flight");
+        } else {
+            player.sendMessage("§cNot enough energy to fly!");
         }
     }
 }

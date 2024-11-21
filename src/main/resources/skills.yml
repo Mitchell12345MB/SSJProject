@@ -4,6 +4,7 @@ Fly:
   Acion_Points_Cost: 20 #How many action points it costs to unlock the skill.
   Upgrade_Acion_Points_Cost: 20 #How many action points it costs to upgrade the skill. Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
   Energy_Cost: 10 #How much energy it costs to use the skill.
+  Max_Level: 10 #The maximum level of the skill.
   Stat_Requirements:
     Power: 10 #The stat requirement for the skill.
     Strength: 10 #The stat requirement for the skill.
@@ -18,6 +19,7 @@ Kaioken:
   Acion_Points_Cost: 20
   Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
   Energy_Cost: 10 
+  Max_Level: 400 #The maximum level of the skill.
   Stat_Requirements:
     Power: 10
     Strength: 10
@@ -28,6 +30,7 @@ Potential:
   Acion_Points_Cost: 20
   Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
   Energy_Cost: 10 
+  Max_Level: 400 #The maximum level of the skill.
   Stat_Requirements:
     Power: 10
     Strength: 10
@@ -42,6 +45,7 @@ God:
   Acion_Points_Cost: 20
   Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
   Energy_Cost: 10 
+  Max_Level: 400 #The maximum level of the skill.
   Stat_Requirements:
     Power: 10
     Strength: 10
@@ -56,6 +60,7 @@ Jump:
   Acion_Points_Cost: 20
   Upgrade_Acion_Points_Cost: 20 #Increases by 1 each time you upgrade the skill. Increases flight speed each time you upgrade by 5.
   Energy_Cost: 10 
+  Max_Level: 10 #The maximum level of the skill.
   Stat_Requirements:
     Power: 10
     Strength: 10

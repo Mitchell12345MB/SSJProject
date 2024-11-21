@@ -126,7 +126,7 @@ public class SSJMethodChecks {
         }
     }
 
-    public void callSettingsMenuChecks(Player p, InventoryClickEvent e) {
+    public void callSettingsMenuChecks(Player p, InventoryClickEvent e) { // Settings Menu click checks
         if (!e.getInventory().equals(ssj.getSSJGui().settingsinv)) return;
 
         switch (e.getRawSlot()) {
@@ -144,6 +144,9 @@ public class SSJMethodChecks {
                 break;
             case 4:
                 ssj.getSSJGui().openSkillsInventory(p);
+                break;
+            case 5:
+                toggleSetting(p, "Staff_Flight");
                 break;
             case 8: // Back button
                 ssj.getSSJGui().openGenStatInventory(p);

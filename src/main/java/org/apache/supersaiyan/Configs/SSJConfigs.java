@@ -448,7 +448,7 @@ public class SSJConfigs {
     }
 
     public int getMaxAbilityLevel() {
-        return ssj.getSSJConfigs().getCFile().getInt("Max_Ability_Level", 10); // Default max level is 10
+        return ssj.getSSJConfigs().getCFile().getInt("Max_Ability_Level", 400); // Default max level is 400
     }
 
 }

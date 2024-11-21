@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -20,7 +21,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.Location;
 import java.util.HashMap;
@@ -459,20 +462,25 @@ public class SSJActionListeners implements Listener {
         }
         
         Player p = (Player) e.getWhoClicked();
-        
-        // Cancel the event for all custom inventories
-        if (e.getInventory().equals(ssj.getSSJGui().genstatinv) ||
-            e.getInventory().equals(ssj.getSSJGui().transformationsinv) ||
-            e.getInventory().equals(ssj.getSSJGui().skillsinv) ||
-            e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
-            
+        Inventory inventory = e.getInventory();
+
+        // Process clicks in the settings inventory
+        if (inventory.equals(ssj.getSSJGui().settingsinv)) {
             e.setCancelled(true);
-            
-            // Only process clicks if there's an actual item
-            ItemStack clickedItem = e.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+
+        ItemStack clickedItem = e.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+            return;
+            }
+
+            ItemMeta meta = clickedItem.getItemMeta();
+            if (meta == null || !meta.hasDisplayName()) {
                 return;
             }
+
+            String displayName = ChatColor.stripColor(meta.getDisplayName());
+
+
             
             // Process the click based on inventory type
             if (e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
@@ -484,42 +492,80 @@ public class SSJActionListeners implements Listener {
             } else if (e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
                 ssj.getSSJMethodChecks().callSettingsMenuChecks(p, e);
             }
+
+            if (displayName.equals("Staff Flight")) {
+                // Check if player has permission
+                if (p.isOp() || p.hasPermission("ssj.staff")) {
+                    // Toggle 'Staff Flight' setting
+                    boolean currentState = ssj.getSSJPCM().isStaffFlightEnabled(p);
+                    ssj.getSSJPCM().setStaffFlightEnabled(p, !currentState);
+    
+                    // Update item in GUI
+                    ssj.getSSJGui().openSettingsInventory(p);
+    
+                    p.sendMessage("Staff Flight has been " + (!currentState ? "enabled" : "disabled") + ".");
+                } else {
+                    p.sendMessage(ChatColor.RED + "You do not have permission to use this setting.");
+                }
+            }
+
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
-        if (ssj.getSSJPCM().hasSkill(player, "Fly")) {
-            event.setCancelled(true);
-            
-            // If player is in creative mode, don't interfere
-            if (player.getGameMode() == GameMode.CREATIVE) {
-                return;
-            }
-            
-            // Handle double jump to fly
-            if (!player.isFlying()) {
-                ssj.getSSJSkillManager().handleSkillActivation(player, "Fly");
-                // Start energy drain
-                ssj.getSSJEnergyManager().startEnergyDrain(player);
+
+        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) return;
+
+        // Check if 'Staff Flight' is enabled
+        if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
+            // Allow flight without energy cost
+            player.setAllowFlight(true);
+            player.setFlying(event.isFlying());
+            return;
+        }
+
+        if (event.isFlying()) {
+            // Player started flying
+            if (ssj.getSSJPCM().hasSkill(player, "Fly")) {
+                int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
+                if (ssj.getSSJPCM().getEnergy(player) >= energyCost) {
+                    ssj.getSSJEnergyManager().modifyEnergy(player, -energyCost);
+                    ssj.getSSJEnergyManager().startEnergyDrain(player, "flight");
+                } else {
+                    player.sendMessage("§cNot enough energy to fly!");
+                    event.setCancelled(true);
+                    player.setAllowFlight(false);
+                    player.setFlying(false);
+                }
             } else {
-                ssj.getSSJSkillManager().disableFlight(player);
-                // Stop energy drain
-                ssj.getSSJEnergyManager().stopEnergyDrain(player);
+                event.setCancelled(true);
+                player.setAllowFlight(false);
+                player.setFlying(false);
             }
+        } else {
+            // Player stopped flying
+            ssj.getSSJEnergyManager().stopEnergyDrain(player, "flight");
         }
     }
 
     @EventHandler
     public void onPlayerMoveFlightCheck(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (player.isFlying() && ssj.getSSJPCM().hasSkill(player, "Fly")) {
-            int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
-            if (ssj.getSSJPCM().getEnergy(player) < energyCost) {
-                ssj.getSSJSkillManager().disableFlight(player);
-                ssj.getSSJEnergyManager().stopEnergyDrain(player);
-            }
+
+        if (!player.isFlying() || player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) return;
+
+        // Check if 'Staff Flight' is enabled
+        if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
+            // Do nothing; staff flight is active without energy cost
+            return;
+        }
+
+        // Proceed with normal energy check
+        int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
+        if (ssj.getSSJPCM().getEnergy(player) < energyCost) {
+            ssj.getSSJSkillManager().disableFlight(player);
         }
     }
 

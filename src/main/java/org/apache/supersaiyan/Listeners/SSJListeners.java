@@ -120,6 +120,7 @@ public class SSJListeners implements Listener {
             ssj.getSSJMethodChecks().scoreBoardCheck();
             ssj.getSSJMethods().callScoreboard(player);
         }
+
     }
 
     private void resetPlayerStats(Player player) {

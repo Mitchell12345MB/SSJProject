@@ -7,6 +7,11 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.Particle;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.PacketType;
+import org.bukkit.entity.EntityType;
+import java.util.UUID;
 
 public class SSJTransformationManager {
     private final SSJ ssj;
@@ -53,6 +58,30 @@ public class SSJTransformationManager {
             return false;
         }
         
+        // Kaioken Skill Lock
+        if (transform.contains("Kaioken_Ability_Lock")) {
+            if (!ssj.getSSJPCM().hasSkill(player, "Kaioken")) {
+                player.sendMessage("§cYou need to unlock the Kaioken skill to use this transformation!");
+                return false;
+            }
+        }
+        
+        // God Skill Lock
+        if (transform.contains("God_Ability_Lock")) {
+            if (!ssj.getSSJPCM().hasSkill(player, "God")) {
+                player.sendMessage("§cYou need to unlock the God skill to use this transformation!");
+                return false;
+            }
+        }
+        
+        // Potential Skill Lock
+        if (transform.contains("Potential_Skill_Lock")) {
+            if (!ssj.getSSJPCM().hasSkill(player, "Potential")) {
+                player.sendMessage("§cYou need to unlock the Potential skill to use this transformation!");
+                return false;
+            }
+        }
+        
         // Get boss bar progress using the correct method
         SSJBossBar bossBar = ssj.getSSJActionListeners().getBossBars().get(player.getUniqueId());
         if (bossBar != null) {
@@ -63,7 +92,6 @@ public class SSJTransformationManager {
         return false;
     }
     
-    @SuppressWarnings("deprecation")
     public void transform(Player player, String transformationId) {
         String path = getTransformationPath(transformationId);
         if (!ssj.getSSJConfigs().getTCFile().contains(path)) {
@@ -151,25 +179,23 @@ public class SSJTransformationManager {
                            particleCount, 3).createParticles();
         }
         
-        // Apply effects based on config
-        if (ssj.getSSJConfigs().getLF()) {
-            Location loc = player.getLocation();
-            player.getWorld().spigot().strikeLightningEffect(loc, false);
+        // Apply effects based on player's settings
+        if (ssj.getSSJPCM().getLightningEffects(player)) {
+            // Apply lightning effect
+            sendLightningEffect(player);
         }
-        if (ssj.getSSJConfigs().getEE()) {
-            int radius = ssj.getSSJConfigs().getER();
-            if (radius > 0) {
-                player.getWorld().createExplosion(
-                    player.getLocation(), 
-                    radius,
-                    false,
-                    false,
-                    player
-                );
-            }
+        if (ssj.getSSJPCM().getExplosionEffects(player)) {
+            // Apply explosion effect
+            createExplosionEffect(player);
         }
-        if (ssj.getSSJConfigs().getSE()) {
-            player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_GHAST_SHOOT, 1.0f, 1.0f);
+        if (ssj.getSSJPCM().getSoundEffects(player)) {
+            // Apply sound effect
+            player.playSound(
+                player.getLocation(),
+                org.bukkit.Sound.ENTITY_GHAST_SHOOT,
+                1.0f,
+                1.0f
+            );
         }
         
         // Reset boss bar progress after transformation
@@ -185,10 +211,16 @@ public class SSJTransformationManager {
         }
         
         // After setting multipliers
-        ssj.getSSJEnergyManager().startEnergyDrain(player);
+        ssj.getSSJEnergyManager().startEnergyDrain(player, "transformation");
+
+        // Recalculate BP after applying transformation multipliers
+        ssj.getSSJRpgSys().multBP(player);
+
+        // Update the scoreboard
+        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethods().callScoreboard(player);
     }
     
-    @SuppressWarnings("deprecation")
     public void detransform(Player player) {
         String currentForm = ssj.getSSJPCM().getForm(player);
         if (currentForm.equals("Base")) {
@@ -211,34 +243,32 @@ public class SSJTransformationManager {
         
         // Reset stats and stop energy drain
         ssj.getSSJRpgSys().resetAllStatBoosts(player);
-        ssj.getSSJEnergyManager().stopEnergyDrain(player);
+        ssj.getSSJEnergyManager().stopAllEnergyDrains(player);
 
         // Reapply base stats
         ssj.getSSJRpgSys().updateAllStatBoosts(player);
 
-        // Apply effects based on config
-        if (ssj.getSSJConfigs().getLF()) {
-            Location loc = player.getLocation();
-            player.getWorld().spigot().strikeLightningEffect(loc, false);
+        // Apply effects based on player's settings
+        if (ssj.getSSJPCM().getLightningEffects(player)) {
+            // Apply lightning effect
+            sendLightningEffect(player);
         }
-        if (ssj.getSSJConfigs().getEE()) {
-            int radius = ssj.getSSJConfigs().getER();
-            if (radius > 0) {
-                player.getWorld().createExplosion(
-                    player.getLocation(), 
-                    radius,
-                    false,
-                    false,
-                    player
-                );
-            }
+        if (ssj.getSSJPCM().getExplosionEffects(player)) {
+            // Apply explosion effect
+            createExplosionEffect(player);
         }
-        if (ssj.getSSJConfigs().getSE()) {
-            player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_GHAST_SHOOT, 1.0f, 1.0f);
+        if (ssj.getSSJPCM().getSoundEffects(player)) {
+            // Apply sound effect
+            player.playSound(
+                player.getLocation(),
+                org.bukkit.Sound.ENTITY_GHAST_SHOOT,
+                1.0f,
+                1.0f
+            );
         }
         
         // Update charging particles if player is charging
-        if (ssj.getSSJChargeSystem().isCharging()) {
+        if (ssj.getSSJChargeSystem().isCharging(player)) {
             ssj.getSSJChargeSystem().updateParticles(player);
         }
 
@@ -447,25 +477,81 @@ public class SSJTransformationManager {
     }
 
     public void revertToBase(Player player) {
-        // Store original energy percentage
-        double energyPercentage = ssj.getSSJEnergyManager().getCurrentEnergyPercentage(player);
-        
-        // Reset multipliers first
+        // Reset all multipliers
         ssj.getSSJEnergyManager().resetMultipliers(player);
-        
-        // Set form to base
+
+        // Set form back to base
         ssj.getSSJPCM().setPlayerConfigValue(player, "Form", "Base");
-        
-        // Calculate new energy based on percentage
-        int newMaxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
-        int newEnergy = (int)(newMaxEnergy * (energyPercentage / 100));
-        ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", newEnergy);
-        
-        // Update stats and visuals
+
+        // Reset stats
         ssj.getSSJRpgSys().resetAllStatBoosts(player);
         ssj.getSSJRpgSys().updateAllStatBoosts(player);
+
+        // Recalculate BP after resetting stats
         ssj.getSSJRpgSys().multBP(player);
+
+        // Update the scoreboard
         ssj.getSSJMethodChecks().scoreBoardCheck();
         ssj.getSSJMethods().callScoreboard(player);
+
+        // Update charging particles if player is charging
+        if (ssj.getSSJChargeSystem().isCharging(player)) {
+            ssj.getSSJChargeSystem().updateParticles(player);
+        }
+
+        // Stop all energy drains since the player is back to base form
+        ssj.getSSJEnergyManager().stopEnergyDrain(player, "transformation");
+        ssj.getSSJEnergyManager().stopAllEnergyDrains(player);
+    }
+
+    public void applyTransformationEffects(Player player) {
+        // Existing code...
+
+        // Replace global lightning effect with per-player effect
+        if (ssj.getSSJPCM().getLightningEffects(player)) {
+            sendLightningEffect(player);
+        }
+
+        // Existing code...
+    }
+
+    public void sendLightningEffect(Player player) {
+        Location loc = player.getLocation();
+
+        PacketContainer lightningPacket = ProtocolLibrary.getProtocolManager()
+            .createPacket(PacketType.Play.Server.SPAWN_ENTITY);
+
+        // Set a unique entity ID
+        int entityId = (int) Math.floor(Math.random() * Integer.MAX_VALUE);
+        lightningPacket.getIntegers().write(0, entityId); // Entity ID
+
+        // Set UUID for the entity
+        lightningPacket.getUUIDs().write(0, UUID.randomUUID());
+
+        // Set the position of the entity
+        lightningPacket.getDoubles()
+            .write(0, loc.getX())
+            .write(1, loc.getY())
+            .write(2, loc.getZ());
+
+        // Set the entity type to Lightning Bolt
+        lightningPacket.getEntityTypeModifier().write(0, EntityType.LIGHTNING_BOLT);
+
+        // Set pitch and yaw (if required)
+        lightningPacket.getBytes()
+            .write(0, (byte) 0) // Pitch
+            .write(1, (byte) 0); // Yaw
+
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, lightningPacket);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createExplosionEffect(Player player) {
+        Location loc = player.getLocation();
+        player.spawnParticle(Particle.FLASH, loc, 1);
+        player.playSound(loc, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
     }
 }

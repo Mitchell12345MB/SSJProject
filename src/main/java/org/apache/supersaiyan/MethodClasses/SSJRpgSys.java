@@ -74,31 +74,29 @@ public class SSJRpgSys {
         }
     }
 
-    public void multBP(Player p) {
-        double bpMultiplier = ssj.getSSJEnergyManager().getBPMultiplier(p);
-        int baseBP = getBaseBP(p);
-        int energy = ssj.getSSJPCM().getEnergy(p);
-        
+    public void multBP(Player player) {
+        double bpMultiplier = ssj.getSSJEnergyManager().getBPMultiplier(player);
+        int baseBP = getBaseBP(player);
+        int energy = ssj.getSSJPCM().getEnergy(player);
+
         // Calculate BP with multipliers
         long multbp = (long)((energy + baseBP) * ssj.getSSJConfigs().getBPM() * bpMultiplier);
-        
+
         // Apply max stats limit if enabled
         if (ssj.getSSJConfigs().getMaxStatsLimit()) {
             int maxStats = ssj.getSSJConfigs().getMaxStats();
             multbp = Math.min(multbp, maxStats);
         }
-        
+
         // Cap BP at Integer.MAX_VALUE to prevent display issues
         int finalBP = (int)Math.min(multbp, Integer.MAX_VALUE);
-        
-        if (ssj.getSSJPCM().getBattlePower(p) == 0 || energy == 0) {
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", addBaseBP(p));
-        } else if (energy < ssj.getSSJPCM().getLimit(p)) {
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", finalBP);
-        }
-        
+
+        // Update player's battle power
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Battle_Power", finalBP);
+
+        // Update the scoreboard
         ssj.getSSJMethodChecks().scoreBoardCheck();
-        ssj.getSSJMethods().callScoreboard(p);
+        ssj.getSSJMethods().callScoreboard(player);
     }
 
     public int addBaseBP(Player p) {

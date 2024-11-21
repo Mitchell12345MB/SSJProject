@@ -124,28 +124,44 @@ public class SSJGui {
     }
 
     private void initializeTransformationsInvItems(Player p) {
-        String unlockedTransforms = ssj.getSSJPCM().getTransformations(p);
-        String currentForm = ssj.getSSJPCM().getForm(p);
+        transformationsinv.clear();
+        FileConfiguration transformConfig = ssj.getSSJConfigs().getTCFile();
 
-        // Base Forms
-        if (unlockedTransforms.contains("potential")) {
-            transformationsinv.addItem(createGuiItem(Material.DIAMOND, "§aPotential Unleashed", 
-                "§bStatus: " + (currentForm.equals("Potential Unleashed") ? "§aActive" : "§cInactive"),
-                "§aA powerful non-Saiyan transformation."));
-        }
+        for (String category : transformConfig.getKeys(false)) {
+            ConfigurationSection categorySection = transformConfig.getConfigurationSection(category);
+            if (categorySection == null) continue;
 
-        // Kaioken Forms
-        if (unlockedTransforms.contains("x1")) {
-            transformationsinv.addItem(createGuiItem(Material.REDSTONE, "§cKaioken", 
-                "§bStatus: " + (currentForm.contains("Kaioken") ? "§aActive" : "§cInactive"),
-                "§aMultiplies your power level."));
-        }
+            for (String transformName : categorySection.getKeys(false)) {
+                ConfigurationSection transformSection = categorySection.getConfigurationSection(transformName);
+                if (transformSection == null) continue;
 
-        // Saiyan Forms
-        if (unlockedTransforms.contains("1")) {
-            transformationsinv.addItem(createGuiItem(Material.GOLD_INGOT, "§eSuper Saiyan", 
-                "§bStatus: " + (currentForm.equals("Super Saiyan") ? "§aActive" : "§cInactive"),
-                "§aThe legendary Super Saiyan transformation."));
+                String transformationId = transformSection.getString("TransformationID");
+                if (transformationId == null) continue;
+
+                // **Check if player has required skills to see the transformation**
+                boolean canSee = true;
+
+                if (transformSection.contains("Kaioken_Ability_Lock") && !ssj.getSSJPCM().hasSkill(p, "Kaioken")) {
+                    canSee = false;
+                }
+
+                if (transformSection.contains("God_Ability_Lock") && !ssj.getSSJPCM().hasSkill(p, "God")) {
+                    canSee = false;
+                }
+
+                if (transformSection.contains("Potential_Skill_Lock") && !ssj.getSSJPCM().hasSkill(p, "Potential")) {
+                    canSee = false;
+                }
+
+                // Skip adding the transformation to the GUI if the player cannot see it
+                if (!canSee) {
+                    continue;
+                }
+
+                // Create and add the transformation item to the inventory
+                ItemStack item = createTransformationItem(transformSection, p);
+                transformationsinv.addItem(item);
+            }
         }
 
         // Add back button
@@ -160,12 +176,69 @@ public class SSJGui {
     }
 
     private void initializeSettingsInvItems(Player p) {
+        settingsinv.clear();
         settingsinv.addItem(createGuiItem(Material.GOLD_INGOT, "§bExplosion Effects", String.valueOf(ssj.getSSJPCM().getExplosionEffects(p)), "§aYour current explosion effects."));
         settingsinv.addItem(createGuiItem(Material.IRON_INGOT, "§bLightning Effects", String.valueOf(ssj.getSSJPCM().getLightningEffects(p)), "§aYour current lightning effects settings."));
-        settingsinv.addItem(createGuiItem(Material.DIAMOND, "bSound Effects", String.valueOf(ssj.getSSJPCM().getSoundEffects(p)), "§aYour current sound settings."));
+        settingsinv.addItem(createGuiItem(Material.DIAMOND, "§bSound Effects", String.valueOf(ssj.getSSJPCM().getSoundEffects(p)), "§aYour current sound settings."));
         settingsinv.addItem(createGuiItem(Material.GREEN_DYE, "§bStat Page", "§aGoes to your stat page."));
         settingsinv.addItem(createGuiItem(Material.RED_DYE, "§bSkill Page", "§aGoes to your skill stat page."));
+        
+
+        // Check if player is OP or has 'ssj.staff' permission
+        if (p.isOp() || p.hasPermission("ssj.staff")) {
+            ItemStack staffFlightItem = createStaffFlightItem(p);
+            settingsinv.addItem(staffFlightItem);
+        }
+
         settingsinv.setItem(8, createGuiItem(Material.BARRIER, "§cBack", "§aReturn to previous menu."));
+    }
+
+    private ItemStack createTransformationItem(ConfigurationSection transformSection, Player p) {
+        String transformName = transformSection.getString("Desc", "Unknown Transformation");
+        String transformationId = transformSection.getString("TransformationID", "");
+        int levelLock = transformSection.getInt("Level_Lock", 0);
+        int saiyanAbilityLock = transformSection.getInt("Saiyan_Ability_Lock", 0);
+
+        // Check if the player has unlocked this transformation
+        boolean isUnlocked = ssj.getSSJPCM().getTransformations(p).contains(transformationId);
+
+        // Create the item stack (you can choose any material that suits your GUI)
+        ItemStack item = new ItemStack(isUnlocked ? Material.ENDER_EYE : Material.ENDER_PEARL);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(ChatColor.GOLD + transformName);
+
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "Transformation ID: " + transformationId);
+        lore.add("");
+
+        // Add level lock info
+        lore.add(ChatColor.YELLOW + "Requirements:");
+        lore.add(ChatColor.GRAY + "- Level: " + levelLock);
+        lore.add(ChatColor.GRAY + "- Saiyan Ability: " + saiyanAbilityLock);
+
+        // Check for required skills and add to lore
+        if (transformSection.contains("Kaioken_Ability_Lock")) {
+            lore.add(ChatColor.GRAY + "- Skill: Kaioken");
+        }
+        if (transformSection.contains("God_Ability_Lock")) {
+            lore.add(ChatColor.GRAY + "- Skill: God");
+        }
+        if (transformSection.contains("Potential_Skill_Lock")) {
+            lore.add(ChatColor.GRAY + "- Skill: Potential");
+        }
+
+        lore.add("");
+
+        if (isUnlocked) {
+            lore.add(ChatColor.GREEN + "Click to transform!");
+        } else {
+            lore.add(ChatColor.RED + "Transformation Locked");
+        }
+
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 
     protected ItemStack createGuiItem(final Material material, final String name, final String... lore) {
@@ -227,5 +300,23 @@ public class SSJGui {
         } else {
             lore.add("§cNot enough AP to unlock!");
         }
+    }
+
+    private ItemStack createStaffFlightItem(Player p) {
+        boolean isEnabled = ssj.getSSJPCM().isStaffFlightEnabled(p);
+        Material material = isEnabled ? Material.FEATHER : Material.LEAD;
+
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(ChatColor.GOLD + "Staff Flight");
+
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.WHITE + "Toggle flight without energy.");
+        lore.add(ChatColor.WHITE + "Current: " + (isEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled"));
+
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 }

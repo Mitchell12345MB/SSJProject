@@ -170,8 +170,6 @@ public class SSJChargeSystem {
             }
         }
         
-        if (particleEffect != null) {
-            particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 10, 3);
-        }
+        particleEffect = new SSJParticles(ssj, player, Particle.valueOf(particleType.toUpperCase()), 10, 3);
     }
 }
