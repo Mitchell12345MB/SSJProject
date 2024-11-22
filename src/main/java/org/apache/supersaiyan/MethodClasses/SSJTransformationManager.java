@@ -42,7 +42,77 @@ public class SSJTransformationManager {
         
         ConfigurationSection transform = ssj.getSSJConfigs().getTCFile().getConfigurationSection(path);
         
-        // Check Level Lock
+        // **Check if required abilities/skills are enabled**
+
+        // **1. Saiyan Ability**
+        if (transform.contains("Saiyan_Ability_Lock")) {
+            int saiyanAbilityLock = transform.getInt("Saiyan_Ability_Lock");
+            int playerSaiyanAbilityLevel = ssj.getSSJPCM().getSaiyanAbility(player);
+
+            if (playerSaiyanAbilityLevel < saiyanAbilityLock) {
+                player.sendMessage("§cYour Saiyan Ability level is too low to use this transformation!");
+                return false;
+            }
+
+            // Check if Saiyan Ability is enabled in settings
+            if (!ssj.getSSJPCM().isSaiyanAbilityEnabled(player)) {
+                player.sendMessage("§cSaiyan Ability is disabled in your settings!");
+                return false;
+            }
+        }
+
+        // **2. Potential Skill**
+        if (transform.contains("Potential_Skill_Lock")) {
+            int potentialSkillLock = transform.getInt("Potential_Skill_Lock");
+            int playerPotentialSkillLevel = ssj.getSSJSkillManager().getSkillLevel(player, "Potential");
+
+            if (playerPotentialSkillLevel < potentialSkillLock) {
+                player.sendMessage("§cYour Potential skill level is too low to use this transformation!");
+                return false;
+            }
+
+            // Check if Potential skill is enabled in settings
+            if (!ssj.getSSJPCM().isSkillEnabled(player, "Potential")) {
+                player.sendMessage("§cPotential skill is disabled in your settings!");
+                return false;
+            }
+        }
+
+        // **3. Kaioken Ability**
+        if (transform.contains("Kaioken_Ability_Lock")) {
+            int kaiokenAbilityLock = transform.getInt("Kaioken_Ability_Lock");
+            int playerKaiokenLevel = ssj.getSSJSkillManager().getSkillLevel(player, "Kaioken");
+
+            if (playerKaiokenLevel < kaiokenAbilityLock) {
+                player.sendMessage("§cYour Kaioken ability level is too low to use this transformation!");
+                return false;
+            }
+
+            // Check if Kaioken skill is enabled in settings
+            if (!ssj.getSSJPCM().isSkillEnabled(player, "Kaioken")) {
+                player.sendMessage("§cKaioken skill is disabled in your settings!");
+                return false;
+            }
+        }
+
+        // **4. God Ability**
+        if (transform.contains("God_Ability_Lock")) {
+            int godAbilityLock = transform.getInt("God_Ability_Lock");
+            int playerGodAbilityLevel = ssj.getSSJSkillManager().getSkillLevel(player, "God");
+
+            if (playerGodAbilityLevel < godAbilityLock) {
+                player.sendMessage("§cYour God ability level is too low to use this transformation!");
+                return false;
+            }
+
+            // Check if God skill is enabled in settings
+            if (!ssj.getSSJPCM().isSkillEnabled(player, "God")) {
+                player.sendMessage("§cGod skill is disabled in your settings!");
+                return false;
+            }
+        }
+        
+        // Existing Level Lock check
         int playerLevel = ssj.getSSJPCM().getLevel(player);
         int levelLock = transform.getInt("Level_Lock", 0);
         if (playerLevel < levelLock) {
@@ -50,46 +120,8 @@ public class SSJTransformationManager {
             return false;
         }
         
-        // Check Saiyan Ability Lock
-        int playerSaiyanAbility = ssj.getSSJPCM().getSaiyanAbility(player);
-        int saiyanAbilityLock = transform.getInt("Saiyan_Ability_Lock", 0);
-        if (playerSaiyanAbility < saiyanAbilityLock) {
-            player.sendMessage("§cYou need a Saiyan Ability level of " + saiyanAbilityLock + " to use this transformation!");
-            return false;
-        }
-        
-        // Kaioken Skill Lock
-        if (transform.contains("Kaioken_Ability_Lock")) {
-            if (!ssj.getSSJPCM().hasSkill(player, "Kaioken")) {
-                player.sendMessage("§cYou need to unlock the Kaioken skill to use this transformation!");
-                return false;
-            }
-        }
-        
-        // God Skill Lock
-        if (transform.contains("God_Ability_Lock")) {
-            if (!ssj.getSSJPCM().hasSkill(player, "God")) {
-                player.sendMessage("§cYou need to unlock the God skill to use this transformation!");
-                return false;
-            }
-        }
-        
-        // Potential Skill Lock
-        if (transform.contains("Potential_Skill_Lock")) {
-            if (!ssj.getSSJPCM().hasSkill(player, "Potential")) {
-                player.sendMessage("§cYou need to unlock the Potential skill to use this transformation!");
-                return false;
-            }
-        }
-        
-        // Get boss bar progress using the correct method
-        SSJBossBar bossBar = ssj.getSSJActionListeners().getBossBars().get(player.getUniqueId());
-        if (bossBar != null) {
-            int currentProgress = bossBar.getProgress(player);
-            return currentProgress >= 100;
-        }
-        
-        return false;
+        // All checks passed
+        return true;
     }
     
     public void transform(Player player, String transformationId) {

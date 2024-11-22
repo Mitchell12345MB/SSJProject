@@ -38,7 +38,7 @@ public class SSJPlayerConfigManager {
         defaultValues.put("Level", 0);
         defaultValues.put("Battle_Power", 0);
         defaultValues.put("Energy", 0);
-        defaultValues.put("Saiyan_Ability", 0);
+        defaultValues.put("Saiyan_Ability.Level", 0);
         defaultValues.put("Form", "Base");
         defaultValues.put("Action_Points", ssj.getSSJConfigs().getSAP());
         defaultValues.put("Base.Health", ssj.getSSJConfigs().getSSP());
@@ -49,6 +49,7 @@ public class SSJPlayerConfigManager {
         defaultValues.put("Base.Defence", ssj.getSSJConfigs().getSSP());
         defaultValues.put("Transformations_Unlocked", "");
         defaultValues.put("Staff_Flight", false);
+        defaultValues.put("Saiyan_Ability.Enabled", true);
     }
 
     public File getFile(Player player) {
@@ -116,18 +117,6 @@ public class SSJPlayerConfigManager {
         return started;
     }
 
-    public boolean getLightningEffects(Player p) {
-        return (boolean) getPlayerConfigValue(p, "See_Lightning_Effects").orElse(true);
-    }
-
-    public boolean getExplosionEffects(Player p) {
-        return (boolean) getPlayerConfigValue(p, "See_Explosion_Effects").orElse(true);
-    }
-
-    public boolean getSoundEffects(Player p) {
-        return (boolean) getPlayerConfigValue(p, "Hear_Sound_Effects").orElse(true);
-    }
-
     public int getLevel(Player p) {
         return (int) getPlayerConfigValue(p, "Level").orElse(0);
     }
@@ -141,7 +130,7 @@ public class SSJPlayerConfigManager {
     }
 
     public int getSaiyanAbility(Player p) {
-        return (int) getPlayerConfigValue(p, "Saiyan_Ability").orElse(0);
+        return getPlayerConfig(p).getInt("Saiyan_Ability.Level", 0);
     }
 
     public String getForm(Player p) {
@@ -209,7 +198,7 @@ public class SSJPlayerConfigManager {
     }
 
     public void setSaiyanAbility(Player p, int level) {
-        setPlayerConfigValue(p, "Saiyan_Ability", level);
+        setPlayerConfigValue(p, "Saiyan_Ability.Level", level);
     }
 
     public void setTransformations(Player p, String transforms) {
@@ -228,6 +217,7 @@ public class SSJPlayerConfigManager {
             unlockedSkills.add(skillName);
             config.set("Unlocked_Skills", unlockedSkills);
             config.set("Skills." + skillName + ".Level", 1);
+            config.set("Skills." + skillName + ".Enabled", true);
             
             try {
                 savePlayerConfig(player, config);
@@ -265,5 +255,45 @@ public class SSJPlayerConfigManager {
 
     public void setStaffFlightEnabled(Player p, boolean enabled) {
         setPlayerConfigValue(p, "Staff_Flight", enabled);
+    }
+
+    public boolean isSaiyanAbilityEnabled(Player p) {
+        return getPlayerConfig(p).getBoolean("Saiyan_Ability.Enabled", true);
+    }
+
+    public void setSaiyanAbilityEnabled(Player p, boolean enabled) {
+        setPlayerConfigValue(p, "Saiyan_Ability.Enabled", enabled);
+    }
+
+    public boolean isSkillEnabled(Player p, String skillName) {
+        return getPlayerConfig(p).getBoolean("Skills." + skillName + ".Enabled", true);
+    }
+
+    public void setSkillEnabled(Player p, String skillName, boolean enabled) {
+        setPlayerConfigValue(p, "Skills." + skillName + ".Enabled", enabled);
+    }
+
+    public boolean getExplosionEffects(Player player) {
+        return getPlayerConfig(player).getBoolean("See_Explosion_Effects", true);
+    }
+
+    public void setExplosionEffects(Player player, boolean enabled) {
+        setPlayerConfigValue(player, "See_Explosion_Effects", enabled);
+    }
+
+    public boolean getLightningEffects(Player player) {
+        return getPlayerConfig(player).getBoolean("See_Lightning_Effects", true);
+    }
+
+    public void setLightningEffects(Player player, boolean enabled) {
+        setPlayerConfigValue(player, "See_Lightning_Effects", enabled);
+    }
+
+    public boolean getSoundEffects(Player player) {
+        return getPlayerConfig(player).getBoolean("Hear_Sound_Effects", true);
+    }
+
+    public void setSoundEffects(Player player, boolean enabled) {
+        setPlayerConfigValue(player, "Hear_Sound_Effects", enabled);
     }
 }

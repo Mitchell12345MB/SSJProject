@@ -17,6 +17,12 @@ public class SSJSkillManager {
         ConfigurationSection skillSection = skillConfig.getConfigurationSection(skillName);
         
         if (skillSection == null) return false;
+
+        // Check if skill is enabled
+        if (!ssj.getSSJPCM().isSkillEnabled(player, skillName)) {
+            player.sendMessage("§c" + skillName + " skill is disabled in your settings!");
+            return false;
+        }
         
         // Check AP requirement
         int requiredAP = skillSection.getInt("Acion_Points_Cost");

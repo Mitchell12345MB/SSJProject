@@ -126,40 +126,85 @@ public class SSJMethodChecks {
         }
     }
 
-    public void callSettingsMenuChecks(Player p, InventoryClickEvent e) { // Settings Menu click checks
+    public void callSettingsMenuChecks(Player p, InventoryClickEvent e) {
         if (!e.getInventory().equals(ssj.getSSJGui().settingsinv)) return;
 
-        switch (e.getRawSlot()) {
-            case 0:
-                toggleSetting(p, "See_Explosion_Effects");
-                break;
-            case 1:
-                toggleSetting(p, "See_Lightning_Effects");
-                break;
-            case 2:
-                toggleSetting(p, "Hear_Sound_Effects");
-                break;
-            case 3:
-                ssj.getSSJGui().openGenStatInventory(p);
-                break;
-            case 4:
-                ssj.getSSJGui().openSkillsInventory(p);
-                break;
-            case 5:
-                toggleSetting(p, "Staff_Flight");
-                break;
-            case 8: // Back button
-                ssj.getSSJGui().openGenStatInventory(p);
-                break;
-            default:
-                break;
+        e.setCancelled(true);
+        ItemStack clicked = e.getCurrentItem();
+        if (clicked == null || !clicked.hasItemMeta()) return;
+        int slot = e.getRawSlot();
+
+        // Handle Explosion Effects toggle (Slot 0)
+        if (slot == 0) {
+            toggleGeneralSetting(p, "See_Explosion_Effects", "Explosion Effects");
+            return;
+        }
+
+        // Handle Lightning Effects toggle (Slot 1)
+        if (slot == 1) {
+            toggleGeneralSetting(p, "See_Lightning_Effects", "Lightning Effects");
+            return;
+        }
+
+        // Handle Sound Effects toggle (Slot 2)
+        if (slot == 2) {
+            toggleGeneralSetting(p, "Hear_Sound_Effects", "Sound Effects");
+            return;
+        }
+
+        int currentSlot = 3;
+
+        // Staff Flight (if applicable)
+        if ((p.isOp() || p.hasPermission("ssj.staff")) && slot == currentSlot) {
+            boolean currentState = ssj.getSSJPCM().isStaffFlightEnabled(p);
+            ssj.getSSJPCM().setStaffFlightEnabled(p, !currentState);
+            ssj.getSSJGui().openSettingsInventory(p);
+            p.sendMessage("Staff Flight has been " + (!currentState ? "enabled" : "disabled") + ".");
+            return;
+        }
+
+        if (p.isOp() || p.hasPermission("ssj.staff")) {
+            currentSlot++;
+        }
+
+        // Saiyan Ability
+        if (slot == currentSlot) {
+            boolean saEnabled = ssj.getSSJPCM().isSaiyanAbilityEnabled(p);
+            ssj.getSSJPCM().setSaiyanAbilityEnabled(p, !saEnabled);
+            ssj.getSSJGui().openSettingsInventory(p);
+            p.sendMessage("Saiyan Ability has been " + (!saEnabled ? "enabled" : "disabled") + ".");
+            return;
+        }
+        currentSlot++;
+
+        // Skills
+        String[] skills = {"Fly", "Jump", "Kaioken", "Potential", "God"};
+        for (int i = 0; i < skills.length; i++) {
+            if (slot == currentSlot + i) {
+                String skillName = skills[i];
+                toggleSkillSetting(p, skillName);
+                return;
+            }
+        }
+
+        // Back button
+        if (slot == 17) {
+            ssj.getSSJGui().openGenStatInventory(p);
         }
     }
 
-    private void toggleSetting(Player p, String settingKey) {
-        boolean currentValue = (boolean) ssj.getSSJPCM().getPlayerConfigValue(p, settingKey).orElse(false);
+    private void toggleSkillSetting(Player p, String skillName) {
+        boolean currentValue = ssj.getSSJPCM().isSkillEnabled(p, skillName);
+        ssj.getSSJPCM().setSkillEnabled(p, skillName, !currentValue);
+        ssj.getSSJGui().openSettingsInventory(p);
+        p.sendMessage(skillName + " Skill has been " + (!currentValue ? "enabled" : "disabled") + ".");
+    }
+
+    private void toggleGeneralSetting(Player p, String settingKey, String settingName) {
+        boolean currentValue = ssj.getSSJPCM().getPlayerConfig(p).getBoolean(settingKey, true);
         ssj.getSSJPCM().setPlayerConfigValue(p, settingKey, !currentValue);
         ssj.getSSJGui().openSettingsInventory(p);
+        p.sendMessage(settingName + " have been " + (!currentValue ? "enabled" : "disabled") + ".");
     }
 
     public void onEnableChecks() {
@@ -244,7 +289,8 @@ public class SSJMethodChecks {
                 ItemStack clicked = e.getCurrentItem();
                 if (clicked != null && clicked.hasItemMeta()) {
                     String name = clicked.getItemMeta().getDisplayName();
-                    handleTransformationClick(p, name);
+                    handleTransformationUpgradeClick(p, name);
+                    handleTransformationUnlockClick(p, name);
                 }
                 break;
         }
@@ -281,8 +327,15 @@ public class SSJMethodChecks {
         ssj.getSSJGui().openSkillsInventory(p);
     }
 
-    private void handleTransformationClick(Player p, String transformName) {
+    private void handleTransformationUpgradeClick(Player p, String transformName) {
         // Handle transformation activation based on the clicked transformation
         // This should integrate with your existing transformation system
     }
+
+    private void handleTransformationUnlockClick(Player p, String transformName) {
+        // Handle transformation activation based on the clicked transformation
+        // This should integrate with your existing transformation system
+    }
+
+
 }

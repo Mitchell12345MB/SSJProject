@@ -39,7 +39,7 @@ public class SSJGui {
     }
 
     private void SSJSettingsInvCall(Player p) {
-        settingsinv = Bukkit.createInventory(null, 9, p.getName() + "'s Settings");
+        settingsinv = Bukkit.createInventory(null, 18, p.getName() + "'s Settings");
         initializeSettingsInvItems(p);
     }
 
@@ -177,20 +177,74 @@ public class SSJGui {
 
     private void initializeSettingsInvItems(Player p) {
         settingsinv.clear();
-        settingsinv.addItem(createGuiItem(Material.GOLD_INGOT, "§bExplosion Effects", String.valueOf(ssj.getSSJPCM().getExplosionEffects(p)), "§aYour current explosion effects."));
-        settingsinv.addItem(createGuiItem(Material.IRON_INGOT, "§bLightning Effects", String.valueOf(ssj.getSSJPCM().getLightningEffects(p)), "§aYour current lightning effects settings."));
-        settingsinv.addItem(createGuiItem(Material.DIAMOND, "§bSound Effects", String.valueOf(ssj.getSSJPCM().getSoundEffects(p)), "§aYour current sound settings."));
-        settingsinv.addItem(createGuiItem(Material.GREEN_DYE, "§bStat Page", "§aGoes to your stat page."));
-        settingsinv.addItem(createGuiItem(Material.RED_DYE, "§bSkill Page", "§aGoes to your skill stat page."));
-        
 
-        // Check if player is OP or has 'ssj.staff' permission
+        // Back button
+        settingsinv.setItem(17, createGuiItem(Material.BARRIER, "§cBack", "§aReturn to previous menu."));
+
+        // Slot assignments:
+        // 0 to 2 - Explosion Effects, Lightning Effects, Sound Effects
+        // 3 - Staff Flight (if applicable)
+        // 4 - Saiyan Ability
+        // 5 to 9 - Skill Toggles (Fly, Jump, Kaioken, Potential, God)
+
+        // Add Explosion Effects setting
+        settingsinv.setItem(0, createToggleItem(
+            Material.GOLD_INGOT,
+            "§bExplosion Effects",
+            ssj.getSSJPCM().getExplosionEffects(p)
+        ));
+
+        // Add Lightning Effects setting
+        settingsinv.setItem(1, createToggleItem(
+            Material.IRON_INGOT,
+            "§bLightning Effects",
+            ssj.getSSJPCM().getLightningEffects(p)
+        ));
+
+        // Add Sound Effects setting
+        settingsinv.setItem(2, createToggleItem(
+            Material.DIAMOND,
+            "§bSound Effects",
+            ssj.getSSJPCM().getSoundEffects(p)
+        ));
+
+        int currentSlot = 3;
+
+        // If the player has staff permissions, add Staff Flight item
         if (p.isOp() || p.hasPermission("ssj.staff")) {
             ItemStack staffFlightItem = createStaffFlightItem(p);
-            settingsinv.addItem(staffFlightItem);
+            settingsinv.setItem(currentSlot, staffFlightItem);
+            currentSlot++;
         }
 
-        settingsinv.setItem(8, createGuiItem(Material.BARRIER, "§cBack", "§aReturn to previous menu."));
+        // Place Saiyan Ability item at the next slot
+        ItemStack saiyanAbilityItem = createToggleItem(
+            Material.FIRE_CORAL_FAN,
+            ChatColor.GOLD + "Saiyan Ability",
+            ssj.getSSJPCM().isSaiyanAbilityEnabled(p)
+        );
+        settingsinv.setItem(currentSlot, saiyanAbilityItem);
+        currentSlot++;
+
+        // Define the skills and their materials
+        String[] skills = {"Fly", "Jump", "Kaioken", "Potential", "God"};
+        Material[] materials = {
+            Material.FEATHER,       // Fly
+            Material.RABBIT_FOOT,   // Jump
+            Material.REDSTONE,      // Kaioken
+            Material.EMERALD,       // Potential
+            Material.NETHER_STAR    // God
+        };
+
+        // Place skill toggle items starting from the next slot
+        for (int i = 0; i < skills.length; i++) {
+            ItemStack skillItem = createToggleItem(
+                materials[i],
+                ChatColor.GOLD + skills[i] + " Skill",
+                ssj.getSSJPCM().isSkillEnabled(p, skills[i])
+            );
+            settingsinv.setItem(currentSlot + i, skillItem);
+        }
     }
 
     private ItemStack createTransformationItem(ConfigurationSection transformSection, Player p) {
@@ -230,10 +284,10 @@ public class SSJGui {
 
         lore.add("");
 
-        if (isUnlocked) {
-            lore.add(ChatColor.GREEN + "Click to transform!");
-        } else {
+        if (!isUnlocked) {
+
             lore.add(ChatColor.RED + "Transformation Locked");
+
         }
 
         meta.setLore(lore);
@@ -316,6 +370,18 @@ public class SSJGui {
         lore.add(ChatColor.WHITE + "Current: " + (isEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled"));
 
         meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack createToggleItem(Material material, String name, boolean enabled) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(Arrays.asList(
+            "§7Status: " + (enabled ? "§aEnabled" : "§cDisabled"),
+            "§eClick to toggle"
+        ));
         item.setItemMeta(meta);
         return item;
     }
