@@ -55,8 +55,7 @@ This is a complete rewrite of the original Super Saiyan plugin, aimed at deliver
 ---
 <div align="center">
   
-[![Status](https://img.shields.io/badge/Status-Alpha-orange.svg)](https://github.com/yourusername/SSJPL)
+[![Status](https://img.shields.io/badge/Status-Alpha-orange.svg)](https://github.com/Mitchell12345MB/SSJPL)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-brightgreen.svg)](https://www.minecraft.net/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 </div>
