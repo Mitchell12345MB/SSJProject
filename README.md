@@ -16,6 +16,9 @@ This plugin is currently in late alpha stage, approaching beta release.
   - Energy charge bar display inconsistencies
   - Incorrect energy scaling after de-transformation
   - Energy gain multiplier calculation issues
+  - Aura release system incomplete
+  - Base Potential charge system incomplete
+  - Base Potential multiplier system incomplete
 
 - **Transformation System**
   - Transformation unlocking through GUI is non-functional
@@ -26,6 +29,10 @@ This plugin is currently in late alpha stage, approaching beta release.
   - Hold charge state bypasses intended right-click mechanism
   - Charge continues while cursor remains on charging item
 
+- **Particle System**
+  - Too many particles being spawned
+  - Wrong particles are being spawned for transformations
+
 ### 🚀 Missing Features
 - **Skills System**
   - Jump skill implementation incomplete
@@ -33,6 +40,14 @@ This plugin is currently in late alpha stage, approaching beta release.
     - Kamehameha
     - Galick Gun
     - Additional signature moves
+
+- **RPG System**
+  - Gain action points implementation incomplete
+  - NPC implementation incomplete
+  - Skin manipulation implementation incomplete
+
+- **Particle System**
+  - Missing particles that can be implemented
 
 ## 🔮 Planned Improvements
 This is a complete rewrite of the original Super Saiyan plugin, aimed at delivering a more robust and feature-rich experience.
