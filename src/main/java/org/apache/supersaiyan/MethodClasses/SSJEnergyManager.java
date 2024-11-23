@@ -86,7 +86,11 @@ public class SSJEnergyManager {
         int currentEnergy = ssj.getSSJPCM().getEnergy(player);
         int newEnergy = Math.max(0, Math.min(getEnergyLimit(player), currentEnergy + amount));
         ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", newEnergy);
-        
+
+        // Update the scoreboard
+        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethods().callScoreboard(player);
+
         // Check if energy is below transformation requirement
         String currentForm = ssj.getSSJPCM().getForm(player);
         if (!currentForm.equals("Base")) {
@@ -95,10 +99,6 @@ public class SSJEnergyManager {
                 // Force detransform
                 ssj.getSSJTransformationManager().revertToBase(player);
                 player.sendMessage("§cNot enough energy to maintain transformation!");
-                
-                // **Add these lines to update the scoreboard**
-                ssj.getSSJMethodChecks().scoreBoardCheck();
-                ssj.getSSJMethods().callScoreboard(player);
             }
         }
     }
@@ -133,6 +133,7 @@ public class SSJEnergyManager {
                 int drainAmount = (int) Math.round(baseEnergyDrain * drainMultiplier);
 
                 modifyEnergy(player, -drainAmount);
+                ssj.getSSJRpgSys().multBP(player);
 
                 if (ssj.getSSJPCM().getEnergy(player) <= 0) {
                     cancel();

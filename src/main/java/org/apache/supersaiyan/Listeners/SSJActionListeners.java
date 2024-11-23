@@ -528,6 +528,12 @@ public class SSJActionListeners implements Listener {
 
         if (event.isFlying()) {
             // Player started flying
+
+            // Check if 'Staff Flight' is enabled
+        if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
+                ssj.getSSJEnergyManager().stopEnergyDrain(player, "Staff Flight");
+            }
+
             if (ssj.getSSJPCM().hasSkill(player, "Fly")) {
                 int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
                 if (ssj.getSSJPCM().getEnergy(player) >= energyCost) {
@@ -558,8 +564,7 @@ public class SSJActionListeners implements Listener {
 
         // Check if 'Staff Flight' is enabled
         if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
-            // Do nothing; staff flight is active without energy cost
-            return;
+            ssj.getSSJEnergyManager().stopEnergyDrain(player, "Staff Flight");
         }
 
         // Proceed with normal energy check
@@ -581,6 +586,11 @@ public class SSJActionListeners implements Listener {
         
         // Check if player is jumping
         if (to.getY() > from.getY() && player.getVelocity().getY() > 0) {
+
+            // Check if 'Staff Flight' is enabled
+        if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
+                ssj.getSSJEnergyManager().stopEnergyDrain(player, "Staff Flight");
+            }
             // Allow flight on jump
             player.setAllowFlight(true);
         }

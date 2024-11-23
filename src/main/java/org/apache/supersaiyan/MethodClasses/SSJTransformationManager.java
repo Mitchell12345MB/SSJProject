@@ -12,6 +12,8 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.PacketType;
 import org.bukkit.entity.EntityType;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SSJTransformationManager {
     private final SSJ ssj;
@@ -204,11 +206,20 @@ public class SSJTransformationManager {
         }
         
         // Apply particles
-        String particleType = transform.getString("Particle.Type");
-        int particleCount = transform.getInt("Particle.Count");
-        if (!particleType.isEmpty() && particleCount > 0) {
-            new SSJParticles(ssj, player, org.bukkit.Particle.valueOf(particleType.toUpperCase()), 
-                           particleCount, 3).createParticles();
+        String particleType1 = transform.getString("Particle.Type");
+        int particleCount1 = transform.getInt("Particle.Count");
+
+        String particleType2 = transform.getString("Particle2.Type");
+        int particleCount2 = transform.getInt("Particle2.Count");
+
+        // Spawn the first particle type if specified
+        if (particleType1 != null && !particleType1.isEmpty() && particleCount1 > 0) {
+            new SSJParticles(ssj, player, Particle.valueOf(particleType1.toUpperCase()), particleCount1, 4).createParticles();
+        }
+
+        // Spawn the second particle type if specified
+        if (particleType2 != null && !particleType2.isEmpty() && particleCount2 > 0) {
+            new SSJParticles(ssj, player, Particle.valueOf(particleType2.toUpperCase()), particleCount2, 5).createParticles();
         }
         
         // Apply effects based on player's settings
@@ -369,85 +380,96 @@ public class SSJTransformationManager {
         return null;
     }
     
-    public String getNextTransformation(Player player, String currentForm) {
-        String[] categories = {"Base_Forms", "Kaioken_Forms", "Saiyan_Forms", 
-                             "Legendary_Saiyan_Forms", "Saiyan_God_Forms"};
-        
-        String unlockedTransforms = ssj.getSSJPCM().getTransformations(player);
-        
-        // For base form or no form, find first unlocked transformation
-        if (currentForm.equals("Base") || currentForm.isEmpty()) {
-            return findFirstUnlockedTransform(categories, unlockedTransforms);
+    // Check if the player can use a specific transformation based on enabled abilities/skills
+    private boolean canUseTransformation(Player player, ConfigurationSection transform) {
+        // Check if Saiyan Ability is required and enabled
+        if (transform.contains("Saiyan_Ability_Lock") && !ssj.getSSJPCM().isSaiyanAbilityEnabled(player)) {
+            return false;
         }
-        
-        // Find current form in categories
-        for (String category : categories) {
-            ConfigurationSection section = ssj.getSSJConfigs().getTCFile().getConfigurationSection(category);
-            if (section != null) {
-                for (String key : section.getKeys(false)) {
-                    String desc = section.getString(key + ".Desc");
-                    if (desc != null && desc.equals(currentForm)) {
-                        // Found current form, get next form in sequence
-                        String nextId = findNextFormInCategory(section, key, unlockedTransforms);
-                        if (nextId != null) {
-                            return nextId;
-                        }
-                        // If no next form in current category, check next category
-                        return findNextCategoryTransform(categories, category, unlockedTransforms);
-                    }
-                }
-            }
+        // Check if Kaioken Skill is required and enabled
+        if (transform.contains("Kaioken_Ability_Lock") && !ssj.getSSJPCM().isSkillEnabled(player, "Kaioken")) {
+            return false;
         }
-        return null;
+        // Check if Potential Skill is required and enabled
+        if (transform.contains("Potential_Skill_Lock") && !ssj.getSSJPCM().isSkillEnabled(player, "Potential")) {
+            return false;
+        }
+        // Check if God Skill is required and enabled
+        if (transform.contains("God_Ability_Lock") && !ssj.getSSJPCM().isSkillEnabled(player, "God")) {
+            return false;
+        }
+        return true;
     }
 
-    private String findFirstUnlockedTransform(String[] categories, String unlockedTransforms) {
+    public String getNextTransformation(Player player, String currentForm) {
+        String[] categories = {"Base_Forms", "Kaioken_Forms", "Saiyan_Forms", 
+                               "Legendary_Saiyan_Forms", "Saiyan_God_Forms"};
+
+        String unlockedTransforms = ssj.getSSJPCM().getTransformations(player);
+
+        // For base form or no form, find first unlocked transformation
+        if (currentForm.equals("Base") || currentForm.isEmpty()) {
+            return findFirstUnlockedTransform(categories, unlockedTransforms, player);
+        }
+
+        boolean foundCurrent = false;
+
+        // Iterate through categories
         for (String category : categories) {
             ConfigurationSection section = ssj.getSSJConfigs().getTCFile().getConfigurationSection(category);
             if (section != null) {
-                for (String key : section.getKeys(false)) {
-                    String transformId = section.getString(key + ".TransformationID");
-                    if (transformId != null && unlockedTransforms.contains(transformId)) {
+                List<String> keys = new ArrayList<>(section.getKeys(false));
+                for (String key : keys) {
+                    String desc = section.getString(key + ".Desc");
+                    ConfigurationSection transform = section.getConfigurationSection(key);
+
+                    // Skip transformations that are not unlocked
+                    String transformId = transform.getString("TransformationID");
+                    if (!unlockedTransforms.contains(transformId)) {
+                        continue;
+                    }
+
+                    // Check if required abilities/skills are enabled
+                    if (!canUseTransformation(player, transform)) {
+                        continue;
+                    }
+
+                    // If we've found the current form, set the flag to true
+                    if (!foundCurrent && desc != null && desc.equals(currentForm)) {
+                        foundCurrent = true;
+                        continue;
+                    }
+
+                    // Once the current form is found, the next valid transformation is returned
+                    if (foundCurrent) {
                         return transformId;
                     }
                 }
             }
         }
+
+        // No further transformation available
         return null;
     }
 
-    private String findNextCategoryTransform(String[] categories, String currentCategory, String unlockedTransforms) {
-        boolean foundCurrentCategory = false;
+    private String findFirstUnlockedTransform(String[] categories, String unlockedTransforms, Player player) {
         for (String category : categories) {
-            if (foundCurrentCategory) {
-                ConfigurationSection section = ssj.getSSJConfigs().getTCFile().getConfigurationSection(category);
-                if (section != null) {
-                    for (String key : section.getKeys(false)) {
-                        String transformId = section.getString(key + ".TransformationID");
-                        if (transformId != null && unlockedTransforms.contains(transformId)) {
-                            return transformId;
-                        }
-                    }
-                }
-            }
-            if (category.equals(currentCategory)) {
-                foundCurrentCategory = true;
-            }
-        }
-        return null;
-    }
+            ConfigurationSection section = ssj.getSSJConfigs().getTCFile().getConfigurationSection(category);
+            if (section != null) {
+                for (String key : section.getKeys(false)) {
+                    ConfigurationSection transform = section.getConfigurationSection(key);
+                    String transformId = transform.getString("TransformationID");
 
-    private String findNextFormInCategory(ConfigurationSection section, String currentKey, String unlockedTransforms) {
-        boolean foundCurrent = false;
-        for (String key : section.getKeys(false)) {
-            if (foundCurrent) {
-                String nextId = section.getString(key + ".TransformationID");
-                if (nextId != null && unlockedTransforms.contains(nextId)) {
-                    return nextId;
+                    if (!unlockedTransforms.contains(transformId)) {
+                        continue;
+                    }
+
+                    if (!canUseTransformation(player, transform)) {
+                        continue;
+                    }
+
+                    return transformId;
                 }
-            }
-            if (key.equals(currentKey)) {
-                foundCurrent = true;
             }
         }
         return null;

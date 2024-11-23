@@ -62,6 +62,8 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
+.cursorignore
+.cursorrules
 
 # Directories potentially created on remote AFP share
 .AppleDB
