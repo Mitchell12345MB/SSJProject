@@ -64,6 +64,7 @@ Icon
 .com.apple.timemachine.donotpresent
 .cursorignore
 .cursorrules
+.gitignore
 
 # Directories potentially created on remote AFP share
 .AppleDB

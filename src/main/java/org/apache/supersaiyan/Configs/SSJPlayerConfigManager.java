@@ -271,6 +271,11 @@ public class SSJPlayerConfigManager {
 
     public void setSkillEnabled(Player p, String skillName, boolean enabled) {
         setPlayerConfigValue(p, "Skills." + skillName + ".Enabled", enabled);
+
+        // If the skill is being disabled, handle necessary actions
+        if (!enabled) {
+            ssj.getSSJSkillManager().handleSkillDisabled(p, skillName);
+        }
     }
 
     public boolean getExplosionEffects(Player player) {

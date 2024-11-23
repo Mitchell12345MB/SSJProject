@@ -4,6 +4,7 @@ import org.apache.supersaiyan.SSJ;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.ChatColor;
 
 public class SSJSkillManager {
     private final SSJ ssj;
@@ -18,7 +19,7 @@ public class SSJSkillManager {
         
         if (skillSection == null) return false;
 
-        // Check if skill is enabled
+        // Check if skill is enabled in player's settings
         if (!ssj.getSSJPCM().isSkillEnabled(player, skillName)) {
             player.sendMessage("§c" + skillName + " skill is disabled in your settings!");
             return false;
@@ -137,12 +138,15 @@ public class SSJSkillManager {
             return;
         }
 
-        if (player.isFlying() || player.getAllowFlight()) {
-            player.setFlying(false);
-            player.setAllowFlight(false);
-            player.sendMessage("§cFlight disabled!");
-            ssj.getSSJEnergyManager().stopEnergyDrain(player, "flight");
-        }
+        // Revoke flight permissions
+        player.setFlying(false);
+        player.setAllowFlight(false);
+
+        // Stop energy drain associated with flying
+        ssj.getSSJEnergyManager().stopEnergyDrain(player, "flight");
+
+        // Notify the player
+        player.sendMessage(ChatColor.RED + "Your flight ability has been disabled.");
     }
     
     public void enableFlight(Player player) {
@@ -155,7 +159,7 @@ public class SSJSkillManager {
             return;
         }
 
-        if (!ssj.getSSJPCM().hasSkill(player, "Fly")) return;
+        if (!canUseSkill(player, "Fly")) return;
 
         int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
         if (ssj.getSSJPCM().getEnergy(player) >= energyCost) {
@@ -167,5 +171,12 @@ public class SSJSkillManager {
         } else {
             player.sendMessage("§cNot enough energy to fly!");
         }
+    }
+    
+    public void handleSkillDisabled(Player player, String skillName) {
+        if (skillName.equalsIgnoreCase("Fly")) {
+            disableFlight(player);
+        }
+        // Handle other skills if necessary
     }
 }

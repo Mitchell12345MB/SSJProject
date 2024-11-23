@@ -159,6 +159,7 @@ public class SSJMethodChecks {
             boolean currentState = ssj.getSSJPCM().isStaffFlightEnabled(p);
             ssj.getSSJPCM().setStaffFlightEnabled(p, !currentState);
             ssj.getSSJGui().openSettingsInventory(p);
+            ssj.getSSJMethods().toggleStaffFlight(p, !currentState);
             p.sendMessage("Staff Flight has been " + (!currentState ? "enabled" : "disabled") + ".");
             return;
         }

@@ -22,6 +22,8 @@ public class SSJChargeSystem {
     private String particleType2;
     private int particleCount1;
     private int particleCount2;
+    private Map<UUID, BukkitTask> energyDrainTasks = new HashMap<>();
+    private int energyDrainRate = 10; // Energy points to drain per second
     
     public SSJChargeSystem(SSJ ssj) {
         this.ssj = ssj;
@@ -134,6 +136,7 @@ public class SSJChargeSystem {
                     int transformationEnergyGainMultiplier = ssj.getSSJConfigs().getTCFile().getInt(
                         currentForm + ".Traits.ENERGY_GAIN_MULTIPLIER"
                     );
+                
 
                     if (currentEnergy >= maxEnergy) {
                         player.sendMessage(ChatColor.RED + "You've reached your energy limit!");
@@ -250,5 +253,75 @@ public class SSJChargeSystem {
                 ssj, player, Particle.valueOf(particleType2), particleCount2, 5
             ).createParticles();
         }
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void handleEnergyDrain(Player player) {
+        boolean isFlying = player.isFlying();
+        boolean staffFlightEnabled = ssj.getSSJPCM().isStaffFlightEnabled(player);
+
+        if (isFlying && !staffFlightEnabled) {
+            startEnergyDrain(player);
+        } else {
+            cancelEnergyDrain(player);
+        }
+
+        if (player.isOnGround()) {
+            cancelEnergyDrain(player);
+        }
+    }
+
+    private void startEnergyDrain(Player player) {
+        UUID playerId = player.getUniqueId();
+        
+        // Don't start a new task if one is already running
+        if (energyDrainTasks.containsKey(playerId)) {
+            return;
+        }
+
+        BukkitTask task = new BukkitRunnable() {
+            @SuppressWarnings("deprecation")
+            @Override
+            public void run() {
+                if (!player.isOnline() || player.isOnGround() || !player.isFlying()) {
+                    cancelEnergyDrain(player);
+                    return;
+                }
+
+                int currentEnergy = ssj.getSSJPCM().getEnergy(player);
+                if (currentEnergy <= 0) {
+                    player.setFlying(false);
+                    player.setAllowFlight(false);
+                    player.sendMessage(ChatColor.RED + "You've run out of energy!");
+                    cancelEnergyDrain(player);
+                    return;
+                }
+
+                ssj.getSSJEnergyManager().modifyEnergy(player, -energyDrainRate);
+                
+                // Update energy bar if it exists
+                if (energyBar != null) {
+                    energyBar.update(player);
+                }
+            }
+        }.runTaskTimer(ssj, 0L, 20L); // Run every second (20 ticks)
+
+        energyDrainTasks.put(playerId, task);
+    }
+
+    private void cancelEnergyDrain(Player player) {
+        UUID playerId = player.getUniqueId();
+        BukkitTask task = energyDrainTasks.remove(playerId);
+        if (task != null) {
+            task.cancel();
+        }
+    }
+
+    // Add this method to clean up tasks when the plugin disables
+    public void cleanup() {
+        for (BukkitTask task : energyDrainTasks.values()) {
+            task.cancel();
+        }
+        energyDrainTasks.clear();
     }
 }

@@ -518,22 +518,43 @@ public class SSJActionListeners implements Listener {
 
         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) return;
 
+        // Check if the fly skill is enabled
+        if (!ssj.getSSJPCM().isSkillEnabled(player, "Fly")) {
+            // Fly skill is disabled
+            event.setCancelled(true);
+            player.setAllowFlight(false);
+            player.setFlying(false);
+            player.sendMessage(ChatColor.RED + "You cannot fly because the Fly skill is disabled.");
+            return;
+        }
+
+        // Proceed with enabling or disabling flight
+        if (event.isFlying()) {
+            ssj.getSSJSkillManager().enableFlight(player);
+        } else {
+            ssj.getSSJSkillManager().disableFlight(player);
+        }
+
         // Check if 'Staff Flight' is enabled
         if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
             // Allow flight without energy cost
             player.setAllowFlight(true);
             player.setFlying(event.isFlying());
+            
+            // Force client update if player is stationary
+            if (event.isFlying()) {
+                player.teleport(player.getLocation().add(0, 0.01, 0));
+            } else {
+                player.teleport(player.getLocation().subtract(0, 0.01, 0));
+            }
+            
+            // Ensure energy drain is stopped
+            ssj.getSSJEnergyManager().stopEnergyDrain(player, "Staff Flight");
             return;
         }
 
         if (event.isFlying()) {
             // Player started flying
-
-            // Check if 'Staff Flight' is enabled
-        if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
-                ssj.getSSJEnergyManager().stopEnergyDrain(player, "Staff Flight");
-            }
-
             if (ssj.getSSJPCM().hasSkill(player, "Fly")) {
                 int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
                 if (ssj.getSSJPCM().getEnergy(player) >= energyCost) {
@@ -564,13 +585,16 @@ public class SSJActionListeners implements Listener {
 
         // Check if 'Staff Flight' is enabled
         if (ssj.getSSJPCM().isStaffFlightEnabled(player)) {
+            // Ensure energy drain is stopped for staff flight
             ssj.getSSJEnergyManager().stopEnergyDrain(player, "Staff Flight");
+            return;
         }
 
-        // Proceed with normal energy check
+        // Proceed with normal energy check for non-staff flight
         int energyCost = ssj.getSSJConfigs().getSCFile().getInt("Fly.Energy_Cost");
         if (ssj.getSSJPCM().getEnergy(player) < energyCost) {
             ssj.getSSJSkillManager().disableFlight(player);
+            player.sendMessage(ChatColor.RED + "You've run out of energy!");
         }
     }
 

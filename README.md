@@ -8,9 +8,6 @@ This plugin is currently in late alpha stage, approaching beta release.
 ## ⚠️ Known Issues & Upcoming Features
 
 ### 🐛 Bug Fixes Needed
-- **Flight System**
-  - Staff flight status doesn't update while hovering
-  - Energy drain continues after landing when staff flight is disabled mid-flight
 
 - **Energy Management**
   - Energy charge bar display inconsistencies

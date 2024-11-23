@@ -143,4 +143,22 @@ public class SSJMethods {
         // Assign the scoreboard to the player
         player.setScoreboard(board);
     }
+
+    public void toggleStaffFlight(Player player, boolean enable) {
+        // Enable or disable flight for the player
+        player.setAllowFlight(enable);
+        player.setFlying(enable);
+
+        // Stop energy drain if enabling staff flight
+        if (enable) {
+            ssj.getSSJEnergyManager().stopAllEnergyDrains(player);
+        }
+
+        // Force a client update by slightly changing the player's position
+        if (enable) {
+            player.teleport(player.getLocation().add(0, 0.01, 0));
+        } else {
+            player.teleport(player.getLocation().subtract(0, 0.01, 0));
+        }
+    }
 }
