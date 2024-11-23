@@ -9,6 +9,9 @@ This plugin is currently in late alpha stage, approaching beta release.
 
 ### 🐛 Bug Fixes Needed
 
+- **Skill System**
+  - Player doesn't fall out of the sky when disabling the flight skill in the settings GUI
+
 - **Energy Management**
   - Energy charge bar display inconsistencies
   - Incorrect energy scaling after de-transformation
