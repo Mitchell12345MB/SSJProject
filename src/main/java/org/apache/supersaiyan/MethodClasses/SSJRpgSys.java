@@ -123,7 +123,7 @@ public class SSJRpgSys {
         // Health boost
         int healthLevel = ssj.getSSJPCM().getHealth(player);
         if (healthLevel > 0) {
-            AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
             if (maxHealth != null) {
                 double healthBoost = 20 + (healthLevel * 2); // Base health (20) + 2 health per level
                 maxHealth.setBaseValue(Math.min(healthBoost, 100)); // Cap at 100 health
@@ -133,7 +133,7 @@ public class SSJRpgSys {
         // Strength boost
         int strengthLevel = ssj.getSSJPCM().getStrength(player);
         if (strengthLevel > 0) {
-            AttributeInstance attackDamage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+            AttributeInstance attackDamage = player.getAttribute(Attribute.ATTACK_DAMAGE);
             if (attackDamage != null) {
                 double damageBoost = 2 + (strengthLevel * 0.5); // Base damage (2) + 0.5 per level
                 attackDamage.setBaseValue(Math.min(damageBoost, 20)); // Cap at 20 damage
@@ -143,7 +143,7 @@ public class SSJRpgSys {
         // Speed boost
         int speedLevel = ssj.getSSJPCM().getSpeed(player);
         if (speedLevel > 0) {
-            AttributeInstance moveSpeed = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+            AttributeInstance moveSpeed = player.getAttribute(Attribute.MOVEMENT_SPEED);
             if (moveSpeed != null) {
                 double speedBoost = 0.1 + (speedLevel * 0.01); // Base speed (0.1) + 1% per level
                 moveSpeed.setBaseValue(Math.min(speedBoost, 0.5)); // Cap at 5x normal speed
@@ -153,8 +153,8 @@ public class SSJRpgSys {
         // Defense boost
         int defenseLevel = ssj.getSSJPCM().getDefence(player);
         if (defenseLevel > 0) {
-            AttributeInstance armor = player.getAttribute(Attribute.GENERIC_ARMOR);
-            AttributeInstance toughness = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+            AttributeInstance armor = player.getAttribute(Attribute.ARMOR);
+            AttributeInstance toughness = player.getAttribute(Attribute.ARMOR_TOUGHNESS);
             if (armor != null && toughness != null) {
                 double armorBoost = defenseLevel * 2; // 2 armor per level
                 double toughnessBoost = defenseLevel; // 1 toughness per level
@@ -166,31 +166,31 @@ public class SSJRpgSys {
 
     public void resetAllStatBoosts(Player player) {
         // Reset health to default (20)
-        AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        AttributeInstance maxHealth = player.getAttribute(Attribute.MAX_HEALTH);
         if (maxHealth != null) {
             maxHealth.setBaseValue(20);
         }
         
         // Reset attack damage to default (1)
-        AttributeInstance attackDamage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+        AttributeInstance attackDamage = player.getAttribute(Attribute.ATTACK_DAMAGE);
         if (attackDamage != null) {
             attackDamage.setBaseValue(1);
         }
         
         // Reset movement speed to default (0.1)
-        AttributeInstance moveSpeed = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        AttributeInstance moveSpeed = player.getAttribute(Attribute.MOVEMENT_SPEED);
         if (moveSpeed != null) {
             moveSpeed.setBaseValue(0.1);
         }
         
         // Reset armor to default (0)
-        AttributeInstance armor = player.getAttribute(Attribute.GENERIC_ARMOR);
+        AttributeInstance armor = player.getAttribute(Attribute.ARMOR);
         if (armor != null) {
             armor.setBaseValue(0);
         }
         
         // Reset toughness to default (0)
-        AttributeInstance toughness = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+        AttributeInstance toughness = player.getAttribute(Attribute.ARMOR_TOUGHNESS);
         if (toughness != null) {
             toughness.setBaseValue(0);
         }

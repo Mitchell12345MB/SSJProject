@@ -87,6 +87,9 @@ public class SSJEnergyManager {
         int newEnergy = Math.max(0, Math.min(getEnergyLimit(player), currentEnergy + amount));
         ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", newEnergy);
 
+        // Recalculate BP since energy changed
+        ssj.getSSJRpgSys().multBP(player);
+
         // Update the scoreboard
         ssj.getSSJMethodChecks().scoreBoardCheck();
         ssj.getSSJMethods().callScoreboard(player);

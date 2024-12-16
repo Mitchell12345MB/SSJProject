@@ -27,11 +27,12 @@ public class SSJPlayerConfigManager {
     public SSJPlayerConfigManager(SSJ ssj, File folder) {
         this.folder = folder;
         this.ssj = ssj;
-        initializeDefaultValues();
     }
 
-    private void initializeDefaultValues() {
+    private void initializeDefaultValues(Player player) {
+        defaultValues.clear(); // Clear any existing values
         defaultValues.put("Start", false);
+        defaultValues.put("Player_Name", player.getName());
         defaultValues.put("See_Lightning_Effects", true);
         defaultValues.put("See_Explosion_Effects", true);
         defaultValues.put("Hear_Sound_Effects", true);
@@ -41,15 +42,21 @@ public class SSJPlayerConfigManager {
         defaultValues.put("Saiyan_Ability.Level", 0);
         defaultValues.put("Form", "Base");
         defaultValues.put("Action_Points", ssj.getSSJConfigs().getSAP());
-        defaultValues.put("Base.Health", ssj.getSSJConfigs().getSSP());
-        defaultValues.put("Base.Power", ssj.getSSJConfigs().getSSP());
-        defaultValues.put("Base.Strength", ssj.getSSJConfigs().getSSP());
-        defaultValues.put("Base.Speed", ssj.getSSJConfigs().getSSP());
-        defaultValues.put("Base.Stamina", ssj.getSSJConfigs().getSSP());
-        defaultValues.put("Base.Defence", ssj.getSSJConfigs().getSSP());
-        defaultValues.put("Transformations_Unlocked", "");
+        int startingStatPoints = ssj.getSSJConfigs().getSSP();
+        defaultValues.put("Base.Health", startingStatPoints);
+        defaultValues.put("Base.Power", startingStatPoints);
+        defaultValues.put("Base.Strength", startingStatPoints);
+        defaultValues.put("Base.Speed", startingStatPoints);
+        defaultValues.put("Base.Stamina", startingStatPoints);
+        defaultValues.put("Base.Defence", startingStatPoints);
+        defaultValues.put("Transformations", "");
         defaultValues.put("Staff_Flight", false);
         defaultValues.put("Saiyan_Ability.Enabled", true);
+
+        // Debug log
+        ssj.getLogger().info("Initializing default values for " + player.getName());
+        ssj.getLogger().info("Starting Action Points: " + ssj.getSSJConfigs().getSAP());
+        ssj.getLogger().info("Starting Stat Points: " + startingStatPoints);
     }
 
     public File getFile(Player player) {
@@ -63,9 +70,9 @@ public class SSJPlayerConfigManager {
             // Reset player stats to vanilla values first
             ssj.getSSJRpgSys().resetAllStatBoosts(player);
             
-            // Initialize default values
-            initializeDefaultValues();
-            defaultValues.forEach(config::set);
+            // Initialize default values with the player
+            initializeDefaultValues(player);
+            defaultValues.forEach(config::set);  // Apply the default values to config
             savePlayerConfig(player, config);
         }
         return config;
@@ -100,7 +107,7 @@ public class SSJPlayerConfigManager {
     private void onFirstSet(Player p) {
         ssj.getLogger().warning(p.getName() + "'s.yml Doesn't exist! Creating one...");
         var config = getPlayerConfig(p);
-        defaultValues.forEach(config::set);
+        defaultValues.forEach(config::set);  // Apply the default values to config
         savePlayerConfig(p, config);
         ssj.getLogger().warning(p.getName() + "'s.yml has been created!");
     }
@@ -170,7 +177,7 @@ public class SSJPlayerConfigManager {
     }
 
     public String getTransformations(Player p) {
-        return (String) getPlayerConfigValue(p, "Transformations_Unlocked").orElse("");
+        return (String) getPlayerConfigValue(p, "Transformations").orElse("");
     }
 
     public double getBPMultiplier(Player player) {

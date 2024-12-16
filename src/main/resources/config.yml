@@ -31,6 +31,27 @@ Starting_Action_Points: 10
 # How many stat points a player will start with. This sets all attributes such as health, attack, defence, etc... (default is 5)
 Starting_Stat_Points: 5
 
+# Action Points from kills configuration
+Action_Points_Rewards:
+  # Player kill rewards
+  Player_Kills:
+    Base_Reward: 5  # Base AP for any player kill
+    Level_Bonus: 2  # Additional AP per level difference (when killing higher level players)
+  
+  # Mob kill rewards
+  Mob_Kills:
+    Boss_Mobs:  # Ender Dragon, Wither
+      Reward: 25
+    Strong_Mobs:  # Elder Guardian, Warden, Ravager
+      Reward: 15
+    Medium_Strong_Mobs:  # Blaze, Witch, Vindicator, Piglin Brute, Iron Golem
+      Reward: 10
+    Medium_Mobs:  # Zombie, Skeleton, Spider, Creeper, Enderman, Piglin
+      Reward: 5
+    Weak_Mobs:  # Passive animals
+      Reward: 1
+    Default_Reward: 2  # For any unlisted mob
+
 # The multiplier for every player's Battle Power. (Default is 2)
 Base_Battle_Power_Multiplier: 2
 
@@ -48,9 +69,6 @@ Hold_Charge_Item: true
 
 # Passive or active energy gain.
 Passive_Energy_Gain: false
-
-# Make the energy bar visible at all times?
-Energy_Bar_Visible: false
 
 # Enables the max stats limit.
 Max_Stats_Limit: false

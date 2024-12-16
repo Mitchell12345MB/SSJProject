@@ -30,7 +30,7 @@ public class SSJBossBar {
         this.title = title != null ? title : "Energy: ";
         this.playerStats = playerStats != null ? playerStats : new HashMap<>();
         this.isTransformBar = title != null && title.contains("Transformation");
-        this.isPersistent = !isTransformBar && (isPersistent || ssj.getSSJConfigs().getEnergyBarVisible());
+        this.isPersistent = !isTransformBar && (isPersistent);
         
         if (isTransformBar) {
             this.bossBar = Bukkit.createBossBar(this.title, BarColor.PURPLE, BarStyle.SOLID);
@@ -104,8 +104,12 @@ public class SSJBossBar {
         } else {
             double currentEnergy = ssj.getSSJPCM().getEnergy(player);
             double maxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
-            double progress = Math.min(1.0, currentEnergy / maxEnergy);
             
+            if (maxEnergy <= 0) {
+                maxEnergy = 1;
+            }
+            
+            double progress = Math.min(1.0, Math.max(0.0, currentEnergy / maxEnergy));
             bossBar.setProgress(progress);
             bossBar.setTitle("§6Energy: §e" + (int)currentEnergy + "§6/§e" + (int)maxEnergy);
         }

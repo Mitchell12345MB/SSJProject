@@ -16,8 +16,9 @@ public class SSJChargeSystem {
     private final SSJ ssj;
     private BukkitTask chargeTask;
     private BukkitRunnable chargeRunnable;
-    private SSJBossBar energyBar;
+    private Map<UUID, SSJBossBar> energyBars = new HashMap<>();
     private Map<UUID, Boolean> chargingPlayers = new HashMap<>();
+    private Map<UUID, Boolean> scoreboardEnabled = new HashMap<>();  // Track scoreboard state
     private String particleType1;
     private String particleType2;
     private int particleCount1;
@@ -38,19 +39,15 @@ public class SSJChargeSystem {
         }
 
         // Show energy bar if not already visible
-        if (energyBar == null) {
+        SSJBossBar energyBar;
+        if (!energyBars.containsKey(playerId)) {
             energyBar = new SSJBossBar(ssj, ChatColor.GOLD + "Energy: ", new HashMap<>(), false);
+            energyBars.put(playerId, energyBar);
+        } else {
+            energyBar = energyBars.get(playerId);
         }
-
-        // Show energy bar if config is enabled
-        if (!ssj.getSSJConfigs().getEnergyBarVisible()) {
-            energyBar.show(player);
-        }
-
-        // Update energy bar if it exists
-        if (energyBar != null) {
-            energyBar.update(player);
-        }
+        energyBar.show(player);
+        energyBar.update(player);
 
         // Add player to charging list
         chargingPlayers.put(playerId, true);
@@ -113,20 +110,23 @@ public class SSJChargeSystem {
             @Override
             public void run() {
                 if (!player.isOnline() || !isCharging(player)) {
+                    stopCharging(player);
                     this.cancel();
                     return;
                 }
 
-                // Play charging particles
-                if (particleType1 != null && !particleType1.isEmpty() && particleCount1 > 0) {
-                    new SSJParticles(
-                        ssj, player, Particle.valueOf(particleType1), particleCount1, 4
-                    ).createParticles();
-                }
-                if (particleType2 != null && !particleType2.isEmpty() && particleCount2 > 0) {
-                    new SSJParticles(
-                        ssj, player, Particle.valueOf(particleType2), particleCount2, 5
-                    ).createParticles();
+                // Play charging particles every 10 ticks (2 times per second)
+                if (tickCounter % 10 == 0) {
+                    if (particleType1 != null && !particleType1.isEmpty() && particleCount1 > 0) {
+                        new SSJParticles(
+                            ssj, player, Particle.valueOf(particleType1), Math.min(particleCount1, 20), 2
+                        ).createParticles();
+                    }
+                    if (particleType2 != null && !particleType2.isEmpty() && particleCount2 > 0) {
+                        new SSJParticles(
+                            ssj, player, Particle.valueOf(particleType2), Math.min(particleCount2, 20), 2
+                        ).createParticles();
+                    }
                 }
 
                 // Every 20 ticks (1 second)
@@ -136,7 +136,6 @@ public class SSJChargeSystem {
                     int transformationEnergyGainMultiplier = ssj.getSSJConfigs().getTCFile().getInt(
                         currentForm + ".Traits.ENERGY_GAIN_MULTIPLIER"
                     );
-                
 
                     if (currentEnergy >= maxEnergy) {
                         player.sendMessage(ChatColor.RED + "You've reached your energy limit!");
@@ -148,31 +147,24 @@ public class SSJChargeSystem {
                     if (ssj.getSSJConfigs().getPassiveEnergyGain()) {
                         if (!currentForm.equals("Base")) {
                             int passiveEnergyGain = ssj.getSSJConfigs().getPEMG();
-                            ssj.getSSJEnergyManager().modifyEnergy(player, passiveEnergyGain * transformationEnergyGainMultiplier * (currentEnergy / 2));
+                            ssj.getSSJEnergyManager().modifyEnergy(player, passiveEnergyGain * transformationEnergyGainMultiplier);
                         } else {
                             int passiveEnergyGain = ssj.getSSJConfigs().getPEMG();
-                            ssj.getSSJEnergyManager().modifyEnergy(player, passiveEnergyGain * (currentEnergy / 2));
+                            ssj.getSSJEnergyManager().modifyEnergy(player, passiveEnergyGain);
                         }
                     }
 
                     if (!currentForm.equals("Base")) {
                         int nonPassiveEnergyGain = ssj.getSSJConfigs().getNPEMG();
-                        ssj.getSSJEnergyManager().modifyEnergy(player, nonPassiveEnergyGain * transformationEnergyGainMultiplier + (currentEnergy / 2));
+                        ssj.getSSJEnergyManager().modifyEnergy(player, nonPassiveEnergyGain * transformationEnergyGainMultiplier);
                     } else {
                         int nonPassiveEnergyGain = ssj.getSSJConfigs().getNPEMG();
-                        ssj.getSSJEnergyManager().modifyEnergy(player, nonPassiveEnergyGain * (currentEnergy / 2));
+                        ssj.getSSJEnergyManager().modifyEnergy(player, nonPassiveEnergyGain);
                     }
 
-                    // Recalculate BP
-                    ssj.getSSJRpgSys().multBP(player);
-
-                    // Update the scoreboard
-                    ssj.getSSJMethodChecks().scoreBoardCheck();
-                    ssj.getSSJMethods().callScoreboard(player);
-
                     // Update energy bar
-                    if (energyBar != null) {
-                        energyBar.update(player);
+                    if (energyBars.containsKey(playerId)) {
+                        energyBars.get(playerId).update(player);
                     }
                 }
 
@@ -185,13 +177,6 @@ public class SSJChargeSystem {
     public void stopCharging(Player player) {
         UUID playerId = player.getUniqueId();
         
-        if (energyBar != null) {
-            if (!ssj.getSSJConfigs().getEnergyBarVisible()) {
-                energyBar.hide(player);
-                energyBar = null;
-            }
-        }
-        
         if (chargeTask != null) {
             chargeTask.cancel();
             chargeTask = null;
@@ -199,6 +184,9 @@ public class SSJChargeSystem {
         if (chargeRunnable != null) {
             chargeRunnable.cancel();
             chargeRunnable = null;
+        }
+        if (energyBars.containsKey(playerId)) {
+            energyBars.get(playerId).hide(player);
         }
         chargingPlayers.remove(playerId);
     }
@@ -300,8 +288,8 @@ public class SSJChargeSystem {
                 ssj.getSSJEnergyManager().modifyEnergy(player, -energyDrainRate);
                 
                 // Update energy bar if it exists
-                if (energyBar != null) {
-                    energyBar.update(player);
+                if (energyBars.containsKey(playerId)) {
+                    energyBars.get(playerId).update(player);
                 }
             }
         }.runTaskTimer(ssj, 0L, 20L); // Run every second (20 ticks)
@@ -317,11 +305,49 @@ public class SSJChargeSystem {
         }
     }
 
-    // Add this method to clean up tasks when the plugin disables
+    public void toggleScoreboard(Player player) {
+        UUID playerId = player.getUniqueId();
+        boolean currentState = scoreboardEnabled.getOrDefault(playerId, false);
+        
+        if (currentState) {
+            player.setScoreboard(ssj.getServer().getScoreboardManager().getNewScoreboard());  // Reset to empty scoreboard
+            scoreboardEnabled.put(playerId, false);
+            player.sendMessage(ChatColor.GREEN + "Scoreboard removed!");
+        } else {
+            ssj.getSSJMethods().callScoreboard(player);
+            scoreboardEnabled.put(playerId, true);
+            player.sendMessage(ChatColor.GREEN + "Scoreboard added!");
+        }
+    }
+
     public void cleanup() {
+        // Cancel all energy drain tasks
         for (BukkitTask task : energyDrainTasks.values()) {
             task.cancel();
         }
         energyDrainTasks.clear();
+
+        // Clean up all energy bars
+        for (Map.Entry<UUID, SSJBossBar> entry : energyBars.entrySet()) {
+            Player player = ssj.getServer().getPlayer(entry.getKey());
+            if (player != null) {
+                entry.getValue().hide(player);
+            }
+        }
+        energyBars.clear();
+        
+        // Clean up scoreboards
+        for (Map.Entry<UUID, Boolean> entry : scoreboardEnabled.entrySet()) {
+            if (entry.getValue()) {
+                Player player = ssj.getServer().getPlayer(entry.getKey());
+                if (player != null) {
+                    player.setScoreboard(ssj.getServer().getScoreboardManager().getNewScoreboard());  // Reset to empty scoreboard
+                }
+            }
+        }
+        scoreboardEnabled.clear();
+        
+        // Clear charging players
+        chargingPlayers.clear();
     }
 }

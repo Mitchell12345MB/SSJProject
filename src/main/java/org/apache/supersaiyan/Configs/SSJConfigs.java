@@ -377,12 +377,6 @@ public class SSJConfigs {
         
     }
 
-    public boolean getEnergyBarVisible() {
-
-        return ssj.getSSJConfigs().getCFile().getBoolean("Energy_Bar_Visible");
-        
-    }
-
     // transformations.yml stuff
 
     public List<String> getBaseForms() {

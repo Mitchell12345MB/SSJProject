@@ -9,11 +9,11 @@ This plugin is currently in late alpha stage, approaching beta release.
 
 ### 🐛 Bug Fixes Needed
 
-- **Skill System**
-  - Player doesn't fall out of the sky when disabling the flight skill in the settings GUI
+- **RPG System**
+  - Gain action points implementation buggy
 
 - **Energy Management**
-  - Energy charge bar display inconsistencies
+  - Energy draining keeps running when disabling the flight skill in the settings GUI
   - Incorrect energy scaling after de-transformation
   - Energy gain multiplier calculation issues
   - Aura release system incomplete
@@ -21,9 +21,9 @@ This plugin is currently in late alpha stage, approaching beta release.
   - Base Potential multiplier system incomplete
 
 - **Transformation System**
-  - Transformation unlocking through GUI is non-functional
+  - Transformation unlocking through GUI is buggy
   - Stats application requires verification
-  - Lightning effects missing for SSJ2+ transformations
+  - ProtocalLib effects for per player config is buggy
 
 - **Charging Mechanics**
   - Hold charge state bypasses intended right-click mechanism
@@ -42,7 +42,6 @@ This plugin is currently in late alpha stage, approaching beta release.
     - Additional signature moves
 
 - **RPG System**
-  - Gain action points implementation incomplete
   - NPC implementation incomplete
   - Skin manipulation implementation incomplete
 

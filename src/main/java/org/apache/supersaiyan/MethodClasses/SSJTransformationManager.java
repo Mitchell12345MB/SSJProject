@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.ChatColor;
 
 public class SSJTransformationManager {
     private final SSJ ssj;
@@ -328,7 +329,7 @@ public class SSJTransformationManager {
 
         switch(trait.toUpperCase()) {
             case "SPEED":
-                AttributeInstance speed = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                AttributeInstance speed = player.getAttribute(Attribute.MOVEMENT_SPEED);
                 if (speed != null) {
                     double baseSpeedBoost = 0.1 + (baseSpeed * 0.01);
                     double transformSpeedBoost = level * 0.01;
@@ -336,7 +337,7 @@ public class SSJTransformationManager {
                 }
                 break;
             case "INCREASE_DAMAGE":
-                AttributeInstance damage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+                AttributeInstance damage = player.getAttribute(Attribute.ATTACK_DAMAGE);
                 if (damage != null) {
                     double baseDamageBoost = 2 + (baseStrength * 0.5);
                     double transformDamageBoost = level * 0.5;
@@ -344,8 +345,8 @@ public class SSJTransformationManager {
                 }
                 break;
             case "DAMAGE_RESISTANCE":
-                AttributeInstance armor = player.getAttribute(Attribute.GENERIC_ARMOR);
-                AttributeInstance toughness = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+                AttributeInstance armor = player.getAttribute(Attribute.ARMOR);
+                AttributeInstance toughness = player.getAttribute(Attribute.ARMOR_TOUGHNESS);
                 if (armor != null && toughness != null) {
                     double baseArmorBoost = baseDefense * 2;
                     double baseToughnessBoost = baseDefense;
@@ -356,7 +357,7 @@ public class SSJTransformationManager {
                 }
                 break;
             case "HEALTH_BOOST":
-                AttributeInstance health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                AttributeInstance health = player.getAttribute(Attribute.MAX_HEALTH);
                 if (health != null) {
                     double baseHealthBoost = 20 + (baseHealth * 2);
                     double transformHealthBoost = level * 2;
@@ -607,5 +608,109 @@ public class SSJTransformationManager {
         Location loc = player.getLocation();
         player.spawnParticle(Particle.FLASH, loc, 1);
         player.playSound(loc, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+    }
+
+    public boolean canUnlockTransformation(Player player, String transformationId) {
+        String path = getTransformationPath(transformationId);
+        if (!ssj.getSSJConfigs().getTCFile().contains(path)) {
+            return false;
+        }
+        
+        ConfigurationSection transform = ssj.getSSJConfigs().getTCFile().getConfigurationSection(path);
+        if (transform == null) {
+            return false;
+        }
+
+        // Check if already unlocked
+        String unlockedTransforms = ssj.getSSJPCM().getTransformations(player);
+        if (unlockedTransforms.contains(transformationId)) {
+            player.sendMessage(ChatColor.RED + "You have already unlocked this transformation!");
+            return false;
+        }
+
+        // Check level requirement
+        int playerLevel = ssj.getSSJPCM().getLevel(player);
+        int levelLock = transform.getInt("Level_Lock", 0);
+        if (playerLevel < levelLock) {
+            player.sendMessage(ChatColor.RED + "You need to be level " + levelLock + " to unlock this transformation!");
+            return false;
+        }
+
+        // Check Saiyan Ability requirement
+        if (transform.contains("Saiyan_Ability_Lock")) {
+            int saiyanAbilityLock = transform.getInt("Saiyan_Ability_Lock");
+            int playerSaiyanAbilityLevel = ssj.getSSJPCM().getSaiyanAbility(player);
+            if (playerSaiyanAbilityLevel < saiyanAbilityLock) {
+                player.sendMessage(ChatColor.RED + "Your Saiyan Ability level is too low! You need level " + saiyanAbilityLock + "!");
+                return false;
+            }
+        }
+
+        // Check Kaioken Ability requirement
+        if (transform.contains("Kaioken_Ability_Lock")) {
+            int kaiokenAbilityLock = transform.getInt("Kaioken_Ability_Lock");
+            int playerKaiokenLevel = ssj.getSSJSkillManager().getSkillLevel(player, "Kaioken");
+            if (playerKaiokenLevel < kaiokenAbilityLock) {
+                player.sendMessage(ChatColor.RED + "Your Kaioken ability level is too low! You need level " + kaiokenAbilityLock + "!");
+                return false;
+            }
+        }
+
+        // Check God Ability requirement
+        if (transform.contains("God_Ability_Lock")) {
+            int godAbilityLock = transform.getInt("God_Ability_Lock");
+            int playerGodAbilityLevel = ssj.getSSJSkillManager().getSkillLevel(player, "God");
+            if (playerGodAbilityLevel < godAbilityLock) {
+                player.sendMessage(ChatColor.RED + "Your God ability level is too low! You need level " + godAbilityLock + "!");
+                return false;
+            }
+        }
+
+        // Check Action Points requirement
+        if (transform.contains("Acion_Points_Cost")) {
+            int actionPointsCost = transform.getInt("Acion_Points_Cost");
+            int playerActionPoints = ssj.getSSJPCM().getActionPoints(player);
+            if (playerActionPoints < actionPointsCost) {
+                player.sendMessage(ChatColor.RED + "You need " + actionPointsCost + " Action Points to unlock this transformation!");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void unlockTransformation(Player player, String transformationId) {
+        if (!canUnlockTransformation(player, transformationId)) {
+            return;
+        }
+
+        String path = getTransformationPath(transformationId);
+        ConfigurationSection transform = ssj.getSSJConfigs().getTCFile().getConfigurationSection(path);
+        
+        // Deduct Action Points if required
+        if (transform.contains("Acion_Points_Cost")) {
+            int actionPointsCost = transform.getInt("Acion_Points_Cost");
+            int currentPoints = ssj.getSSJPCM().getActionPoints(player);
+            ssj.getSSJPCM().setActionPoints(player, currentPoints - actionPointsCost);
+        }
+
+        // Add transformation to player's unlocked list using the correct method
+        String currentTransforms = ssj.getSSJPCM().getTransformations(player);
+        String newTransforms = currentTransforms.isEmpty() ? transformationId : currentTransforms + "," + transformationId;
+        ssj.getSSJPCM().setTransformations(player, newTransforms);
+
+        // Send success message
+        String transformName = transform.getString("Desc", "Unknown Transformation");
+        player.sendMessage(ChatColor.GREEN + "You have unlocked the " + transformName + " transformation!");
+        
+        // Play unlock effects
+        player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+        player.spawnParticle(Particle.WAX_ON, player.getLocation().add(0, 1, 0), 50, 0.5, 1, 0.5, 0.1);
+    }
+
+    public void handleTransformationUnlockClick(Player player, String transformationId) {
+        if (canUnlockTransformation(player, transformationId)) {
+            unlockTransformation(player, transformationId);
+        }
     }
 }
