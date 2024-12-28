@@ -14,20 +14,15 @@ public class SSJRpgSys {
     private BukkitTask passiveEnergyTask;
 
     public SSJRpgSys(SSJ ssj) {
-
         this.ssj = ssj;
-        if (ssj.getSSJConfigs().getPassiveEnergyGain()) {
-            startPassiveEnergyGain();
-        }
-
     }
 
-    private void startPassiveEnergyGain() {
+    public void startPassiveEnergyGain() {
         passiveEnergyTask = new BukkitRunnable() {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (ssj.getSSJPCM().getStart(player)) {
+                    if (ssj.getSSJConfigs().getPassiveEnergyGain()) {
                         addPassiveEnergy(player);
                     }
                 }
@@ -47,7 +42,7 @@ public class SSJRpgSys {
             
             // Update battle power and scoreboard
             multBP(player);
-            ssj.getSSJMethodChecks().scoreBoardCheck();
+            ssj.getSSJMethodChecks().checkScoreboard();
             ssj.getSSJMethods().callScoreboard(player);
         }
     }
@@ -95,7 +90,7 @@ public class SSJRpgSys {
         ssj.getSSJPCM().setPlayerConfigValue(player, "Battle_Power", finalBP);
 
         // Update the scoreboard
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
         ssj.getSSJMethods().callScoreboard(player);
     }
 

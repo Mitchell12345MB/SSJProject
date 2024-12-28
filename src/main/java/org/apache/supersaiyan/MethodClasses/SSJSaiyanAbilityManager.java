@@ -46,7 +46,7 @@ public class SSJSaiyanAbilityManager {
         
         // Update stats
         ssj.getSSJRpgSys().multBP(player);
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
         ssj.getSSJMethods().callScoreboard(player);
         
         player.sendMessage("§aYour Saiyan Ability has increased to level " + (currentLevel + 1) + "!");
@@ -107,12 +107,35 @@ public class SSJSaiyanAbilityManager {
         
         // Update stats and UI
         ssj.getSSJRpgSys().multBP(player);
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
         ssj.getSSJMethods().callScoreboard(player);
     }
 
     private int calculateUpgradeCost(int currentLevel) {
         // Base cost is 1, increases by 1 for each level
         return currentLevel + 1;
+    }
+
+    public int getSaiyanAbilityLevel(Player player) {
+        return ssj.getSSJPCM().getSaiyanAbility(player);
+    }
+
+    public void setSaiyanAbilityLevel(Player player, int level) {
+        // Get max level from config
+        int maxLevel = ssj.getSSJConfigs().getCFile().getInt("Max_Ability_Level", 400);
+        
+        // Validate level
+        if (level < 0) {
+            level = 0;
+        } else if (level > maxLevel) {
+            level = maxLevel;
+        }
+        
+        // Set the new level
+        ssj.getSSJPCM().setSaiyanAbility(player, level);
+        
+        // Update scoreboard
+        ssj.getSSJMethodChecks().checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(player);
     }
 } 

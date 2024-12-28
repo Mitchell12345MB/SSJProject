@@ -1,16 +1,120 @@
 name: SuperSaiyan
-version: 1
+version: '${project.version}'
 main: org.apache.supersaiyan.SSJ
-api-version: 1.17
-prefix: SSJPL
-authors: [ SauSAliens ]
-depend:
-  - ProtocolLib
-description: Simple super saiyan plugin
-website: https://www.spigotmc.org/resources/super-saiyan-transformations.18212/
+api-version: '1.21'
+authors: [Mitchell]
+description: A plugin that adds Dragon Ball Z elements to Minecraft
+website: https://github.com/mitchellwinn/SSJProject
+
 commands:
   ssj:
-    description:
-    usage:
-    aliases:
-    permission:
+    description: Main command for the SuperSaiyan plugin
+    usage: /<command> [subcommand] [args]
+    aliases: [supersaiyan]
+
+permissions:
+  ssj.admin:
+    description: Allows access to all admin commands
+    default: op
+    children:
+      ssj.addap: true
+      ssj.addstat: true
+      ssj.setstat: true
+      ssj.addskill: true
+      ssj.addskilllevel: true
+      ssj.setskilllevel: true
+      ssj.addtransform: true
+      ssj.addsaiyanability: true
+      ssj.setsaiyanability: true
+      ssj.subsaiyanability: true
+      ssj.subskilllevel: true
+      ssj.removetransform: true
+      ssj.subap: true
+      ssj.substat: true
+  
+  ssj.user:
+    description: Default user permissions
+    default: true
+    children:
+      ssj.viewskills: true
+      ssj.viewstats: true
+      ssj.viewtransforms: true
+      ssj.start: true
+      ssj.items: true
+
+  # Individual permissions
+  ssj.addap:
+    description: Allows adding action points to players
+    default: op
+  
+  ssj.addstat:
+    description: Allows adding to player stats
+    default: op
+  
+  ssj.setstat:
+    description: Allows setting player stats
+    default: op
+  
+  ssj.addskill:
+    description: Allows adding skills to players
+    default: op
+  
+  ssj.viewskills:
+    description: Allows viewing skills (own or others)
+    default: true
+  
+  ssj.viewstats:
+    description: Allows viewing stats (own or others)
+    default: true
+  
+  ssj.viewtransforms:
+    description: Allows viewing transformations (own or others)
+    default: true
+  
+  ssj.addskilllevel:
+    description: Allows adding skill levels to players
+    default: op
+  
+  ssj.setskilllevel:
+    description: Allows setting skill levels for players
+    default: op
+  
+  ssj.addtransform:
+    description: Allows adding transformations to players
+    default: op
+  
+  ssj.addsaiyanability:
+    description: Allows adding saiyan ability levels to players
+    default: op
+  
+  ssj.setsaiyanability:
+    description: Allows setting saiyan ability levels for players
+    default: op
+  
+  ssj.subsaiyanability:
+    description: Allows subtracting saiyan ability levels from players
+    default: op
+  
+  ssj.subskilllevel:
+    description: Allows subtracting skill levels from players
+    default: op
+  
+  ssj.removetransform:
+    description: Allows removing transformations from players
+    default: op
+  
+  ssj.subap:
+    description: Allows subtracting action points from players
+    default: op
+  
+  ssj.substat:
+    description: Allows subtracting from player stats
+    default: op
+  
+  ssj.start:
+    description: Allows starting Saiyan journey
+    default: true
+  
+  ssj.items:
+    description: Allows getting SSJ plugin items
+    default: true

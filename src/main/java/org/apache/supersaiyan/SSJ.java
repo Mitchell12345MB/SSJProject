@@ -12,78 +12,72 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
-import java.util.UUID;
 
 public class SSJ extends JavaPlugin {
 
-    private Player player;
-
-    private Particle particleType;
-
-    private String string;
-
-    private int integer;
-
-    private Map<UUID, Integer> mapui;
+    private static SSJ instance;
 
     private SSJConfigs ssjconfigs;
-
     private SSJGui ssjgui;
-
     private SSJMethods ssjmethods;
-
     private SSJTimers ssjtimers;
-
     private SSJMethodChecks ssjmethodchecks;
-
     private SSJPlayerConfigManager ssjplayerconfigmanager;
-
     private SSJScoreBoards ssjscoreboards;
-    
     private SSJParticles ssjparticles;
-
     private SSJBossBar ssjbossbar;
-
     private SSJListeners ssjlisteners;
-
     private SSJRpgSys ssjrpgsys;
-
     private SSJActionListeners ssjactionlisteners;
-
     private SSJTransformationManager ssjtransformationmanager;
-
     private SSJChargeSystem ssjchargesystem;
-
     private SSJSkillManager ssjskillmanager;
-
-    private SSJEnergyManager ssjenergyManager;
-
+    private SSJEnergyManager ssjenergymanager;
     private SSJSaiyanAbilityManager ssjsaiyanabilitymanager;
-
     private SSJBossBar persistentEnergyBar;
+    private SSJPotentialSystem ssjPotentialSystem;
+    private SSJAuraSystem ssjAuraSystem;
 
     @Override
     public void onEnable() {
-        // Save default config files first
-        saveDefaultConfig();
+        // Initialize plugin instance
+        instance = this;
         
-        // Initialize configs before anything else
-        ssjconfigs = new SSJConfigs(this);
-        ssjconfigs.createConfig();
-        ssjconfigs.createTConfig(); 
-        ssjconfigs.createSConfig();
-        ssjconfigs.loadConfigs();
+        // Initialize configs first
+        this.ssjconfigs = new SSJConfigs(this);
+        this.ssjconfigs.createConfig();
+        this.ssjconfigs.createTConfig();
+        this.ssjconfigs.createSConfig();
+        this.ssjconfigs.loadConfigs();
+        this.ssjconfigs.updateConfigs();
         
-        // Then proceed with other initialization
+        File userFolder = new File(getDataFolder(), "PlayerConfigs");
+        userFolder.mkdirs();
+        this.ssjplayerconfigmanager = new SSJPlayerConfigManager(this, userFolder);
+        
+        // Register all classes
         regClass();
-        regCommands();
-        configUICall();
         
-        if (ssjmethodchecks != null) {
-            ssjmethodchecks.onEnableChecks();
+        // Register event listeners
+        regListeners();
+        
+        // Register commands
+        Objects.requireNonNull(getCommand("ssj")).setExecutor(new SSJCommands(this));
+        
+        // Start timers and systems
+        this.ssjtimers.saveTimer();
+        
+        // Only start passive energy gain if enabled in config
+        if (this.ssjconfigs.getPassiveEnergyGain()) {
+            this.ssjrpgsys.startPassiveEnergyGain();
         }
+        
+        ssjPotentialSystem = new SSJPotentialSystem(this);
+        ssjAuraSystem = new SSJAuraSystem(this);
+        
+        getLogger().info("SSJ Plugin has been enabled!");
     }
 
     @Override
@@ -99,213 +93,126 @@ public class SSJ extends JavaPlugin {
         }
         
         // Clean up charge system bars
-        if (getSSJChargeSystem() != null) {
+        if (ssjchargesystem != null) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                getSSJChargeSystem().stopCharging(player);
+                ssjchargesystem.stopCharging(player);
             }
+        }
+
+        // Clean up potential system
+        if (ssjPotentialSystem != null) {
+            ssjPotentialSystem.cleanup();
         }
 
         if (ssjmethodchecks != null) {
-            ssjmethodchecks.onDisableChecks();
+            ssjmethodchecks.checkOnDisable();
         }
 
-        ssjrpgsys.stopPassiveEnergyGain();
+        if (ssjrpgsys != null) {
+            ssjrpgsys.stopPassiveEnergyGain();
+        }
+
+        getLogger().info("SSJ Plugin has been disabled!");
     }
 
-    private void regListeners(){
-
+    private void regListeners() {
         ssjlisteners = new SSJListeners(this);
-
-        super.getServer().getPluginManager().registerEvents(ssjlisteners, this);
+        getServer().getPluginManager().registerEvents(ssjlisteners, this);
 
         ssjactionlisteners = new SSJActionListeners(this);
-
-        super.getServer().getPluginManager().registerEvents(ssjactionlisteners, this);
-
+        getServer().getPluginManager().registerEvents(ssjactionlisteners, this);
     }
 
     private void regClass() {
-
-        File playerConfigsFolder = new File(getDataFolder(), "PlayerConfigs");
-
-        if (!playerConfigsFolder.exists()) {
-
-            playerConfigsFolder.mkdirs();
-
-        }
-
-        /** new SSJUpdateChecker(this, 12345).getVersion(version -> {
-
-            if (!this.getDescription().getVersion().equals(version)) {
-
-                getLogger().info("There is a new update available.");
-
-            }
-
-        }); **/
-
-        ssjplayerconfigmanager = new SSJPlayerConfigManager(this, playerConfigsFolder);
-
-        ssjscoreboards = new SSJScoreBoards(this);
-
-        ssjgui = new SSJGui(this);
-
-        ssjmethods = new SSJMethods(this);
-
-        ssjtimers = new SSJTimers(this);
-
-        ssjmethodchecks = new SSJMethodChecks(this);
-
-        ssjparticles = new SSJParticles(this, player, particleType, integer, 0);
-
-        ssjbossbar = new SSJBossBar(this, string, mapui, false);
-
-        ssjrpgsys = new SSJRpgSys(this);
-
-        ssjtransformationmanager = new SSJTransformationManager(this);
-
-        ssjchargesystem = new SSJChargeSystem(this);
-
-        ssjskillmanager = new SSJSkillManager(this);
-
-        ssjenergyManager = new SSJEnergyManager(this);
-
-        ssjsaiyanabilitymanager = new SSJSaiyanAbilityManager(this);
-
-        // Initialize listeners after systems
-        regListeners();
-        
+        this.ssjmethods = new SSJMethods(this);
+        this.ssjtimers = new SSJTimers(this);
+        this.ssjmethodchecks = new SSJMethodChecks(this);
+        this.ssjscoreboards = new SSJScoreBoards(this);
+        this.ssjparticles = new SSJParticles(this, null, Particle.FLAME, 5, 2.0);
+        this.ssjbossbar = new SSJBossBar(this, "Energy: ", new HashMap<>(), true);
+        this.ssjrpgsys = new SSJRpgSys(this);
+        this.ssjtransformationmanager = new SSJTransformationManager(this);
+        this.ssjchargesystem = new SSJChargeSystem(this);
+        this.ssjskillmanager = new SSJSkillManager(this);
+        this.ssjenergymanager = new SSJEnergyManager(this);
+        this.ssjsaiyanabilitymanager = new SSJSaiyanAbilityManager(this);
+        this.ssjgui = new SSJGui(this);
     }
 
-    private void regCommands(){
-
-        Objects.requireNonNull(getCommand("ssj")).setExecutor(new SSJCommands(this));
-
+    // Getter methods
+    public static SSJ getInstance() {
+        return instance;
     }
 
-    private void configUICall(){
-
-        ssjconfigs.createConfig();
-
-        ssjconfigs.createTConfig();
-
-        ssjconfigs.createSConfig();
-
-        ssjconfigs.updateConfigs();
-
-    }
-
-    public SSJTransformationManager getSSJTransformationManager() {
-
-        return ssjtransformationmanager;
-
-    }
-
-    public SSJGui getSSJGui(){
-
-        return ssjgui;
-
-    }
-
-    public SSJConfigs getSSJConfigs(){
-
+    public SSJConfigs getSSJConfigs() {
         return ssjconfigs;
-
     }
 
-    public SSJMethods getSSJMethods(){
+    public SSJGui getSSJGui() {
+        return ssjgui;
+    }
 
+    public SSJMethods getSSJMethods() {
         return ssjmethods;
-
     }
 
-    public SSJTimers getSSJTimers(){
-
+    public SSJTimers getSSJTimers() {
         return ssjtimers;
-
     }
 
-    public SSJPlayerConfigManager getSSJPCM(){
-
-        return ssjplayerconfigmanager;
-
-    }
-
-    public SSJMethodChecks getSSJMethodChecks(){
-
+    public SSJMethodChecks getSSJMethodChecks() {
         return ssjmethodchecks;
-
     }
 
-    public SSJScoreBoards getSSJSB(){
+    public SSJPlayerConfigManager getSSJPCM() {
+        return ssjplayerconfigmanager;
+    }
 
+    public SSJScoreBoards getSSJScoreBoards() {
         return ssjscoreboards;
-
     }
 
-    public SSJBossBar getSSJBB(){
-
-        return ssjbossbar;
-
-    }
-
-    public SSJParticles getSSJParticles(){
-
+    public SSJParticles getSSJParticles() {
         return ssjparticles;
+    }
 
+    public SSJBossBar getSSJBossBar() {
+        return ssjbossbar;
     }
 
     public SSJRpgSys getSSJRpgSys() {
-
         return ssjrpgsys;
-
     }
 
-    public SSJActionListeners getSSJAL() {
-
-        return ssjactionlisteners;
-
-    }
-
-    public SSJListeners getSSJListeners() {
-
-        return ssjlisteners;
-
-    }
-
-    public SSJActionListeners getSSJActionListeners() {
-
-        return ssjactionlisteners;
-        
+    public SSJTransformationManager getSSJTransformationManager() {
+        return ssjtransformationmanager;
     }
 
     public SSJChargeSystem getSSJChargeSystem() {
-
         return ssjchargesystem;
-        
     }
 
     public SSJSkillManager getSSJSkillManager() {
-
         return ssjskillmanager;
-        
     }
 
     public SSJEnergyManager getSSJEnergyManager() {
-
-        return ssjenergyManager;
-        
+        return ssjenergymanager;
     }
 
     public SSJSaiyanAbilityManager getSSJSaiyanAbilityManager() {
-
         return ssjsaiyanabilitymanager;
-        
     }
 
-    public SSJBossBar getPersistentEnergyBar() {
+    public SSJActionListeners getSSJActionListeners() {
+        return ssjactionlisteners;
+    }
 
-        return persistentEnergyBar;
-        
+    public SSJPotentialSystem getSSJPotentialSystem() {
+        return ssjPotentialSystem;
+    }
+
+    public SSJAuraSystem getSSJAuraSystem() {
+        return ssjAuraSystem;
     }
 }

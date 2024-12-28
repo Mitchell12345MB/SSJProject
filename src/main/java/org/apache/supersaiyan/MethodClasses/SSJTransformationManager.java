@@ -261,7 +261,7 @@ public class SSJTransformationManager {
         ssj.getSSJRpgSys().multBP(player);
 
         // Update the scoreboard
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
         ssj.getSSJMethods().callScoreboard(player);
     }
     
@@ -326,6 +326,15 @@ public class SSJTransformationManager {
         int baseStrength = ssj.getSSJPCM().getStrength(player);
         int baseSpeed = ssj.getSSJPCM().getSpeed(player);
         int baseDefense = ssj.getSSJPCM().getDefence(player);
+        
+        // Apply max stats limit if enabled
+        if (ssj.getSSJConfigs().getMaxStatsLimit()) {
+            int maxStats = ssj.getSSJConfigs().getMaxStats();
+            baseHealth = Math.min(baseHealth, maxStats);
+            baseStrength = Math.min(baseStrength, maxStats);
+            baseSpeed = Math.min(baseSpeed, maxStats);
+            baseDefense = Math.min(baseDefense, maxStats);
+        }
 
         switch(trait.toUpperCase()) {
             case "SPEED":
@@ -546,7 +555,7 @@ public class SSJTransformationManager {
         ssj.getSSJRpgSys().multBP(player);
 
         // Update the scoreboard
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
         ssj.getSSJMethods().callScoreboard(player);
 
         // Update charging particles if player is charging
@@ -572,42 +581,51 @@ public class SSJTransformationManager {
 
     public void sendLightningEffect(Player player) {
         Location loc = player.getLocation();
-
+        
+        // Create lightning packet
         PacketContainer lightningPacket = ProtocolLibrary.getProtocolManager()
             .createPacket(PacketType.Play.Server.SPAWN_ENTITY);
-
-        // Set a unique entity ID
+        
         int entityId = (int) Math.floor(Math.random() * Integer.MAX_VALUE);
-        lightningPacket.getIntegers().write(0, entityId); // Entity ID
-
-        // Set UUID for the entity
+        lightningPacket.getIntegers().write(0, entityId);
         lightningPacket.getUUIDs().write(0, UUID.randomUUID());
-
-        // Set the position of the entity
         lightningPacket.getDoubles()
             .write(0, loc.getX())
             .write(1, loc.getY())
             .write(2, loc.getZ());
-
-        // Set the entity type to Lightning Bolt
         lightningPacket.getEntityTypeModifier().write(0, EntityType.LIGHTNING_BOLT);
-
-        // Set pitch and yaw (if required)
         lightningPacket.getBytes()
-            .write(0, (byte) 0) // Pitch
-            .write(1, (byte) 0); // Yaw
+            .write(0, (byte) 0)
+            .write(1, (byte) 0);
 
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, lightningPacket);
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Send to all players in range who have effects enabled
+        for (Player nearbyPlayer : loc.getWorld().getPlayers()) {
+            if (nearbyPlayer.getLocation().distance(loc) <= 50) { // 50 block radius
+                if (ssj.getSSJPCM().getLightningEffects(nearbyPlayer)) {
+                    try {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(nearbyPlayer, lightningPacket);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 
     public void createExplosionEffect(Player player) {
         Location loc = player.getLocation();
-        player.spawnParticle(Particle.FLASH, loc, 1);
-        player.playSound(loc, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+        
+        // Show explosion effect to nearby players who have effects enabled
+        for (Player nearbyPlayer : loc.getWorld().getPlayers()) {
+            if (nearbyPlayer.getLocation().distance(loc) <= 50) { // 50 block radius
+                if (ssj.getSSJPCM().getExplosionEffects(nearbyPlayer)) {
+                    nearbyPlayer.spawnParticle(Particle.FLASH, loc, 1);
+                    if (ssj.getSSJPCM().getSoundEffects(nearbyPlayer)) {
+                        nearbyPlayer.playSound(loc, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+                    }
+                }
+            }
+        }
     }
 
     public boolean canUnlockTransformation(Player player, String transformationId) {
@@ -712,5 +730,27 @@ public class SSJTransformationManager {
         if (canUnlockTransformation(player, transformationId)) {
             unlockTransformation(player, transformationId);
         }
+    }
+
+    public void removeTransformation(Player player, String transformId) {
+        // Get current transformations
+        String currentTransforms = ssj.getSSJPCM().getTransformations(player);
+        
+        // Remove the transformation
+        String newTransforms = currentTransforms.replace(transformId, "").trim();
+        
+        // Update player's transformations
+        ssj.getSSJPCM().setTransformations(player, newTransforms);
+        
+        // If player is currently in this form, revert to base
+        if (ssj.getSSJPCM().getForm(player).contains(transformId)) {
+            revertToBase(player);
+        }
+        
+        // Update scoreboard
+        ssj.getSSJMethodChecks().checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(player);
+        
+        player.sendMessage("§cTransformation " + transformId + " has been removed!");
     }
 }

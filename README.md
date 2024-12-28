@@ -9,31 +9,10 @@ This plugin is currently in late alpha stage, approaching beta release.
 
 ### 🐛 Bug Fixes Needed
 
-- **RPG System**
-  - Gain action points implementation buggy
-
-- **Energy Management**
-  - Energy draining keeps running when disabling the flight skill in the settings GUI
-  - Incorrect energy scaling after de-transformation
-  - Energy gain multiplier calculation issues
-  - Aura release system incomplete
-  - Base Potential charge system incomplete
-  - Base Potential multiplier system incomplete
-
-- **Transformation System**
-  - Transformation unlocking through GUI is buggy
-  - Stats application requires verification
-  - ProtocalLib effects for per player config is buggy
-
-- **Charging Mechanics**
-  - Hold charge state bypasses intended right-click mechanism
-  - Charge continues while cursor remains on charging item
-
-- **Particle System**
-  - Too many particles being spawned
-  - Wrong particles are being spawned for transformations
+- :)
 
 ### 🚀 Missing Features
+
 - **Skills System**
   - Jump skill implementation incomplete
   - Core abilities pending implementation:
@@ -42,6 +21,8 @@ This plugin is currently in late alpha stage, approaching beta release.
     - Additional signature moves
 
 - **RPG System**
+  - Potential system (potential increases when you charge energy until energy is %50 witch is max potential, the more your potential increase, the more your overall stats increase (works just like the potential system in the mod called "Dragon Block C".)) incomplete
+  - Aura release system (Pressing the aura release button will release your aura and increase your stats for a short duration, but you will loose energy. This is just like the aura release system in the mod called "Dragon Block C".)) incomplete
   - NPC implementation incomplete
   - Skin manipulation implementation incomplete
 

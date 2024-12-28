@@ -132,6 +132,10 @@ public class SSJPlayerConfigManager {
         return getPlayerConfig(player).getInt("Battle_Power", 0);
     }
 
+    public int getBP(Player player) {
+        return getBattlePower(player);
+    }
+
     public int getEnergy(Player p) {
         return (int) getPlayerConfigValue(p, "Energy").orElse(0);
     }
@@ -202,6 +206,10 @@ public class SSJPlayerConfigManager {
 
     public void setActionPoints(Player p, int points) {
         setPlayerConfigValue(p, "Action_Points", points);
+    }
+
+    public void addActionPoints(Player p, int points) {
+        setPlayerConfigValue(p, "Action_Points", getActionPoints(p) + points);
     }
 
     public void setSaiyanAbility(Player p, int level) {
@@ -307,5 +315,10 @@ public class SSJPlayerConfigManager {
 
     public void setSoundEffects(Player player, boolean enabled) {
         setPlayerConfigValue(player, "Hear_Sound_Effects", enabled);
+    }
+
+    public boolean hasTransformation(Player player, String transformId) {
+        String transformations = getTransformations(player);
+        return transformations != null && transformations.contains(transformId);
     }
 }

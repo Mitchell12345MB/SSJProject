@@ -136,30 +136,111 @@ public class SSJGui {
                 if (transformSection == null) continue;
 
                 String transformationId = transformSection.getString("TransformationID");
-                if (transformationId == null) continue;
+                if (transformationId == null || transformationId.equals("base")) continue; // Skip base form
 
-                // **Check if player has required skills to see the transformation**
+                // Check if player has required skills to see the transformation
                 boolean canSee = true;
+                boolean hasRequirements = true;
 
-                if (transformSection.contains("Kaioken_Ability_Lock") && !ssj.getSSJPCM().hasSkill(p, "Kaioken")) {
-                    canSee = false;
+                // Check Kaioken requirement
+                if (transformSection.contains("Kaioken_Ability_Lock")) {
+                    if (!ssj.getSSJPCM().hasSkill(p, "Kaioken")) {
+                        canSee = false;
+                    } else {
+                        int requiredLevel = transformSection.getInt("Kaioken_Ability_Lock");
+                        int playerLevel = ssj.getSSJSkillManager().getSkillLevel(p, "Kaioken");
+                        hasRequirements = hasRequirements && (playerLevel >= requiredLevel);
+                    }
                 }
 
-                if (transformSection.contains("God_Ability_Lock") && !ssj.getSSJPCM().hasSkill(p, "God")) {
-                    canSee = false;
+                // Check God requirement
+                if (transformSection.contains("God_Ability_Lock")) {
+                    if (!ssj.getSSJPCM().hasSkill(p, "God")) {
+                        canSee = false;
+                    } else {
+                        int requiredLevel = transformSection.getInt("God_Ability_Lock");
+                        int playerLevel = ssj.getSSJSkillManager().getSkillLevel(p, "God");
+                        hasRequirements = hasRequirements && (playerLevel >= requiredLevel);
+                    }
                 }
 
-                if (transformSection.contains("Potential_Skill_Lock") && !ssj.getSSJPCM().hasSkill(p, "Potential")) {
-                    canSee = false;
+                // Check Potential requirement
+                if (transformSection.contains("Potential_Skill_Lock")) {
+                    if (!ssj.getSSJPCM().hasSkill(p, "Potential")) {
+                        canSee = false;
+                    } else {
+                        int requiredLevel = transformSection.getInt("Potential_Skill_Lock");
+                        int playerLevel = ssj.getSSJSkillManager().getSkillLevel(p, "Potential");
+                        hasRequirements = hasRequirements && (playerLevel >= requiredLevel);
+                    }
                 }
 
-                // Skip adding the transformation to the GUI if the player cannot see it
+                // Check Saiyan Ability requirement
+                if (transformSection.contains("Saiyan_Ability_Lock")) {
+                    int requiredLevel = transformSection.getInt("Saiyan_Ability_Lock");
+                    int playerLevel = ssj.getSSJPCM().getSaiyanAbility(p);
+                    hasRequirements = hasRequirements && (playerLevel >= requiredLevel);
+                }
+
+                // Check Level requirement
+                if (transformSection.contains("Level_Lock")) {
+                    int requiredLevel = transformSection.getInt("Level_Lock");
+                    int playerLevel = ssj.getSSJPCM().getLevel(p);
+                    hasRequirements = hasRequirements && (playerLevel >= requiredLevel);
+                }
+
+                // Skip if player can't see this transformation
                 if (!canSee) {
                     continue;
                 }
 
-                // Create and add the transformation item to the inventory
-                ItemStack item = createTransformationItem(transformSection, p);
+                // Create transformation item
+                String desc = transformSection.getString("Desc", "Unknown Transformation");
+                Material material = Material.BLAZE_POWDER;
+                List<String> lore = new ArrayList<>();
+
+                // Check if transformation is unlocked
+                boolean isUnlocked = ssj.getSSJPCM().getTransformations(p).contains(transformationId);
+
+                if (isUnlocked) {
+                    lore.add("§aUnlocked");
+                } else {
+                    if (hasRequirements) {
+                        int apCost = transformSection.getInt("Acion_Points_Cost", 0);
+                        int playerAP = ssj.getSSJPCM().getActionPoints(p);
+                        lore.add("§eRequirements met!");
+                        lore.add("§eCost: " + apCost + " Action Points");
+                        if (playerAP >= apCost) {
+                            lore.add("§aClick to unlock!");
+                        } else {
+                            lore.add("§cNot enough Action Points!");
+                        }
+                    } else {
+                        lore.add("§cRequirements not met:");
+                        if (transformSection.contains("Level_Lock")) {
+                            int required = transformSection.getInt("Level_Lock");
+                            int current = ssj.getSSJPCM().getLevel(p);
+                            lore.add(current >= required ? "§a" : "§c" + "Level: " + current + "/" + required);
+                        }
+                        if (transformSection.contains("Saiyan_Ability_Lock")) {
+                            int required = transformSection.getInt("Saiyan_Ability_Lock");
+                            int current = ssj.getSSJPCM().getSaiyanAbility(p);
+                            lore.add(current >= required ? "§a" : "§c" + "Saiyan Ability: " + current + "/" + required);
+                        }
+                        if (transformSection.contains("Kaioken_Ability_Lock")) {
+                            int required = transformSection.getInt("Kaioken_Ability_Lock");
+                            int current = ssj.getSSJSkillManager().getSkillLevel(p, "Kaioken");
+                            lore.add(current >= required ? "§a" : "§c" + "Kaioken: " + current + "/" + required);
+                        }
+                        if (transformSection.contains("God_Ability_Lock")) {
+                            int required = transformSection.getInt("God_Ability_Lock");
+                            int current = ssj.getSSJSkillManager().getSkillLevel(p, "God");
+                            lore.add(current >= required ? "§a" : "§c" + "God: " + current + "/" + required);
+                        }
+                    }
+                }
+
+                ItemStack item = createGuiItem(material, "§b" + desc, lore.toArray(new String[0]));
                 transformationsinv.addItem(item);
             }
         }
@@ -245,54 +326,6 @@ public class SSJGui {
             );
             settingsinv.setItem(currentSlot + i, skillItem);
         }
-    }
-
-    private ItemStack createTransformationItem(ConfigurationSection transformSection, Player p) {
-        String transformName = transformSection.getString("Desc", "Unknown Transformation");
-        String transformationId = transformSection.getString("TransformationID", "");
-        int levelLock = transformSection.getInt("Level_Lock", 0);
-        int saiyanAbilityLock = transformSection.getInt("Saiyan_Ability_Lock", 0);
-
-        // Check if the player has unlocked this transformation
-        boolean isUnlocked = ssj.getSSJPCM().getTransformations(p).contains(transformationId);
-
-        // Create the item stack (you can choose any material that suits your GUI)
-        ItemStack item = new ItemStack(isUnlocked ? Material.ENDER_EYE : Material.ENDER_PEARL);
-        ItemMeta meta = item.getItemMeta();
-        assert meta != null;
-        meta.setDisplayName(ChatColor.GOLD + transformName);
-
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Transformation ID: " + transformationId);
-        lore.add("");
-
-        // Add level lock info
-        lore.add(ChatColor.YELLOW + "Requirements:");
-        lore.add(ChatColor.GRAY + "- Level: " + levelLock);
-        lore.add(ChatColor.GRAY + "- Saiyan Ability: " + saiyanAbilityLock);
-
-        // Check for required skills and add to lore
-        if (transformSection.contains("Kaioken_Ability_Lock")) {
-            lore.add(ChatColor.GRAY + "- Skill: Kaioken");
-        }
-        if (transformSection.contains("God_Ability_Lock")) {
-            lore.add(ChatColor.GRAY + "- Skill: God");
-        }
-        if (transformSection.contains("Potential_Skill_Lock")) {
-            lore.add(ChatColor.GRAY + "- Skill: Potential");
-        }
-
-        lore.add("");
-
-        if (!isUnlocked) {
-
-            lore.add(ChatColor.RED + "Transformation Locked");
-
-        }
-
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
     }
 
     protected ItemStack createGuiItem(final Material material, final String name, final String... lore) {

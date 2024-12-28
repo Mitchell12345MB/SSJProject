@@ -179,4 +179,42 @@ public class SSJSkillManager {
         }
         // Handle other skills if necessary
     }
+    
+    public void setSkillLevel(Player player, String skillName, int level) {
+        FileConfiguration config = ssj.getSSJPCM().getPlayerConfig(player);
+        
+        // Ensure skill exists and is unlocked
+        if (!ssj.getSSJPCM().hasSkill(player, skillName)) {
+            player.sendMessage("§cYou haven't unlocked this skill yet!");
+            return;
+        }
+        
+        // Get max level from config
+        FileConfiguration skillConfig = ssj.getSSJConfigs().getSCFile();
+        ConfigurationSection skillSection = skillConfig.getConfigurationSection(skillName);
+        if (skillSection == null) {
+            player.sendMessage("§cInvalid skill!");
+            return;
+        }
+        
+        int maxLevel = skillSection.getInt("Max_Level", 100);
+        
+        // Validate level
+        if (level < 1) {
+            level = 1;
+        } else if (level > maxLevel) {
+            level = maxLevel;
+        }
+        
+        // Set the new level
+        config.set("Skills." + skillName + ".Level", level);
+        ssj.getSSJPCM().savePlayerConfig(player, config);
+        
+        // Apply skill effects
+        applySkillBoosts(player, skillName);
+        
+        // Update scoreboard
+        ssj.getSSJMethodChecks().checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(player);
+    }
 }

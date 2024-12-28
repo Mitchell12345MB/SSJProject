@@ -34,11 +34,11 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
 
         ssj.getSSJMethods().callScoreboard(p);
 
-        ssj.getSSJMethodChecks().callGenStatMenuChecks(p, e);
+        ssj.getSSJMethodChecks().handleGenStatMenuClick(p, e);
 
     }
 
@@ -55,11 +55,11 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
 
         ssj.getSSJMethods().callScoreboard(p);
 
-        ssj.getSSJMethodChecks().callSkillStatMenuChecks(p, e);
+        ssj.getSSJMethodChecks().handleSkillStatMenuClick(p, e);
 
     }
 
@@ -76,11 +76,11 @@ public class SSJListeners implements Listener {
 
         final Player p = (Player) e.getWhoClicked();
 
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
 
         ssj.getSSJMethods().callScoreboard(p);
 
-        ssj.getSSJMethodChecks().callSettingsMenuChecks(p, e);
+        ssj.getSSJMethodChecks().handleSettingsMenuClick(p, e);
 
     }
 
@@ -117,7 +117,7 @@ public class SSJListeners implements Listener {
             ssj.getSSJRpgSys().updateAllStatBoosts(player);
             
             // Update scoreboard
-            ssj.getSSJMethodChecks().scoreBoardCheck();
+            ssj.getSSJMethodChecks().checkScoreboard();
             ssj.getSSJMethods().callScoreboard(player);
         }
 
@@ -147,7 +147,7 @@ public class SSJListeners implements Listener {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                ssj.getSSJMethodChecks().scoreBoardCheck();
+                ssj.getSSJMethodChecks().checkScoreboard();
 
                 ssj.getSSJPCM().createUserCheck(online);
 

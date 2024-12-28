@@ -4,6 +4,7 @@ import org.apache.supersaiyan.SSJ;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.io.IOException;
@@ -443,6 +444,10 @@ public class SSJConfigs {
 
     public int getMaxAbilityLevel() {
         return ssj.getSSJConfigs().getCFile().getInt("Max_Ability_Level", 400); // Default max level is 400
+    }
+
+    public ConfigurationSection getMobRewardsConfig() {
+        return getCFile().getConfigurationSection("Action_Points_Rewards.Mob_Kills");
     }
 
 }

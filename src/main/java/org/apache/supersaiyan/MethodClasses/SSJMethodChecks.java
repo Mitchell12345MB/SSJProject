@@ -6,242 +6,261 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class SSJMethodChecks {
+public class SSJMethodChecks implements Listener {
 
     private final SSJ ssj;
 
     public SSJMethodChecks(SSJ ssj) {
-
         this.ssj = ssj;
-
+        Bukkit.getPluginManager().registerEvents(this, ssj);
     }
 
-    public void checkStartCommandMethod(Player p) {
-        if (ssj.getSSJPCM().getFile(p).exists() && ssj.getSSJPCM().getStart(p)) {
-            p.sendMessage(ChatColor.RED + "You've already started your Saiyan journey!");
+    public void checkStartCommand(Player player) {
+        if (ssj.getSSJPCM().getFile(player).exists() && ssj.getSSJPCM().getStart(player)) {
+            player.sendMessage(ChatColor.RED + "You've already started your Saiyan journey!");
             return;
         }
 
-        if (!ssj.getSSJPCM().getFile(p).exists()) {
-            p.sendMessage(ChatColor.RED + "Your player file doesn't exist!");
-            p.sendMessage(ChatColor.RED + "Please re-log or tell a server Admin/Owner.");
+        if (!ssj.getSSJPCM().getFile(player).exists()) {
+            player.sendMessage(ChatColor.RED + "Your player file doesn't exist!");
+            player.sendMessage(ChatColor.RED + "Please re-log or tell a server Admin/Owner.");
             return;
         }
 
-        if (ssj.getSSJPCM().getFile(p).exists() && !ssj.getSSJPCM().getStart(p)) {
+        if (ssj.getSSJPCM().getFile(player).exists() && !ssj.getSSJPCM().getStart(player)) {
             // Reset stats first
-            ssj.getSSJRpgSys().resetAllStatBoosts(p);
+            ssj.getSSJRpgSys().resetAllStatBoosts(player);
             
             // Set initial stats and action points
             int startingStatPoints = ssj.getSSJConfigs().getSSP();
             int startingActionPoints = ssj.getSSJConfigs().getSAP();
             
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Action_Points", startingActionPoints);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Base.Health", startingStatPoints);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Base.Power", startingStatPoints);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Base.Strength", startingStatPoints);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Base.Speed", startingStatPoints);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Base.Stamina", startingStatPoints);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Base.Defence", startingStatPoints);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Action_Points", startingActionPoints);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Health", startingStatPoints);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Power", startingStatPoints);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Strength", startingStatPoints);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Speed", startingStatPoints);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Stamina", startingStatPoints);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Base.Defence", startingStatPoints);
             
             // Give starting items and set start to true
-            ssj.getSSJMethods().callStartingItems(p);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Start", true);
+            ssj.getSSJMethods().callStartingItems(player);
+            ssj.getSSJPCM().setPlayerConfigValue(player, "Start", true);
             
             // Update stats and open inventory
-            ssj.getSSJRpgSys().updateAllStatBoosts(p);
-            ssj.getSSJGui().openGenStatInventory(p);
+            ssj.getSSJRpgSys().updateAllStatBoosts(player);
+            ssj.getSSJGui().openGenStatInventory(player);
             
-            p.sendMessage(ChatColor.GREEN + "Your Saiyan journey has started!");
-            p.sendMessage(ChatColor.GREEN + "You have been given " + startingActionPoints + " Action Points!");
-            p.sendMessage(ChatColor.GREEN + "All your base stats have been set to " + startingStatPoints + "!");
-            ssj.getLogger().warning(p.getName() + "'s.yml Has been updated!");
+            String message = String.format("%sYour Saiyan journey has started!\n%sYou have been given %d Action Points!\n%sAll your base stats have been set to %d!",
+                ChatColor.GREEN, ChatColor.GREEN, startingActionPoints, ChatColor.GREEN, startingStatPoints);
+            player.sendMessage(message);
+            ssj.getLogger().info(String.format("%s's.yml has been updated!", player.getName()));
         }
     }
 
-    public void callGenStatMenuChecks(Player p, InventoryClickEvent e) {
-        if (!e.getInventory().equals(ssj.getSSJGui().genstatinv)) return;
+    public void handleGenStatMenuClick(Player player, InventoryClickEvent event) {
+        if (!event.getInventory().equals(ssj.getSSJGui().genstatinv)) {
+            return;
+        }
 
-        switch (e.getRawSlot()) {
+        switch (event.getRawSlot()) {
             case 3:
-                handleStatIncrease(p, "Base.Health", ssj.getSSJPCM().getHealth(p));
+                handleStatIncrease(player, "Base.Health", ssj.getSSJPCM().getHealth(player));
                 break;
             case 4:
-                handleStatIncrease(p, "Base.Power", ssj.getSSJPCM().getPower(p));
+                handleStatIncrease(player, "Base.Power", ssj.getSSJPCM().getPower(player));
                 break;
             case 5:
-                handleStatIncrease(p, "Base.Strength", ssj.getSSJPCM().getStrength(p));
+                handleStatIncrease(player, "Base.Strength", ssj.getSSJPCM().getStrength(player));
                 break;
             case 6:
-                handleStatIncrease(p, "Base.Speed", ssj.getSSJPCM().getSpeed(p));
+                handleStatIncrease(player, "Base.Speed", ssj.getSSJPCM().getSpeed(player));
                 break;
             case 7:
-                handleStatIncrease(p, "Base.Stamina", ssj.getSSJPCM().getStamina(p));
+                handleStatIncrease(player, "Base.Stamina", ssj.getSSJPCM().getStamina(player));
                 break;
             case 8:
-                handleStatIncrease(p, "Base.Defence", ssj.getSSJPCM().getDefence(p));
+                handleStatIncrease(player, "Base.Defence", ssj.getSSJPCM().getDefence(player));
                 break;
             case 9:
-                if (ssj.getSSJSaiyanAbilityManager().canIncreaseSaiyanAbility(p)) {
-                    ssj.getSSJSaiyanAbilityManager().increaseSaiyanAbility(p);
-                    ssj.getSSJGui().openGenStatInventory(p);
+                if (ssj.getSSJSaiyanAbilityManager().canIncreaseSaiyanAbility(player)) {
+                    ssj.getSSJSaiyanAbilityManager().increaseSaiyanAbility(player);
+                    ssj.getSSJGui().openGenStatInventory(player);
                 }
                 break;
             case 10:
-                ssj.getSSJGui().openTransformationsInventory(p);
+                ssj.getSSJGui().openTransformationsInventory(player);
                 break;
             case 11:
-                ssj.getSSJGui().openSkillsInventory(p);
+                ssj.getSSJGui().openSkillsInventory(player);
                 break;
             case 12:
-                ssj.getSSJGui().openSettingsInventory(p);
+                ssj.getSSJGui().openSettingsInventory(player);
                 break;
             case 17: // Back button
-                ssj.getSSJGui().openGenStatInventory(p);
+                ssj.getSSJGui().openGenStatInventory(player);
                 break;
             default:
                 break;
         }
     }
 
-    private void handleStatIncrease(Player p, String statKey, int currentValue) {
-        if (ssj.getSSJPCM().getActionPoints(p) > 0) {
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Action_Points", ssj.getSSJPCM().getActionPoints(p) - 1);
-            ssj.getSSJPCM().setPlayerConfigValue(p, statKey, currentValue + 1);
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Level", ssj.getSSJRpgSys().addLevel(p));
-            ssj.getSSJPCM().setPlayerConfigValue(p, "Battle_Power", ssj.getSSJRpgSys().addBaseBP(p));
-            
-            // Update all stat boosts whenever any stat increases
-            ssj.getSSJRpgSys().updateAllStatBoosts(p);
-            
-            ssj.getSSJGui().openGenStatInventory(p);
-            scoreBoardCheck();
-            ssj.getSSJMethods().callScoreboard(p);
-            ssj.getSSJTransformationManager().reapplyCurrentForm(p);
-        } else {
-            p.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+    private void handleStatIncrease(Player player, String statKey, int currentValue) {
+        if (ssj.getSSJPCM().getActionPoints(player) <= 0) {
+            player.sendMessage(ChatColor.RED + "You have no more action points to spend!");
+            return;
         }
+
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Action_Points", ssj.getSSJPCM().getActionPoints(player) - 1);
+        ssj.getSSJPCM().setPlayerConfigValue(player, statKey, currentValue + 1);
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Level", ssj.getSSJRpgSys().addLevel(player));
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Battle_Power", ssj.getSSJRpgSys().addBaseBP(player));
+        
+        // Update all stat boosts whenever any stat increases
+        ssj.getSSJRpgSys().updateAllStatBoosts(player);
+        
+        ssj.getSSJGui().openGenStatInventory(player);
+        checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(player);
+        ssj.getSSJTransformationManager().reapplyCurrentForm(player);
     }
 
-    public void callSkillStatMenuChecks(Player p, InventoryClickEvent e) {
-        if (!e.getInventory().equals(ssj.getSSJGui().skillstatinv)) return;
+    public void handleSkillStatMenuClick(Player player, InventoryClickEvent event) {
+        if (!event.getInventory().equals(ssj.getSSJGui().skillstatinv)) {
+            return;
+        }
 
-        switch (e.getRawSlot()) {
+        switch (event.getRawSlot()) {
             case 1:
-                ssj.getSSJGui().openGenStatInventory(p);
+                ssj.getSSJGui().openGenStatInventory(player);
                 break;
             case 2:
-                ssj.getSSJGui().openSettingsInventory(p);
+                ssj.getSSJGui().openSettingsInventory(player);
                 break;
             case 17: // Back button
-                ssj.getSSJGui().openSkillsInventory(p);
+                ssj.getSSJGui().openSkillsInventory(player);
                 break;
             default:
                 break;
         }
     }
 
-    public void callSettingsMenuChecks(Player p, InventoryClickEvent e) {
-        if (!e.getInventory().equals(ssj.getSSJGui().settingsinv)) return;
+    public void handleSettingsMenuClick(Player player, InventoryClickEvent event) {
+        if (!event.getInventory().equals(ssj.getSSJGui().settingsinv)) {
+            return;
+        }
 
-        e.setCancelled(true);
-        ItemStack clicked = e.getCurrentItem();
-        if (clicked == null || !clicked.hasItemMeta()) return;
-        int slot = e.getRawSlot();
+        event.setCancelled(true);
+        ItemStack clicked = event.getCurrentItem();
+        if (clicked == null || !clicked.hasItemMeta()) {
+            return;
+        }
+        
+        int slot = event.getRawSlot();
 
         // Handle Explosion Effects toggle (Slot 0)
         if (slot == 0) {
-            toggleGeneralSetting(p, "See_Explosion_Effects", "Explosion Effects");
+            toggleGeneralSetting(player, "See_Explosion_Effects", "Explosion Effects");
             return;
         }
 
         // Handle Lightning Effects toggle (Slot 1)
         if (slot == 1) {
-            toggleGeneralSetting(p, "See_Lightning_Effects", "Lightning Effects");
+            toggleGeneralSetting(player, "See_Lightning_Effects", "Lightning Effects");
             return;
         }
 
         // Handle Sound Effects toggle (Slot 2)
         if (slot == 2) {
-            toggleGeneralSetting(p, "Hear_Sound_Effects", "Sound Effects");
+            toggleGeneralSetting(player, "Hear_Sound_Effects", "Sound Effects");
             return;
         }
 
         int currentSlot = 3;
 
         // Staff Flight (if applicable)
-        if ((p.isOp() || p.hasPermission("ssj.staff")) && slot == currentSlot) {
-            boolean currentState = ssj.getSSJPCM().isStaffFlightEnabled(p);
-            ssj.getSSJPCM().setStaffFlightEnabled(p, !currentState);
-            ssj.getSSJGui().openSettingsInventory(p);
-            ssj.getSSJMethods().toggleStaffFlight(p, !currentState);
-            p.sendMessage("Staff Flight has been " + (!currentState ? "enabled" : "disabled") + ".");
+        if ((player.isOp() || player.hasPermission("ssj.staff")) && slot == currentSlot) {
+            boolean currentState = ssj.getSSJPCM().isStaffFlightEnabled(player);
+            ssj.getSSJPCM().setStaffFlightEnabled(player, !currentState);
+            ssj.getSSJGui().openSettingsInventory(player);
+            ssj.getSSJMethods().toggleStaffFlight(player, !currentState);
+            player.sendMessage(String.format("Staff Flight has been %s.", !currentState ? "enabled" : "disabled"));
             return;
         }
 
-        if (p.isOp() || p.hasPermission("ssj.staff")) {
+        if (player.isOp() || player.hasPermission("ssj.staff")) {
             currentSlot++;
         }
 
         // Saiyan Ability
         if (slot == currentSlot) {
-            boolean saEnabled = ssj.getSSJPCM().isSaiyanAbilityEnabled(p);
-            ssj.getSSJPCM().setSaiyanAbilityEnabled(p, !saEnabled);
-            ssj.getSSJGui().openSettingsInventory(p);
-            p.sendMessage("Saiyan Ability has been " + (!saEnabled ? "enabled" : "disabled") + ".");
+            boolean saEnabled = ssj.getSSJPCM().isSaiyanAbilityEnabled(player);
+            ssj.getSSJPCM().setSaiyanAbilityEnabled(player, !saEnabled);
+            ssj.getSSJGui().openSettingsInventory(player);
+            player.sendMessage(String.format("Saiyan Ability has been %s.", !saEnabled ? "enabled" : "disabled"));
             return;
         }
         currentSlot++;
 
-        // Skills
+        // Skills - only show if player has them unlocked
         String[] skills = {"Fly", "Jump", "Kaioken", "Potential", "God"};
         for (int i = 0; i < skills.length; i++) {
-            if (slot == currentSlot + i) {
-                String skillName = skills[i];
-                toggleSkillSetting(p, skillName);
+            String skillName = skills[i];
+            if (slot == currentSlot + i && ssj.getSSJPCM().hasSkill(player, skillName)) {
+                toggleSkillSetting(player, skillName);
                 return;
             }
         }
 
         // Back button
         if (slot == 17) {
-            ssj.getSSJGui().openGenStatInventory(p);
+            ssj.getSSJGui().openGenStatInventory(player);
         }
     }
 
-    private void toggleSkillSetting(Player p, String skillName) {
-        boolean currentValue = ssj.getSSJPCM().isSkillEnabled(p, skillName);
-        ssj.getSSJPCM().setSkillEnabled(p, skillName, !currentValue);
+    private void toggleSkillSetting(Player player, String skillName) {
+        boolean currentValue = ssj.getSSJPCM().isSkillEnabled(player, skillName);
         
         // Special handling for flight skill
         if (skillName.equals("Fly") && currentValue) {
-            // If disabling flight, stop flying and energy drain
-            p.setFlying(false);
-            p.setAllowFlight(false);
-            ssj.getSSJEnergyManager().stopEnergyDrain(p, "flight");
+            player.setFlying(false);
+            player.setAllowFlight(false);
+            ssj.getSSJEnergyManager().stopEnergyDrain(player, "flight");
+            // Cancel any pending flight tasks
+            Bukkit.getScheduler().cancelTasks(ssj);
+            // Force update player's flight state
+            Bukkit.getScheduler().runTaskLater(ssj, () -> {
+                player.setAllowFlight(false);
+                player.setFlying(false);
+                player.teleport(player.getLocation().add(0, 0.1, 0)); // Small teleport to prevent "big jump"
+            }, 1L);
         }
         
-        ssj.getSSJGui().openSettingsInventory(p);
-        p.sendMessage(skillName + " Skill has been " + (!currentValue ? "enabled" : "disabled") + ".");
+        // Update the setting after handling special cases
+        ssj.getSSJPCM().setSkillEnabled(player, skillName, !currentValue);
+        
+        ssj.getSSJGui().openSettingsInventory(player);
+        player.sendMessage(String.format("%s Skill has been %s.", skillName, !currentValue ? "enabled" : "disabled"));
     }
 
-    private void toggleGeneralSetting(Player p, String settingKey, String settingName) {
-        boolean currentValue = ssj.getSSJPCM().getPlayerConfig(p).getBoolean(settingKey, true);
-        ssj.getSSJPCM().setPlayerConfigValue(p, settingKey, !currentValue);
-        ssj.getSSJGui().openSettingsInventory(p);
-        p.sendMessage(settingName + " have been " + (!currentValue ? "enabled" : "disabled") + ".");
+    private void toggleGeneralSetting(Player player, String settingKey, String settingName) {
+        boolean currentValue = ssj.getSSJPCM().getPlayerConfig(player).getBoolean(settingKey, true);
+        ssj.getSSJPCM().setPlayerConfigValue(player, settingKey, !currentValue);
+        ssj.getSSJGui().openSettingsInventory(player);
+        player.sendMessage(String.format("%s have been %s.", settingName, !currentValue ? "enabled" : "disabled"));
     }
 
-    public void onEnableChecks() {
+    public void checkOnEnable() {
 
         if (!Bukkit.getOnlinePlayers().isEmpty()) {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                scoreBoardCheck();
+                checkScoreboard();
 
                 ssj.getSSJMethods().callScoreboard(online);
 
@@ -257,7 +276,7 @@ public class SSJMethodChecks {
 
     }
 
-    public void onDisableChecks() {
+    public void checkOnDisable() {
 
         if (!Bukkit.getOnlinePlayers().isEmpty()) {
 
@@ -265,7 +284,7 @@ public class SSJMethodChecks {
 
                 ssj.getSSJPCM().savePlayerConfig(online, ssj.getSSJPCM().getPlayerConfig(online));
 
-                scoreBoardCheck();
+                checkScoreboard();
 
                 ssj.getSSJConfigs().saveConfigs();
 
@@ -275,15 +294,15 @@ public class SSJMethodChecks {
 
     }
 
-    public void scoreBoardCheck() {
+    public void checkScoreboard() {
 
         if (!Bukkit.getOnlinePlayers().isEmpty()) {
 
             for (Player online : Bukkit.getOnlinePlayers()) {
 
-                if (ssj.getSSJSB().hasScore(online)) {
+                if (ssj.getSSJScoreBoards().hasScore(online)) {
 
-                    ssj.getSSJSB().removeScore(online);
+                    ssj.getSSJScoreBoards().removeScore(online);
 
                 }
 
@@ -293,20 +312,20 @@ public class SSJMethodChecks {
 
     }
 
-    public void checkPPCPlayerName(Player p) {
+    public void checkPPCPlayerName(Player player) {
 
-        if (ssj.getSSJPCM().getFile(p).exists()) {
+        if (ssj.getSSJPCM().getFile(player).exists()) {
 
-            if (!(p.getName().equals(ssj.getSSJPCM().getName(p)))) {
+            if (!(player.getName().equals(ssj.getSSJPCM().getName(player)))) {
 
-                ssj.getSSJPCM().setPlayerConfigValue(p, "Playe_Name", p.getName());
+                ssj.getSSJPCM().setPlayerConfigValue(player, "Playe_Name", player.getName());
 
-                ssj.getLogger().warning(p.getName() + "'s.yml has been updated!");
+                ssj.getLogger().warning(player.getName() + "'s.yml has been updated!");
             }
         }
     }
 
-    public void callTransformationsMenuChecks(Player p, InventoryClickEvent e) {
+    public void callTransformationsMenuChecks(Player player, InventoryClickEvent e) {
         if (!e.getInventory().equals(ssj.getSSJGui().transformationsinv)) return;
 
         e.setCancelled(true);
@@ -317,7 +336,7 @@ public class SSJMethodChecks {
 
         switch (e.getRawSlot()) {
             case 26: // Back button
-                ssj.getSSJGui().openGenStatInventory(p);
+                ssj.getSSJGui().openGenStatInventory(player);
                 break;
             default:
                 // Get the transformation ID from the name
@@ -341,158 +360,134 @@ public class SSJMethodChecks {
 
                 if (transformId != null) {
                     // Check if the transformation is already unlocked
-                    String unlockedTransforms = ssj.getSSJPCM().getTransformations(p);
+                    String unlockedTransforms = ssj.getSSJPCM().getTransformations(player);
                     if (unlockedTransforms.contains(transformId)) {
-                        // If unlocked, try to transform
-                        if (ssj.getSSJTransformationManager().canTransform(p, transformId)) {
-                            ssj.getSSJTransformationManager().transform(p, transformId);
-                        }
+                        // If unlocked, try to unlock instead of transforming
+                        ssj.getSSJTransformationManager().handleTransformationUnlockClick(player, transformId);
                     } else {
                         // If not unlocked, try to unlock
-                        ssj.getSSJTransformationManager().handleTransformationUnlockClick(p, transformId);
+                        ssj.getSSJTransformationManager().handleTransformationUnlockClick(player, transformId);
                     }
                     // Refresh the inventory
-                    ssj.getSSJGui().openTransformationsInventory(p);
+                    ssj.getSSJGui().openTransformationsInventory(player);
                 }
                 break;
         }
     }
 
-    public void callSkillsMenuChecks(Player p, InventoryClickEvent e) {
+    public void callSkillsMenuChecks(Player player, InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
         
         if (e.getCurrentItem().getType() == Material.BARRIER) {
-            ssj.getSSJGui().openGenStatInventory(p);
+            ssj.getSSJGui().openGenStatInventory(player);
             return;
         }
         
         String skillName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-        if (ssj.getSSJPCM().hasSkill(p, skillName)) {
+        
+        // Check if player meets requirements for the skill
+        if (!ssj.getSSJSkillManager().canUseSkill(player, skillName)) {
+            player.sendMessage(ChatColor.RED + "You don't meet the requirements for this skill!");
+            return;
+        }
+        
+        if (ssj.getSSJPCM().hasSkill(player, skillName)) {
             // Handle upgrade
-            int upgradeCost = ssj.getSSJConfigs().getSCFile().getInt(skillName + ".Upgrade_Acion_Points_Cost");
-            if (ssj.getSSJPCM().getActionPoints(p) >= upgradeCost) {
-                ssj.getSSJPCM().setActionPoints(p, ssj.getSSJPCM().getActionPoints(p) - upgradeCost);
-                ssj.getSSJSkillManager().upgradeSkill(p, skillName);
-                p.sendMessage("§aUpgraded " + skillName + " to level " + ssj.getSSJSkillManager().getSkillLevel(p, skillName) + "!");
+            int upgradeCost = ssj.getSSJConfigs().getSCFile().getInt(skillName + ".Upgrade_Action_Points_Cost");
+            if (ssj.getSSJPCM().getActionPoints(player) >= upgradeCost) {
+                ssj.getSSJPCM().setActionPoints(player, ssj.getSSJPCM().getActionPoints(player) - upgradeCost);
+                ssj.getSSJSkillManager().upgradeSkill(player, skillName);
+                player.sendMessage("§aUpgraded " + skillName + " to level " + ssj.getSSJSkillManager().getSkillLevel(player, skillName) + "!");
             } else {
-                p.sendMessage("§cNot enough AP to upgrade " + skillName + "!");
+                player.sendMessage("§cNot enough AP to upgrade " + skillName + "!");
             }
-        } else if (ssj.getSSJSkillManager().canUseSkill(p, skillName)) {
+        } else if (ssj.getSSJSkillManager().canUseSkill(player, skillName)) {
             // Handle unlock
-            int apCost = ssj.getSSJConfigs().getSCFile().getInt(skillName + ".Acion_Points_Cost");
-            ssj.getSSJPCM().setActionPoints(p, ssj.getSSJPCM().getActionPoints(p) - apCost);
-            ssj.getSSJPCM().unlockSkill(p, skillName);
-            p.sendMessage("§aUnlocked " + skillName + "!");
+            int apCost = ssj.getSSJConfigs().getSCFile().getInt(skillName + ".Action_Points_Cost");
+            if (ssj.getSSJPCM().getActionPoints(player) >= apCost) {
+                ssj.getSSJPCM().setActionPoints(player, ssj.getSSJPCM().getActionPoints(player) - apCost);
+                ssj.getSSJPCM().unlockSkill(player, skillName);
+                player.sendMessage("§aUnlocked " + skillName + "!");
+            } else {
+                player.sendMessage("§cNot enough AP to unlock " + skillName + "!");
+            }
         }
         
         // Refresh inventory
-        ssj.getSSJGui().openSkillsInventory(p);
+        ssj.getSSJGui().openSkillsInventory(player);
     }
 
     public void handlePlayerKillReward(Player killer, Player victim) {
-        // Get levels
-        int killerLevel = ssj.getSSJPCM().getLevel(killer);
-        int victimLevel = ssj.getSSJPCM().getLevel(victim);
+        // Calculate reward based on victim's stats
+        int victimBP = ssj.getSSJPCM().getBP(victim);
+        int rewardAP = Math.max(1, victimBP / 1000); // 1 AP per 1000 BP, minimum 1
         
-        // Get reward values from config
-        int baseReward = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Player_Kills.Base_Reward", 5);
-        int levelBonus = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Player_Kills.Level_Bonus", 2);
-        
-        // Calculate level difference and reward
-        int levelDifference = victimLevel - killerLevel;
-        int reward;
-        if (levelDifference > 0) {
-            reward = baseReward + (levelDifference * levelBonus);
-        } else {
-            reward = Math.max(1, baseReward + levelDifference);
-        }
-        
-        // Get current AP and add reward
+        // Award AP to killer
         int currentAP = ssj.getSSJPCM().getActionPoints(killer);
-        int newAP = currentAP + reward;
-        
-        // Save new AP value using PCM
-        ssj.getSSJPCM().setActionPoints(killer, newAP);
+        ssj.getSSJPCM().setPlayerConfigValue(killer, "Action_Points", currentAP + rewardAP);
         
         // Notify killer
-        killer.sendMessage(ChatColor.GREEN + "You gained " + reward + " Action Points for defeating " + victim.getName() + "!");
+        killer.sendMessage(String.format(
+            "%sYou've gained %d Action Points for defeating %s!",
+            ChatColor.GREEN,
+            rewardAP,
+            victim.getName()
+        ));
+        
+        // Update killer's stats and UI
+        ssj.getSSJRpgSys().updateAllStatBoosts(killer);
+        ssj.getSSJGui().openGenStatInventory(killer);
+        checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(killer);
     }
 
     public void handleMobKillReward(Player killer, String mobType) {
-        int reward;
+        // Get mob reward configuration
+        ConfigurationSection mobRewards = ssj.getSSJConfigs().getMobRewardsConfig();
+        if (mobRewards == null || !mobRewards.contains(mobType)) {
+            return;
+        }
+
+        // Calculate and apply rewards
+        int baseReward = mobRewards.getInt(mobType + ".ap_reward", 1);
+        int currentAP = ssj.getSSJPCM().getActionPoints(killer);
         
-        // Get reward values from config
-        switch(mobType.toUpperCase()) {
-            case "ENDER_DRAGON":
-            case "WITHER":
-                reward = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Mob_Kills.Boss_Mobs.Reward", 25);
-                break;
-                
-            case "ELDER_GUARDIAN":
-            case "WARDEN":
-            case "RAVAGER":
-                reward = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Mob_Kills.Strong_Mobs.Reward", 15);
-                break;
-                
-            case "BLAZE":
-            case "WITCH":
-            case "VINDICATOR":
-            case "PIGLIN_BRUTE":
-            case "IRON_GOLEM":
-                reward = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Mob_Kills.Medium_Strong_Mobs.Reward", 10);
-                break;
-                
-            case "ZOMBIE":
-            case "SKELETON":
-            case "SPIDER":
-            case "CREEPER":
-            case "ENDERMAN":
-            case "PIGLIN":
-                reward = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Mob_Kills.Medium_Mobs.Reward", 5);
-                break;
-                
-            case "CHICKEN":
-            case "COW":
-            case "PIG":
-            case "SHEEP":
-            case "RABBIT":
-            case "BAT":
-                reward = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Mob_Kills.Weak_Mobs.Reward", 1);
-                break;
-                
-            default:
-                reward = ssj.getSSJConfigs().getCFile().getInt("Action_Points_Rewards.Mob_Kills.Default_Reward", 2);
-                break;
+        // Apply any multipliers based on player's state
+        double multiplier = 1.0;
+        if (!ssj.getSSJPCM().getForm(killer).equals("Base")) {
+            multiplier *= 1.5; // 50% bonus for transformed state
         }
         
-        // Get current AP and add reward
-        int currentAP = ssj.getSSJPCM().getActionPoints(killer);
-        int newAP = currentAP + reward;
+        int finalReward = (int) Math.ceil(baseReward * multiplier);
+        ssj.getSSJPCM().setPlayerConfigValue(killer, "Action_Points", currentAP + finalReward);
         
-        // Save new AP value using PCM
-        ssj.getSSJPCM().setActionPoints(killer, newAP);
+        // Notify player
+        if (finalReward > 0) {
+            killer.sendMessage(String.format(
+                "%sYou've gained %d Action Points for defeating a %s!",
+                ChatColor.GREEN,
+                finalReward,
+                mobType
+            ));
+        }
         
-        // Debug log
-        ssj.getLogger().info("Adding " + reward + " AP to " + killer.getName() + " for killing " + mobType);
-        ssj.getLogger().info("Old AP: " + currentAP + ", New AP: " + newAP);
-        
-        // Notify killer
-        killer.sendMessage(ChatColor.GREEN + "You gained " + reward + " Action Points for killing a " + mobType.toLowerCase().replace("_", " ") + "!");
+        // Update stats and UI
+        ssj.getSSJRpgSys().updateAllStatBoosts(killer);
+        ssj.getSSJGui().openGenStatInventory(killer);
+        checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(killer);
     }
 
     public void handleEntityDeath(org.bukkit.event.entity.EntityDeathEvent event) {
-        if (event.getEntity().getKiller() == null) return;  // Only proceed if killed by a player
-        
+        if (event.getEntity().getKiller() == null) {
+            return;
+        }
+
         Player killer = event.getEntity().getKiller();
-        
         if (event.getEntity() instanceof Player) {
-            // Player kill
-            Player victim = (Player) event.getEntity();
-            handlePlayerKillReward(killer, victim);
+            handlePlayerKillReward(killer, (Player) event.getEntity());
         } else {
-            // Mob kill
-            String mobType = event.getEntityType().name();
-            handleMobKillReward(killer, mobType);
+            handleMobKillReward(killer, event.getEntityType().name());
         }
     }
 

@@ -2,9 +2,11 @@ package org.apache.supersaiyan.MethodClasses;
 
 import org.apache.supersaiyan.SSJ;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -19,10 +21,10 @@ public class SSJChargeSystem {
     private Map<UUID, SSJBossBar> energyBars = new HashMap<>();
     private Map<UUID, Boolean> chargingPlayers = new HashMap<>();
     private Map<UUID, Boolean> scoreboardEnabled = new HashMap<>();  // Track scoreboard state
-    private String particleType1;
-    private String particleType2;
-    private int particleCount1;
-    private int particleCount2;
+    private String particleType1 = "FLAME";  // Default particle type
+    private String particleType2 = "CRIT";   // Secondary particle type
+    private int particleCount1 = 5;          // Default particle count
+    private int particleCount2 = 3;          // Secondary particle count
     private Map<UUID, BukkitTask> energyDrainTasks = new HashMap<>();
     private int energyDrainRate = 10; // Energy points to drain per second
     
@@ -36,6 +38,14 @@ public class SSJChargeSystem {
         if (isCharging(player)) {
             player.sendMessage(ChatColor.RED + "You are already charging!");
             return;
+        }
+
+        // Check if hold charge is enabled and player is holding the charge item
+        if (ssj.getSSJConfigs().getHoldChargeItem()) {
+            ItemStack heldItem = player.getInventory().getItemInMainHand();
+            if (!isChargeItem(heldItem)) {
+                return;
+            }
         }
 
         // Show energy bar if not already visible
@@ -52,126 +62,112 @@ public class SSJChargeSystem {
         // Add player to charging list
         chargingPlayers.put(playerId, true);
 
-        // Determine particle types and counts based on current transformation
-        String currentForm = ssj.getSSJPCM().getForm(player);
-        particleType1 = "FLAME"; // Default particle
-        particleCount1 = 10;     // Default count
-        particleType2 = null;   // Default second particle
-        particleCount2 = 0;     // Default second particle count
-
-        // Fetch particle settings from the configuration
-        if (!currentForm.equals("Base")) {
-            // Fetch particle settings from the configuration
-            String[] categories = {
-                "Base_Forms", "Kaioken_Forms", "Saiyan_Forms",
-                "Legendary_Saiyan_Forms", "Saiyan_God_Forms"
-            };
-
-            for (String category : categories) {
-                ConfigurationSection section = ssj.getSSJConfigs().getTCFile().getConfigurationSection(category);
-                if (section != null) {
-                    for (String key : section.getKeys(false)) {
-                        String desc = section.getString(key + ".Desc");
-                        if (currentForm.equals(desc)) {
-                            String particlePath1 = category + "." + key + ".Particle.Type";
-                            String particleCountPath1 = category + "." + key + ".Particle.Count";
-
-                            String particlePath2 = category + "." + key + ".Particle2.Type";
-                            String particleCountPath2 = category + "." + key + ".Particle2.Count";
-
-                            if (ssj.getSSJConfigs().getTCFile().contains(particlePath1)) {
-                                particleType1 = ssj.getSSJConfigs().getTCFile()
-                                    .getString(particlePath1).toUpperCase();
-                            }
-                            if (ssj.getSSJConfigs().getTCFile().contains(particleCountPath1)) {
-                                particleCount1 = ssj.getSSJConfigs().getTCFile()
-                                    .getInt(particleCountPath1);
-                            }
-
-                            if (ssj.getSSJConfigs().getTCFile().contains(particlePath2)) {
-                                particleType2 = ssj.getSSJConfigs().getTCFile()
-                                    .getString(particlePath2).toUpperCase();
-                            }
-                            if (ssj.getSSJConfigs().getTCFile().contains(particleCountPath2)) {
-                                particleCount2 = ssj.getSSJConfigs().getTCFile()
-                                    .getInt(particleCountPath2);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
         // Start charging task
+        startChargingTask(player);
+    }
+
+    private void startChargingTask(Player player) {
+        UUID playerId = player.getUniqueId();
+        
+        // Cancel any existing task for this player
+        if (energyDrainTasks.containsKey(playerId)) {
+            energyDrainTasks.get(playerId).cancel();
+            energyDrainTasks.remove(playerId);
+        }
+        
         chargeRunnable = new BukkitRunnable() {
             int tickCounter = 0;
 
             @Override
             public void run() {
+                // Stop charging if player is offline or not charging
                 if (!player.isOnline() || !isCharging(player)) {
                     stopCharging(player);
                     this.cancel();
                     return;
                 }
 
-                // Play charging particles every 10 ticks (2 times per second)
-                if (tickCounter % 10 == 0) {
-                    if (particleType1 != null && !particleType1.isEmpty() && particleCount1 > 0) {
-                        new SSJParticles(
-                            ssj, player, Particle.valueOf(particleType1), Math.min(particleCount1, 20), 2
-                        ).createParticles();
-                    }
-                    if (particleType2 != null && !particleType2.isEmpty() && particleCount2 > 0) {
-                        new SSJParticles(
-                            ssj, player, Particle.valueOf(particleType2), Math.min(particleCount2, 20), 2
-                        ).createParticles();
+                // Check if hold charge is enabled and player is still holding the charge item
+                if (ssj.getSSJConfigs().getHoldChargeItem()) {
+                    ItemStack heldItem = player.getInventory().getItemInMainHand();
+                    if (!isChargeItem(heldItem)) {
+                        stopCharging(player);
+                        this.cancel();
+                        return;
                     }
                 }
 
-                // Every 20 ticks (1 second)
+                // Handle particles and energy gain
+                if (tickCounter % 10 == 0) {
+                    updateParticles(player);
+                }
+
                 if (tickCounter % 20 == 0) {
-                    int maxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
-                    int currentEnergy = ssj.getSSJPCM().getEnergy(player);
-                    int transformationEnergyGainMultiplier = ssj.getSSJConfigs().getTCFile().getInt(
-                        currentForm + ".Traits.ENERGY_GAIN_MULTIPLIER"
-                    );
-
-                    if (currentEnergy >= maxEnergy) {
-                        player.sendMessage(ChatColor.RED + "You've reached your energy limit!");
-                        stopCharging(player);
-                        return;
-                    }
-
-                    // Modify energy
-                    if (ssj.getSSJConfigs().getPassiveEnergyGain()) {
-                        if (!currentForm.equals("Base")) {
-                            int passiveEnergyGain = ssj.getSSJConfigs().getPEMG();
-                            ssj.getSSJEnergyManager().modifyEnergy(player, passiveEnergyGain * transformationEnergyGainMultiplier);
-                        } else {
-                            int passiveEnergyGain = ssj.getSSJConfigs().getPEMG();
-                            ssj.getSSJEnergyManager().modifyEnergy(player, passiveEnergyGain);
-                        }
-                    }
-
-                    if (!currentForm.equals("Base")) {
-                        int nonPassiveEnergyGain = ssj.getSSJConfigs().getNPEMG();
-                        ssj.getSSJEnergyManager().modifyEnergy(player, nonPassiveEnergyGain * transformationEnergyGainMultiplier);
-                    } else {
-                        int nonPassiveEnergyGain = ssj.getSSJConfigs().getNPEMG();
-                        ssj.getSSJEnergyManager().modifyEnergy(player, nonPassiveEnergyGain);
-                    }
-
-                    // Update energy bar
-                    if (energyBars.containsKey(playerId)) {
-                        energyBars.get(playerId).update(player);
-                    }
+                    handleEnergyGain(player);
                 }
 
                 tickCounter++;
             }
         };
         chargeTask = chargeRunnable.runTaskTimer(ssj, 0L, 1L);
+    }
+
+    private boolean isChargeItem(ItemStack item) {
+        return item != null && item.getType() == Material.MAGMA_CREAM;  // Changed from TNT to MAGMA_CREAM
+    }
+
+    private void handleEnergyGain(Player player) {
+        String currentForm = ssj.getSSJPCM().getForm(player);
+        int maxEnergy = ssj.getSSJEnergyManager().getEnergyLimit(player);
+        int currentEnergy = ssj.getSSJPCM().getEnergy(player);
+
+        if (currentEnergy >= maxEnergy) {
+            player.sendMessage(ChatColor.RED + "You've reached your energy limit!");
+            stopCharging(player);
+            return;
+        }
+
+        // Calculate energy gain with potential boost
+        if (!currentForm.equals("Base")) {
+            int energyGain = ssj.getSSJConfigs().getNPEMG();
+            ssj.getSSJEnergyManager().modifyEnergy(player, energyGain);
+            ssj.getSSJEnergyManager().handlePotentialCharge(player);
+            
+            // Create charging particles based on form
+            if (particleType1 != null && !particleType1.isEmpty()) {
+                try {
+                    Particle particle1 = Particle.valueOf(particleType1);
+                    new SSJParticles(ssj, player, particle1, particleCount1, 2).createParticles();
+                } catch (IllegalArgumentException e) {
+                    ssj.getLogger().warning("Invalid particle type: " + particleType1);
+                }
+            }
+            
+            if (particleType2 != null && !particleType2.isEmpty()) {
+                try {
+                    Particle particle2 = Particle.valueOf(particleType2);
+                    new SSJParticles(ssj, player, particle2, particleCount2, 2).createParticles();
+                } catch (IllegalArgumentException e) {
+                    ssj.getLogger().warning("Invalid particle type: " + particleType2);
+                }
+            }
+        } else {
+            int energyGain = ssj.getSSJConfigs().getNPEMG();
+            ssj.getSSJEnergyManager().modifyEnergy(player, energyGain);
+            
+            // Create base form charging particles
+            try {
+                Particle baseParticle = Particle.valueOf(particleType1);
+                new SSJParticles(ssj, player, baseParticle, particleCount1, 2).createParticles();
+            } catch (IllegalArgumentException e) {
+                ssj.getLogger().warning("Invalid particle type: " + particleType1);
+            }
+        }
+
+        // Update energy bar
+        if (energyBars.containsKey(player.getUniqueId())) {
+            energyBars.get(player.getUniqueId()).update(player);
+        }
     }
     
     public void stopCharging(Player player) {
@@ -201,8 +197,12 @@ public class SSJChargeSystem {
     
     public void updateParticles(Player player) {
         String currentForm = ssj.getSSJPCM().getForm(player);
-        particleType1 = "FLAME"; // Default particle
-        particleType2 = null;
+        
+        // Default particles for base form
+        String particleType1 = "FLAME";
+        String particleType2 = null;
+        int particleCount1 = 5;  // Reduced from 10
+        int particleCount2 = 0;
         
         if (!currentForm.equals("Base")) {
             String[] categories = {"Base_Forms", "Kaioken_Forms", "Saiyan_Forms", 
@@ -214,32 +214,44 @@ public class SSJChargeSystem {
                     for (String key : section.getKeys(false)) {
                         String desc = section.getString(key + ".Desc");
                         if (currentForm.equals(desc)) {
-                            String particlePath1 = category + "." + key + ".Particle.Type";
-                            String particlePath2 = category + "." + key + ".Particle2.Type";
-                            if (ssj.getSSJConfigs().getTCFile().contains(particlePath1)) {
-                                particleType1 = ssj.getSSJConfigs().getTCFile().getString(particlePath1);
-                                break;
+                            // Get particle settings
+                            if (section.contains(key + ".Particle.Type")) {
+                                particleType1 = section.getString(key + ".Particle.Type").toUpperCase();
+                                particleCount1 = Math.min(section.getInt(key + ".Particle.Count", 5), 10);  // Cap at 10
                             }
-                            if (ssj.getSSJConfigs().getTCFile().contains(particlePath2)) {
-                                particleType2 = ssj.getSSJConfigs().getTCFile().getString(particlePath2);
-                                break;
+                            
+                            if (section.contains(key + ".Particle2.Type")) {
+                                String type2 = section.getString(key + ".Particle2.Type");
+                                if (type2 != null && !type2.isEmpty()) {
+                                    particleType2 = type2.toUpperCase();
+                                    particleCount2 = Math.min(section.getInt(key + ".Particle2.Count", 5), 10);  // Cap at 10
+                                }
                             }
+                            break;
                         }
                     }
                 }
             }
         }
         
-        // Play charging particles
-        if (particleType1 != null && !particleType1.isEmpty() && particleCount1 > 0) {
-            new SSJParticles(
-                ssj, player, Particle.valueOf(particleType1), particleCount1, 4
-            ).createParticles();
+        // Spawn primary particles
+        if (particleType1 != null && !particleType1.isEmpty()) {
+            try {
+                Particle particle = Particle.valueOf(particleType1);
+                new SSJParticles(ssj, player, particle, particleCount1, 2).createParticles();
+            } catch (IllegalArgumentException e) {
+                ssj.getLogger().warning("Invalid particle type: " + particleType1);
+            }
         }
-        if (particleType2 != null && !particleType2.isEmpty() && particleCount2 > 0) {
-            new SSJParticles(
-                ssj, player, Particle.valueOf(particleType2), particleCount2, 5
-            ).createParticles();
+        
+        // Spawn secondary particles if defined
+        if (particleType2 != null && !particleType2.isEmpty()) {
+            try {
+                Particle particle = Particle.valueOf(particleType2);
+                new SSJParticles(ssj, player, particle, particleCount2, 2).createParticles();
+            } catch (IllegalArgumentException e) {
+                ssj.getLogger().warning("Invalid particle type: " + particleType2);
+            }
         }
     }
     
@@ -307,16 +319,33 @@ public class SSJChargeSystem {
 
     public void toggleScoreboard(Player player) {
         UUID playerId = player.getUniqueId();
-        boolean currentState = scoreboardEnabled.getOrDefault(playerId, false);
+        boolean currentState = scoreboardEnabled.getOrDefault(playerId, true);  // Default to true
         
         if (currentState) {
-            player.setScoreboard(ssj.getServer().getScoreboardManager().getNewScoreboard());  // Reset to empty scoreboard
+            // Disable scoreboard
+            player.setScoreboard(ssj.getServer().getScoreboardManager().getNewScoreboard());
             scoreboardEnabled.put(playerId, false);
             player.sendMessage(ChatColor.GREEN + "Scoreboard removed!");
         } else {
+            // Enable scoreboard
             ssj.getSSJMethods().callScoreboard(player);
             scoreboardEnabled.put(playerId, true);
             player.sendMessage(ChatColor.GREEN + "Scoreboard added!");
+        }
+        
+        // Save the scoreboard state to player config
+        ssj.getSSJPCM().setPlayerConfigValue(player, "Scoreboard_Enabled", !currentState);
+    }
+
+    // Add this method to initialize scoreboard state on join
+    public void initializeScoreboardState(Player player) {
+        boolean enabled = ssj.getSSJPCM().getPlayerConfig(player).getBoolean("Scoreboard_Enabled", true);
+        scoreboardEnabled.put(player.getUniqueId(), enabled);
+        
+        if (enabled) {
+            ssj.getSSJMethods().callScoreboard(player);
+        } else {
+            player.setScoreboard(ssj.getServer().getScoreboardManager().getNewScoreboard());
         }
     }
 

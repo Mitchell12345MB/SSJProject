@@ -14,6 +14,11 @@ public class SSJTimers{
 
     }
 
+    public void startTimers() {
+        // Start the save timer
+        saveTimer();
+    }
+
     public void saveTimer() {
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(ssj, () -> {

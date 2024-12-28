@@ -79,19 +79,35 @@ public class SSJEnergyManager {
     public int getEnergyLimit(Player player) {
         double baseLimit = ssj.getSSJPCM().getLimit(player);
         double multiplier = getEnergyLimitMultiplier(player);
-        return (int) (baseLimit * multiplier);
+        
+        // Get potential multiplier if applicable
+        double potentialMultiplier = 1.0;
+        if (ssj.getSSJPCM().isSkillEnabled(player, "Potential")) {
+            int potentialLevel = ssj.getSSJPCM().getSkillLevel(player, "Potential");
+            potentialMultiplier = 1.0 + (potentialLevel * 0.1); // 10% increase per level
+        }
+        
+        return (int) (baseLimit * multiplier * potentialMultiplier);
     }
     
     public void modifyEnergy(Player player, int amount) {
         int currentEnergy = ssj.getSSJPCM().getEnergy(player);
-        int newEnergy = Math.max(0, Math.min(getEnergyLimit(player), currentEnergy + amount));
+        double gainMultiplier = getEnergyGainMultiplier(player);
+        
+        // Apply gain multiplier only for positive energy changes
+        int modifiedAmount = amount > 0 ? (int)(amount * gainMultiplier) : amount;
+        
+        int newEnergy = Math.max(0, Math.min(getEnergyLimit(player), currentEnergy + modifiedAmount));
         ssj.getSSJPCM().setPlayerConfigValue(player, "Energy", newEnergy);
+
+        // Update potential system
+        ssj.getSSJPotentialSystem().updatePotential(player);
 
         // Recalculate BP since energy changed
         ssj.getSSJRpgSys().multBP(player);
 
         // Update the scoreboard
-        ssj.getSSJMethodChecks().scoreBoardCheck();
+        ssj.getSSJMethodChecks().checkScoreboard();
         ssj.getSSJMethods().callScoreboard(player);
 
         // Check if energy is below transformation requirement
@@ -191,5 +207,20 @@ public class SSJEnergyManager {
         if (task != null) {
             task.cancel();
         }
+    }
+    
+    public void handlePotentialCharge(Player player) {
+        if (!ssj.getSSJPCM().isSkillEnabled(player, "Potential")) {
+            return;
+        }
+        
+        int potentialLevel = ssj.getSSJPCM().getSkillLevel(player, "Potential");
+        double chargeMultiplier = 1.0 + (potentialLevel * 0.05); // 5% faster charging per level
+        
+        // Apply potential charge multiplier
+        int baseCharge = ssj.getSSJConfigs().getNPEMG();
+        int modifiedCharge = (int)(baseCharge * chargeMultiplier);
+        
+        modifyEnergy(player, modifiedCharge);
     }
 }

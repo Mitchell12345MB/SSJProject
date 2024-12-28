@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class SSJActionListeners implements Listener {
 
@@ -84,7 +85,7 @@ public class SSJActionListeners implements Listener {
 
                 if (ssj.getSSJTransformationManager().canTransform(p, nextForm)) {
                     ssj.getSSJTransformationManager().transform(p, nextForm);
-                    ssj.getSSJMethodChecks().scoreBoardCheck();
+                    ssj.getSSJMethodChecks().checkScoreboard();
                     ssj.getSSJMethods().callScoreboard(p);
                     bossBar.hide(p);
                     bossBars.remove(p.getUniqueId());
@@ -145,7 +146,7 @@ public class SSJActionListeners implements Listener {
             }
 
             // Update scoreboard
-            ssj.getSSJMethodChecks().scoreBoardCheck();
+            ssj.getSSJMethodChecks().checkScoreboard();
             ssj.getSSJMethods().callScoreboard(p);
         }
     }
@@ -259,33 +260,16 @@ public class SSJActionListeners implements Listener {
         Player p = e.getPlayer();
         ItemStack heldItem = p.getInventory().getItemInMainHand();
 
-        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.GHAST_TEAR) {
-            if (ssj.getSSJPCM().getStart(p)) {
-                p.sendMessage("woosh woosh woosh");
-
-                // Create base particle effect
-                SSJParticles ssjparticles = new SSJParticles(ssj, p, Particle.FLAME, 50, 3);
-                ssjparticles.createParticles();
-
-                // Only add lightning effect for specific forms
-                String currentForm = ssj.getSSJPCM().getForm(p);
-                if (currentForm.equals("Super Saiyan 2") || 
-                    currentForm.equals("Super Saiyan 3") || 
-                    currentForm.equals("Super Saiyan 4") || 
-                    currentForm.equals("Super Saiyan 5") || 
-                    currentForm.equals("Super Saiyan God") || 
-                    currentForm.equals("Super Saiyan Blue") || 
-                    currentForm.equals("Super Saiyan Rose") || 
-                    currentForm.equals("Super Saiyan Rage") || 
-                    currentForm.equals("Super Saiyan Blue Evolution") || 
-                    (currentForm.equals("Kaioken Transformation") && 
-                     (currentForm.contains("x50") || currentForm.contains("x100")))) {
-                    new SSJParticles(ssj, p, Particle.WAX_OFF, 10, 3).createLightningEffect();
-                }
-            } else {
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && 
+            heldItem.getType() == Material.GHAST_TEAR && heldItem.hasItemMeta()) {
+            
+            e.setCancelled(true);
+            if (!ssj.getSSJPCM().getStart(p)) {
                 p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
-                p.sendMessage(ChatColor.RED + "So this action won't work!");
+                return;
             }
+
+            ssj.getSSJAuraSystem().toggleAura(p);
         }
     }
 
@@ -317,36 +301,18 @@ public class SSJActionListeners implements Listener {
     }
 
     @EventHandler
-    private void onPlayerInteractRemoveSB(PlayerInteractEvent e) { //Removes scoreboard from the right side of screen that contains the player's stats.
-
+    private void onPlayerInteractRemoveSB(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-
         ItemStack heldItem = p.getInventory().getItemInMainHand();
 
-        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && heldItem.getType() == Material.TNT) {
+        if ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) && 
+            heldItem.getType() == Material.TNT && heldItem.hasItemMeta()) {
 
             if (ssj.getSSJPCM().getStart(p)) {
-
-                if (ssj.getSSJSB().hasScore(p)) {
-
-                    ssj.getSSJSB().removeScore(p);
-
-                    p.sendMessage(ChatColor.RED + "Scoreboard removed.");
-
-                } else {
-
-                    ssj.getSSJMethods().callScoreboard(p);
-
-                    p.sendMessage(ChatColor.RED + "Scoreboard added.");
-
-                }
-
+                ssj.getSSJChargeSystem().toggleScoreboard(p);
             } else {
-
                 p.sendMessage(ChatColor.RED + "You haven't started your Saiyan journey!");
-
                 p.sendMessage(ChatColor.RED + "So this action won't work!");
-
             }
         }
     }
@@ -468,9 +434,9 @@ public class SSJActionListeners implements Listener {
         if (inventory.equals(ssj.getSSJGui().settingsinv)) {
             e.setCancelled(true);
 
-        ItemStack clickedItem = e.getCurrentItem();
-        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
-            return;
+            ItemStack clickedItem = e.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+                return;
             }
 
             ItemMeta meta = clickedItem.getItemMeta();
@@ -479,18 +445,16 @@ public class SSJActionListeners implements Listener {
             }
 
             String displayName = ChatColor.stripColor(meta.getDisplayName());
-
-
             
             // Process the click based on inventory type
             if (e.getInventory().equals(ssj.getSSJGui().genstatinv)) {
-                ssj.getSSJMethodChecks().callGenStatMenuChecks(p, e);
+                ssj.getSSJMethodChecks().handleGenStatMenuClick(p, e);
             } else if (e.getInventory().equals(ssj.getSSJGui().transformationsinv)) {
                 ssj.getSSJMethodChecks().callTransformationsMenuChecks(p, e);
             } else if (e.getInventory().equals(ssj.getSSJGui().skillsinv)) {
                 ssj.getSSJMethodChecks().callSkillsMenuChecks(p, e);
             } else if (e.getInventory().equals(ssj.getSSJGui().settingsinv)) {
-                ssj.getSSJMethodChecks().callSettingsMenuChecks(p, e);
+                ssj.getSSJMethodChecks().handleSettingsMenuClick(p, e);
             }
 
             if (displayName.equals("Staff Flight")) {
@@ -508,7 +472,6 @@ public class SSJActionListeners implements Listener {
                     p.sendMessage(ChatColor.RED + "You do not have permission to use this setting.");
                 }
             }
-
         }
     }
 
@@ -618,6 +581,117 @@ public class SSJActionListeners implements Listener {
             // Allow flight on jump
             player.setAllowFlight(true);
         }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onEntityDeath(org.bukkit.event.entity.EntityDeathEvent event) {
+        Player mobKiller = event.getEntity().getKiller();
+        
+        if (mobKiller == null || !ssj.getSSJPCM().getStart(mobKiller)) {
+            return;
+        }
+
+        // Get mob type and determine reward
+        String entityType = event.getEntityType().toString();
+        int mobReward;
+
+        // Check mob type and assign appropriate reward
+        switch (entityType) {
+            case "ENDER_DRAGON":
+            case "WITHER":
+                mobReward = 25; // Boss_Mobs reward
+                break;
+            case "ELDER_GUARDIAN":
+            case "WARDEN":
+            case "RAVAGER":
+                mobReward = 15; // Strong_Mobs reward
+                break;
+            case "BLAZE":
+            case "WITCH":
+            case "VINDICATOR":
+            case "PIGLIN_BRUTE":
+            case "IRON_GOLEM":
+                mobReward = 10; // Medium_Strong_Mobs reward
+                break;
+            case "ZOMBIE":
+            case "SKELETON":
+            case "SPIDER":
+            case "CREEPER":
+            case "ENDERMAN":
+            case "PIGLIN":
+                mobReward = 5; // Medium_Mobs reward
+                break;
+            case "COW":
+            case "SHEEP":
+            case "PIG":
+            case "CHICKEN":
+            case "RABBIT":
+                mobReward = 1; // Weak_Mobs reward
+                break;
+            default:
+                mobReward = 2; // Default_Reward for unlisted mobs
+        }
+
+        // Award the action points
+        int mobKillerAP = ssj.getSSJPCM().getActionPoints(mobKiller);
+        ssj.getSSJPCM().setPlayerConfigValue(mobKiller, "Action_Points", mobKillerAP + mobReward);
+        mobKiller.sendMessage(ChatColor.GREEN + "+" + mobReward + " Action Points for killing a " + entityType.toLowerCase().replace("_", " ") + "!");
+        
+        // Update scoreboard
+        ssj.getSSJMethodChecks().checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(mobKiller);
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent event) {
+        Player victim = event.getEntity();
+        Player pvpKiller = victim.getKiller();
+        
+        if (pvpKiller == null || pvpKiller == victim || !ssj.getSSJPCM().getStart(pvpKiller)) {
+            return;
+        }
+
+        // Calculate reward based on base reward and level difference
+        int baseReward = 5;
+        int levelBonus = 2;
+        int killerLevel = ssj.getSSJPCM().getLevel(pvpKiller);
+        int victimLevel = ssj.getSSJPCM().getLevel(victim);
+        int levelDiff = Math.max(0, victimLevel - killerLevel);
+        
+        int pvpReward = baseReward + (levelDiff * levelBonus);
+
+        // Award the action points
+        int pvpKillerAP = ssj.getSSJPCM().getActionPoints(pvpKiller);
+        ssj.getSSJPCM().setPlayerConfigValue(pvpKiller, "Action_Points", pvpKillerAP + pvpReward);
+        
+        // Send message and update scoreboard
+        String message = ChatColor.GREEN + "+" + pvpReward + " Action Points for killing " + victim.getName();
+        if (levelDiff > 0) {
+            message += ChatColor.YELLOW + " (+" + (levelDiff * levelBonus) + " level bonus)";
+        }
+        pvpKiller.sendMessage(message + "!");
+        
+        ssj.getSSJMethodChecks().checkScoreboard();
+        ssj.getSSJMethods().callScoreboard(pvpKiller);
+    }
+
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        String command = event.getMessage().toLowerCase();
+
+        // ... existing command handling ...
+
+        if (command.equals("/aura") || command.equals("/releaseaura")) {
+            event.setCancelled(true);
+            if (!ssj.getSSJPCM().getStart(player)) {
+                player.sendMessage(ChatColor.RED + "You need to start your journey first!");
+                return;
+            }
+            ssj.getSSJAuraSystem().toggleAura(player);
+        }
+
+        // ... rest of command handling ...
     }
 
 }
